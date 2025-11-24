@@ -6,6 +6,13 @@ Design tokens are the foundation of the AI-BOS design system. They provide a sin
 
 ---
 
+
+## Overview
+
+This document defines design tokens.
+
+---
+
 ## Token Architecture
 
 ### Two-Layer System

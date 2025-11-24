@@ -5,6 +5,13 @@
 
 ---
 
+
+## Overview
+
+This document reports on 🧹 manual cleanup complete.
+
+---
+
 ## 📋 Summary
 
 Manual cleanup has been performed on the following directories:

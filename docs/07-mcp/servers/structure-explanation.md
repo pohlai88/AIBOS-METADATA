@@ -1,5 +1,12 @@
 # MCP Server Structure Explanation
 
+## Overview
+
+This document defines mcp server structure explanation.
+
+---
+
+
 > **Understanding Server vs Tools in MCP Architecture**
 
 ## Current Structure: Server + Tools Together ✅

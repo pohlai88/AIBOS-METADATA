@@ -9,6 +9,7 @@ node_modules
 
 # Testing
 coverage
+*.test.js.snap
 
 # Next.js
 .next/
@@ -21,18 +22,19 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+component-error.log
+server-error.log
 
 # Misc
 *.pem
 
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
 # Local env files
 .env*.local
 .env
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Vercel
 .vercel
@@ -62,7 +64,8 @@ next-env.d.ts
 !.mcp/**/README.md
 !.mcp/**/package.json
 !.mcp/**/systemPrompt.generated.ts
-!.mcp/config.json
+!.mcp/**/config.json
+!.mcp/**/scripts/
 
 # IDE
 .vscode/
@@ -70,6 +73,7 @@ next-env.d.ts
 *.swp
 *.swo
 *~
+.cursor/
 
 # OS
 .DS_Store
@@ -79,3 +83,17 @@ desktop.ini
 # Package manager lock files (keep pnpm-lock.yaml, ignore others)
 package-lock.json
 yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Husky (if using pre-commit hooks)
+.husky/_
+
+# Storybook
+storybook-static
+
+# Debug
+.vscode-test/

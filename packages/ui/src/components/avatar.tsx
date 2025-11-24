@@ -1,4 +1,6 @@
 // packages/ui/src/components/avatar.tsx
+"use client";
+
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import {

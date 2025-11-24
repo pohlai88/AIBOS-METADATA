@@ -6,6 +6,13 @@ The AI-BOS design system prioritizes accessibility with WCAG AA minimum complian
 
 ---
 
+
+## Overview
+
+This document defines accessibility.
+
+---
+
 ## Accessibility Principles
 
 ### Core Requirements

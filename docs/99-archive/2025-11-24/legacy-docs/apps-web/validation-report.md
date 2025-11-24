@@ -1,4 +1,12 @@
 # apps/web Directory Validation Report
+---
+
+## Overview
+
+This document apps/web directory validation report.
+
+---
+
 
 ## 📋 Files Found
 

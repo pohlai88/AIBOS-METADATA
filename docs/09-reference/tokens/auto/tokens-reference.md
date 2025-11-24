@@ -1,5 +1,12 @@
 # Design Tokens Reference
 
+## Overview
+
+This document defines design tokens reference.
+
+---
+
+
 > **Auto-generated from `globals.css`**
 > **Last updated:** 2025-11-24T08:37:10.544Z
 > **⚠️ MCP-only file - Do not edit manually**

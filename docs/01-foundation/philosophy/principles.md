@@ -6,6 +6,13 @@ This document defines the fundamental design principles that guide all UI decisi
 
 ---
 
+
+## Overview
+
+This document defines design philosophy.
+
+---
+
 ## Core Principles
 
 ### 1. "Lego, not Jenga"

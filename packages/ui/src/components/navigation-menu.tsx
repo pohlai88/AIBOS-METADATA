@@ -1,4 +1,6 @@
 // packages/ui/src/components/navigation-menu.tsx
+"use client";
+
 import * as React from "react";
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
 import {

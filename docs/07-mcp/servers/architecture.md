@@ -97,6 +97,13 @@
 
 ---
 
+
+## Overview
+
+This document defines mcp server architecture.
+
+---
+
 ## Current State vs Recommended State
 
 ### Current Structure (✅ Partially Migrated)

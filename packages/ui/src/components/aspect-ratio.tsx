@@ -1,4 +1,6 @@
 // packages/ui/src/components/aspect-ratio.tsx
+"use client";
+
 import * as React from "react";
 import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio";
 

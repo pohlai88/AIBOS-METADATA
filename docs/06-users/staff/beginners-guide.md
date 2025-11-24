@@ -6,6 +6,13 @@ This guide provides practical examples and common patterns to get you started qu
 
 ---
 
+
+## Overview
+
+This document defines getting started with ai-bos ui.
+
+---
+
 ## ✅ What's Included
 
 The AI-BOS design system provides:

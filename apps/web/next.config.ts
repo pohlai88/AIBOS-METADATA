@@ -21,6 +21,14 @@ const nextConfig: NextConfig = {
   // Output file tracing for monorepo builds
   // Ensures files outside app directory are included in builds
   outputFileTracingRoot: path.join(__dirname, '../..'),
+
+  // Fix sourceMapURL parsing errors
+  // Disable source maps in production
+  productionBrowserSourceMaps: false,
+  
+  // Turbopack configuration (Next.js 16 uses Turbopack by default)
+  // Empty config to silence the webpack/turbopack conflict warning
+  turbopack: {},
 };
 
 export default nextConfig;

@@ -6,6 +6,13 @@ The AI-BOS typography system uses a Major Third (1.250 ratio) scale for harmonio
 
 ---
 
+
+## Overview
+
+This document defines typography system.
+
+---
+
 ## Typography Scale
 
 ### Major Third (1.250 ratio)

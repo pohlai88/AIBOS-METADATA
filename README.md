@@ -2,6 +2,14 @@
 
 A Next.js 16 monorepo structure for the AIBOS Metadata project.
 
+---
+
+## Overview
+
+This monorepo contains the AIBOS Metadata Platform, built with Next.js 16, TypeScript, and modern tooling. It uses pnpm workspaces and Turborepo for efficient development and builds.
+
+---
+
 ## Structure
 
 ```

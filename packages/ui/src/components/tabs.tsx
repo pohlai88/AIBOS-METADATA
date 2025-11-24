@@ -1,6 +1,8 @@
 // packages/ui/src/components/tabs.tsx
 // Radix Tabs wrapper using tokens.ts - Generated following MCP system prompt patterns
 
+"use client";
+
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import {

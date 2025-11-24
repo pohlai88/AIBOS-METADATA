@@ -1,4 +1,6 @@
 // packages/ui/src/components/toast.tsx
+"use client";
+
 import * as React from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
 import {

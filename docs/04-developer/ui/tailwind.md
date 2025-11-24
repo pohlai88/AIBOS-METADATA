@@ -6,6 +6,13 @@ This document describes how Tailwind CSS is configured to work with the AI-BOS d
 
 ---
 
+
+## Overview
+
+This document defines tailwind css integration.
+
+---
+
 ## Configuration Overview
 
 Tailwind v4 is configured via **CSS-based configuration** (no `tailwind.config.ts` needed):

@@ -11,7 +11,14 @@
     "sync-mcp-prompt": "tsx .mcp/ui-generator/tools/sync-prompt.ts",
     "lint:ui-constitution": "tsx .mcp/component-generator/tools/validate-constitution.ts",
     "generate:ui": "tsx .mcp/ui-generator/tools/generate-component.ts",
-    "docs:sync": "tsx apps/docs/scripts/sync-docs.ts"
+    "docs:sync": "tsx apps/docs/scripts/sync-docs.ts",
+    "mcp:validate-naming": "node .mcp/convention-validation/scripts/validate-all.mjs --naming",
+    "mcp:validate-structure": "node .mcp/convention-validation/scripts/validate-all.mjs --structure",
+    "mcp:validate-coding": "node .mcp/convention-validation/scripts/validate-all.mjs --coding",
+    "mcp:validate-docs": "node .mcp/convention-validation/scripts/validate-all.mjs --docs",
+    "mcp:validate-all": "node .mcp/convention-validation/scripts/validate-all.mjs",
+    "mcp:validate-staged": "node .mcp/convention-validation/scripts/validate-staged.mjs",
+    "mcp:setup-pre-commit": "node .mcp/convention-validation/scripts/setup-pre-commit.mjs"
   },
   "devDependencies": {
     "@babel/parser": "^7.28.5",

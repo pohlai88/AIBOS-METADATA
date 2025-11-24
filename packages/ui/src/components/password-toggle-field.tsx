@@ -1,4 +1,6 @@
 // packages/ui/src/components/password-toggle-field.tsx
+"use client";
+
 import * as React from "react";
 import * as PasswordToggleFieldPrimitive from "@radix-ui/react-password-toggle-field";
 import {

@@ -6,6 +6,13 @@ The AI-BOS spacing system uses a 4px base grid for perfect pixel alignment acros
 
 ---
 
+
+## Overview
+
+This document defines spacing system.
+
+---
+
 ## 4px Base Grid
 
 ### Why 4px?

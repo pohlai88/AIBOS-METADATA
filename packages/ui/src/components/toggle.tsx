@@ -1,4 +1,6 @@
 // packages/ui/src/components/toggle.tsx
+"use client";
+
 import * as React from "react";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
 import {

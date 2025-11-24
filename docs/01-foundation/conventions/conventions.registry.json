@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "title": "Conventions Registry",
+  "description": "Registry of all convention documents for MCP discovery and governance",
+  "lastUpdated": "2025-11-24",
+  "registry": {
+    "type": "convention-registry",
+    "domain": "documentation",
+    "governanceLevel": "strict",
+    "entries": [
+      {
+        "id": "convention.naming",
+        "type": "convention",
+        "name": "Naming Conventions",
+        "version": "1.0.0",
+        "status": "active",
+        "path": "docs/01-foundation/conventions/naming.md",
+        "manifest": "docs/01-foundation/conventions/naming.manifest.json",
+        "domain": "documentation",
+        "category": "convention",
+        "governanceLevel": "strict",
+        "scope": "all",
+        "lastUpdated": "2025-11-24",
+        "steward": "AI-BOS Platform Team",
+        "tags": ["naming", "conventions", "standards", "governance"],
+        "validation": {
+          "tools": ["validate_filenames", "validate_component_names", "validate_imports", "validate_package_names"],
+          "mcpServers": ["aibos-convention-validation", "aibos-component-generator", "react-validation"]
+        },
+        "related": {
+          "documents": [
+            "convention.folder-structure",
+            "convention.coding-standards",
+            "convention.documentation-standard"
+          ],
+          "constitution": [
+            "packages/ui/constitution/components.yml"
+          ]
+        }
+      },
+      {
+        "id": "convention.folder-structure",
+        "type": "convention",
+        "name": "Folder Structure Conventions",
+        "version": "1.0.0",
+        "status": "active",
+        "path": "docs/01-foundation/conventions/folder-structure.md",
+        "manifest": "docs/01-foundation/conventions/folder-structure.manifest.json",
+        "domain": "documentation",
+        "category": "convention",
+        "governanceLevel": "strict",
+        "scope": "monorepo",
+        "lastUpdated": "2025-11-24",
+        "steward": "AI-BOS Platform Team",
+        "tags": ["folder-structure", "monorepo", "organization", "governance"],
+        "validation": {
+          "tools": [
+            "validate_directory_structure",
+            "validate_package_structure",
+            "validate_app_structure",
+            "validate_mcp_structure"
+          ],
+          "mcpServers": ["aibos-convention-validation", "aibos-filesystem", "aibos-documentation"]
+        },
+        "related": {
+          "documents": [
+            "convention.naming",
+            "convention.coding-standards",
+            "convention.documentation-standard"
+          ],
+          "architecture": ["docs/07-mcp/servers/architecture.md"]
+        }
+      },
+      {
+        "id": "convention.coding-standards",
+        "type": "convention",
+        "name": "Coding Standards",
+        "version": "1.0.0",
+        "status": "active",
+        "path": "docs/01-foundation/conventions/coding-standards.md",
+        "manifest": "docs/01-foundation/conventions/coding-standards.manifest.json",
+        "domain": "documentation",
+        "category": "convention",
+        "governanceLevel": "strict",
+        "scope": "all",
+        "lastUpdated": "2025-11-24",
+        "steward": "AI-BOS Platform Team",
+        "tags": ["coding-standards", "typescript", "react", "nextjs", "mcp", "accessibility"],
+        "validation": {
+          "tools": [
+            "validate_typescript_rules",
+            "validate_rsc_boundary",
+            "validate_server_actions",
+            "validate_styling_rules",
+            "validate_accessibility"
+          ],
+          "mcpServers": [
+            "react-validation",
+            "aibos-component-generator",
+            "aibos-a11y-validation"
+          ]
+        },
+        "related": {
+          "documents": [
+            "convention.naming",
+            "convention.folder-structure",
+            "convention.documentation-standard"
+          ],
+          "constitution": [
+            "packages/ui/constitution/components.yml",
+            "packages/ui/constitution/rsc.yml",
+            "packages/ui/constitution/tokens.yml"
+          ]
+        }
+      },
+      {
+        "id": "convention.documentation-standard",
+        "type": "convention",
+        "name": "Documentation Standards",
+        "version": "1.0.0",
+        "status": "active",
+        "path": "docs/01-foundation/conventions/documentation-standard.md",
+        "manifest": "docs/01-foundation/conventions/documentation-standard.manifest.json",
+        "domain": "documentation",
+        "category": "convention",
+        "governanceLevel": "strict",
+        "scope": "all",
+        "lastUpdated": "2025-11-24",
+        "steward": "AI-BOS Platform Team",
+        "tags": ["documentation", "markdown", "standards", "governance"],
+        "validation": {
+          "tools": [
+            "validate_markdown_format",
+            "validate_code_examples",
+            "validate_cross_references",
+            "validate_file_naming"
+          ],
+          "mcpServers": ["aibos-convention-validation", "aibos-documentation"]
+        },
+        "related": {
+          "documents": [
+            "convention.naming",
+            "convention.folder-structure",
+            "convention.coding-standards"
+          ],
+          "governance": ["docs/08-governance/documentation-governance.md"]
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "steward": "AI-BOS Platform Team",
+    "reviewFrequency": "quarterly",
+    "changeProcess": "documentation-governance.md",
+    "registryTable": "mdm_convention_registry"
+  }
+}
+

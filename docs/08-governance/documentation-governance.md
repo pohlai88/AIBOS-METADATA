@@ -6,6 +6,13 @@ This document defines the governance rules, validation requirements, and mainten
 
 ---
 
+
+## Overview
+
+This document defines documentation governance.
+
+---
+
 ## 1. Document Control Principles
 
 ### 1.1 Single Source of Truth (SSOT)

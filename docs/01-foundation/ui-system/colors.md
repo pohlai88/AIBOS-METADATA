@@ -6,6 +6,13 @@ The AI-BOS color system follows a "single accent" approach with a rich grayscale
 
 ---
 
+
+## Overview
+
+This document defines color system.
+
+---
+
 ## Color Strategy
 
 ### The "Single Accent" Approach

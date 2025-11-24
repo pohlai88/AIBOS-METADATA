@@ -1,4 +1,6 @@
 // packages/ui/src/components/accessible-icon.tsx
+"use client";
+
 import * as React from "react";
 import * as AccessibleIconPrimitive from "@radix-ui/react-accessible-icon";
 

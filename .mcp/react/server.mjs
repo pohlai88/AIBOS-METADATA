@@ -11,7 +11,9 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { parse } from "@babel/parser";
-import traverse from "@babel/traverse";
+import _traverse from "@babel/traverse";
+// Handle both ESM and CJS exports
+const traverse = _traverse.default || _traverse;
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";

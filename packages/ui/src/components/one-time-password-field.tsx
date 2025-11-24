@@ -1,5 +1,7 @@
 // packages/ui/src/components/one-time-password-field.tsx
 // Radix OneTimePasswordField wrapper using tokens.ts
+"use client";
+
 import * as React from "react";
 import * as OneTimePasswordFieldPrimitive from "@radix-ui/react-one-time-password-field";
 import { componentTokens } from "../design/tokens";

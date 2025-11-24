@@ -1,4 +1,6 @@
 // packages/ui/src/components/portal.tsx
+"use client";
+
 import * as React from "react";
 import * as PortalPrimitive from "@radix-ui/react-portal";
 
