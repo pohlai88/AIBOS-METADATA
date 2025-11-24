@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     try {
       // Dynamic import - .mcp directory is excluded from TypeScript compilation
       // Type assertion needed because module is excluded from tsconfig
-      const modulePath = "../../../../.mcp/ui-generator/server" as string;
+      const modulePath = "../../../../.mcp/ui-generator/server.mjs" as string;
       const { runUiGeneratorAgent } = await import(modulePath) as {
         runUiGeneratorAgent: (messages: Array<{ role: string; content: string }>) => Promise<string>;
       };

@@ -44,8 +44,25 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# MCP (Model Context Protocol) - generated files and server code
-.mcp/
+# MCP (Model Context Protocol)
+# Ignore build artifacts and temporary files, but keep source code and validated generated files
+.mcp/**/node_modules/
+.mcp/**/dist/
+.mcp/**/build/
+.mcp/**/.cache/
+.mcp/**/tmp/
+.mcp/**/*.log
+.mcp/**/.vscode/
+.mcp/**/.idea/
+.mcp/**/*.tmp
+
+# Keep these files (source code, generated files validated by CI, configs)
+!.mcp/**/server.ts
+!.mcp/**/server.mjs
+!.mcp/**/README.md
+!.mcp/**/package.json
+!.mcp/**/systemPrompt.generated.ts
+!.mcp/config.json
 
 # IDE
 .vscode/

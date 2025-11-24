@@ -1,0 +1,245 @@
+{
+  "index": "Introduction",
+  "01-foundation": {
+    "title": "Foundation",
+    "type": "page",
+    "children": {
+      "philosophy": {
+        "title": "Philosophy",
+        "children": {
+          "principles": "Core Principles",
+          "design-language": "Design Language",
+          "platform-vision": "Platform Vision",
+          "lego-vs-jenga": "Lego vs Jenga"
+        }
+      },
+      "conventions": {
+        "title": "Conventions",
+        "children": {
+          "naming": "Naming Conventions",
+          "folder-structure": "Folder Structure",
+          "coding-standards": "Coding Standards",
+          "documentation-standard": "Documentation Standard"
+        }
+      },
+      "metadata": {
+        "title": "Metadata",
+        "children": {
+          "metadata-governance": "Metadata Governance",
+          "metadata-lifecycle": "Metadata Lifecycle",
+          "metadata-dictionary": "Metadata Dictionary"
+        }
+      },
+      "ui-system": {
+        "title": "UI System",
+        "children": {
+          "tokens": "Design Tokens",
+          "colors": "Color System",
+          "spacing": "Spacing System",
+          "typography": "Typography",
+          "components-philosophy": "Components Philosophy",
+          "a11y-guidelines": "Accessibility Guidelines"
+        }
+      },
+      "glossary": {
+        "title": "Glossary",
+        "children": {
+          "common-terms": "Common Terms",
+          "domain-definitions": "Domain Definitions"
+        }
+      }
+    }
+  },
+  "02-architecture": {
+    "title": "Architecture",
+    "type": "page",
+    "children": {
+      "overview": {
+        "title": "Overview",
+        "children": {
+          "system-overview": "System Overview",
+          "architecture-diagrams": "Architecture Diagrams"
+        }
+      },
+      "frontend": {
+        "title": "Frontend",
+        "children": {
+          "app-router-architecture": "App Router",
+          "component-architecture": "Component Architecture",
+          "design-system-architecture": "Design System",
+          "rendering-strategy": "Rendering Strategy"
+        }
+      },
+      "backend": {
+        "title": "Backend",
+        "children": {
+          "services-architecture": "Services",
+          "bff-patterns": "BFF Patterns",
+          "auth-architecture": "Authentication",
+          "rate-limiting": "Rate Limiting",
+          "event-driven-architecture": "Event-Driven",
+          "error-handling": "Error Handling",
+          "security-model": "Security Model"
+        }
+      },
+      "database": {
+        "title": "Database",
+        "children": {
+          "schema-overview": "Schema Overview",
+          "db-design-principles": "Design Principles",
+          "migrations": "Migrations",
+          "indexing-strategy": "Indexing",
+          "multi-tenant-model": "Multi-Tenant"
+        }
+      },
+      "integrations": {
+        "title": "Integrations",
+        "children": {
+          "third-party-integrations": "Third-Party",
+          "webhooks": "Webhooks",
+          "payment-gateway-integration": "Payment Gateway",
+          "messaging-providers": "Messaging"
+        }
+      },
+      "ai-engine": {
+        "title": "AI Engine",
+        "children": {
+          "llm-architecture": "LLM Architecture",
+          "prompt-engineering": "Prompt Engineering",
+          "ai-agent-flows": "AI Agent Flows"
+        }
+      }
+    }
+  },
+  "03-modules": {
+    "title": "ERP Modules",
+    "type": "page",
+    "children": {
+      "accounting": {
+        "title": "Accounting",
+        "children": {
+          "overview": "Overview",
+          "chart-of-accounts": "Chart of Accounts",
+          "journal-entries": "Journal Entries",
+          "reporting": "Reporting",
+          "controls": "Controls",
+          "api": "API"
+        }
+      },
+      "inventory": {
+        "title": "Inventory",
+        "children": {
+          "overview": "Overview",
+          "goods-receipt": "Goods Receipt",
+          "stock-ledger": "Stock Ledger",
+          "inventory-valuation": "Valuation",
+          "api": "API"
+        }
+      },
+      "manufacturing": "Manufacturing",
+      "procurement": "Procurement",
+      "sales": "Sales",
+      "crm": "CRM",
+      "hr-payroll": "HR & Payroll",
+      "retail-pos": "Retail POS",
+      "franchise": "Franchise",
+      "plantation": "Plantation",
+      "central-kitchen": "Central Kitchen",
+      "logistics": "Logistics"
+    }
+  },
+  "04-developer": {
+    "title": "Developer Portal",
+    "type": "page",
+    "children": {
+      "ui": {
+        "title": "UI",
+        "children": {
+          "components": "Components",
+          "patterns": "Patterns",
+          "layouts": "Layouts",
+          "examples": "Examples",
+          "tailwind": "Tailwind"
+        }
+      },
+      "api": "API",
+      "backend": "Backend",
+      "database": "Database",
+      "cli-tools": "CLI Tools",
+      "testing": "Testing"
+    }
+  },
+  "05-operations": {
+    "title": "Operations",
+    "type": "page",
+    "children": {
+      "deployment": "Deployment",
+      "monitoring": "Monitoring",
+      "security": "Security",
+      "performance": "Performance",
+      "support": "Support"
+    }
+  },
+  "06-users": {
+    "title": "User Guides",
+    "type": "page",
+    "children": {
+      "staff": {
+        "title": "Staff",
+        "children": {
+          "beginners-guide": "Beginners Guide",
+          "how-to-create-orders": "Create Orders",
+          "inventory-workflow": "Inventory",
+          "submitting-expenses": "Expenses"
+        }
+      },
+      "managers": "Managers",
+      "executives": "Executives",
+      "customers": "Customers"
+    }
+  },
+  "07-mcp": {
+    "title": "MCP & AI",
+    "type": "page",
+    "children": {
+      "overview": "Overview",
+      "servers": "Servers",
+      "tools": {
+        "title": "Tools",
+        "children": {
+          "sync-figma": "Sync Figma",
+          "generate-docs": "Generate Docs",
+          "update-tokens": "Update Tokens",
+          "db-introspect": "DB Introspect",
+          "validate-docs": "Validate Docs"
+        }
+      },
+      "prompts": "Prompts"
+    }
+  },
+  "08-governance": {
+    "title": "Governance",
+    "type": "page",
+    "children": {
+      "documentation-governance": "Documentation Governance",
+      "audit-trails": "Audit Trails",
+      "review-process": "Review Process",
+      "versioning-policy": "Versioning Policy",
+      "branching-strategy": "Branching Strategy",
+      "escalation-matrix": "Escalation Matrix"
+    }
+  },
+  "09-reference": {
+    "title": "Reference",
+    "type": "page",
+    "children": {
+      "api": "API Reference",
+      "database": "Database Schema",
+      "ui": "UI Component API",
+      "tokens": "Token Reference",
+      "figma": "Figma Mapping",
+      "schemas": "Schema Reference"
+    }
+  }
+}
+

@@ -1,6 +1,8 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import reactPlugin from "eslint-plugin-react";
+import reactHooksPlugin from "eslint-plugin-react-hooks";
 
 /**
  * Root ESLint configuration for the entire monorepo
@@ -15,9 +17,21 @@ export default defineConfig([
     files: ["apps/**/*.{js,jsx,ts,tsx}"],
     ...nextVitals[0],
     ...nextTs[0],
+    plugins: {
+      // Merge with any existing plugins from nextVitals/nextTs
+      ...(nextVitals[0]?.plugins || {}),
+      ...(nextTs[0]?.plugins || {}),
+      react: reactPlugin,
+      "react-hooks": reactHooksPlugin,
+    },
     settings: {
+      ...(nextVitals[0]?.settings || {}),
+      ...(nextTs[0]?.settings || {}),
       next: {
         rootDir: "./",
+      },
+      react: {
+        version: "detect",
       },
     },
   },

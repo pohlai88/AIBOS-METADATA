@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "title": "AI-BOS Documentation Manifest",
+  "description": "Governs documentation structure, templates, and MCP automation rules",
+  "lastUpdated": "2025-11-24",
+  "steward": {
+    "role": "Documentation Steward",
+    "responsibilities": [
+      "Maintain folder structure integrity",
+      "Enforce template compliance",
+      "Review MCP auto-generated content",
+      "Ensure consistent tone and format",
+      "Own documentation lifecycle"
+    ]
+  },
+  "structure": {
+    "root": "docs/",
+    "sections": {
+      "01-foundation": {
+        "purpose": "System philosophy, conventions, and core rules",
+        "audience": ["all"],
+        "updateFrequency": "quarterly",
+        "templates": ["philosophy", "convention", "glossary"],
+        "mcpAutoGenerate": false
+      },
+      "02-architecture": {
+        "purpose": "Technical blueprint of AI-BOS",
+        "audience": ["developers", "architects"],
+        "updateFrequency": "on-change",
+        "templates": ["architecture", "diagram"],
+        "mcpAutoGenerate": false
+      },
+      "03-modules": {
+        "purpose": "ERP module documentation",
+        "audience": ["developers", "consultants", "end-users"],
+        "updateFrequency": "on-change",
+        "templates": ["erp-module"],
+        "mcpAutoGenerate": false
+      },
+      "04-developer": {
+        "purpose": "Developer portal",
+        "audience": ["developers"],
+        "updateFrequency": "on-change",
+        "templates": ["api", "component", "database", "cli"],
+        "mcpAutoGenerate": false
+      },
+      "05-operations": {
+        "purpose": "DevOps, Infrastructure, Security",
+        "audience": ["ops", "sre", "security", "compliance"],
+        "updateFrequency": "on-change",
+        "templates": ["deployment", "security", "monitoring"],
+        "mcpAutoGenerate": false
+      },
+      "06-users": {
+        "purpose": "End-user help center",
+        "audience": ["end-users"],
+        "updateFrequency": "on-release",
+        "templates": ["user-guide", "faq"],
+        "mcpAutoGenerate": false
+      },
+      "07-mcp": {
+        "purpose": "AI, Agents, Tools, Automation",
+        "audience": ["developers", "ai-engineers"],
+        "updateFrequency": "on-change",
+        "templates": ["mcp-tool", "mcp-server"],
+        "mcpAutoGenerate": false
+      },
+      "08-governance": {
+        "purpose": "Compliance, Audits, Workflows",
+        "audience": ["management", "compliance"],
+        "updateFrequency": "on-policy-change",
+        "templates": ["governance", "audit"],
+        "mcpAutoGenerate": false
+      },
+      "09-reference": {
+        "purpose": "Auto-generated reference (MCP-only)",
+        "audience": ["developers", "ai-agents"],
+        "updateFrequency": "automatic",
+        "templates": [],
+        "mcpAutoGenerate": true,
+        "rules": {
+          "humanEditable": false,
+          "overwritePolicy": "mcp-only",
+          "validation": ["schema", "format", "completeness"]
+        }
+      },
+      "99-archive": {
+        "purpose": "Historical documentation",
+        "audience": ["reference-only"],
+        "updateFrequency": "on-deprecation",
+        "templates": [],
+        "mcpAutoGenerate": false
+      }
+    }
+  },
+  "templates": {
+    "erp-module": {
+      "path": "docs/.templates/erp-module.md",
+      "required": true,
+      "sections": ["overview", "business-rules", "api", "database", "use-cases"]
+    },
+    "api": {
+      "path": "docs/.templates/api.md",
+      "required": true,
+      "sections": ["endpoint", "request", "response", "examples", "errors"]
+    },
+    "component": {
+      "path": "docs/.templates/component.md",
+      "required": true,
+      "sections": ["overview", "props", "usage", "examples", "figma"]
+    },
+    "database": {
+      "path": "docs/.templates/database.md",
+      "required": true,
+      "sections": ["schema", "tables", "relationships", "indexes", "constraints"]
+    },
+    "user-guide": {
+      "path": "docs/.templates/user-guide.md",
+      "required": true,
+      "sections": ["overview", "steps", "screenshots", "troubleshooting"]
+    },
+    "mcp-tool": {
+      "path": "docs/.templates/mcp-tool.md",
+      "required": true,
+      "sections": ["overview", "input-schema", "output-schema", "examples", "validation"]
+    }
+  },
+  "mcp": {
+    "autoGenerate": {
+      "enabled": true,
+      "sections": ["09-reference"],
+      "tools": [
+        "generate_component_docs",
+        "update_token_reference",
+        "sync_figma_docs",
+        "db_introspect",
+        "api_introspect"
+      ],
+      "validation": {
+        "required": true,
+        "checks": ["schema", "format", "completeness", "links"]
+      },
+      "review": {
+        "required": true,
+        "steward": true,
+        "autoApprove": false
+      }
+    },
+    "servers": {
+      "documentation": {
+        "path": ".mcp/documentation/server.mjs",
+        "tools": [
+          "generate_component_docs",
+          "update_token_reference",
+          "sync_figma_docs",
+          "validate_docs"
+        ]
+      }
+    }
+  },
+  "nextra": {
+    "config": "apps/docs/pages/_meta.json",
+    "sync": {
+      "source": "docs/",
+      "target": "apps/docs/pages/",
+      "script": "apps/docs/scripts/sync-docs.ts"
+    }
+  },
+  "validation": {
+    "ci": {
+      "enabled": true,
+      "checks": [
+        "template-compliance",
+        "structure-integrity",
+        "link-validation",
+        "mcp-content-validation"
+      ]
+    },
+    "preCommit": {
+      "enabled": true,
+      "hooks": ["template-check", "structure-check"]
+    }
+  },
+  "migration": {
+    "from": "packages/ui/ui-docs/",
+    "to": "docs/",
+    "mapping": {
+      "01-foundation/": "docs/01-foundation/ui-system/",
+      "02-components/": "docs/04-developer/ui/components/",
+      "04-integration/": "docs/04-developer/integration/",
+      "05-guides/": "docs/06-users/staff/"
+    }
+  }
+}
+

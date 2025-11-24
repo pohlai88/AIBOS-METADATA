@@ -1,0 +1,30 @@
+{
+  "name": "@aibos/mcp-react-validation",
+  "version": "1.1.0",
+  "type": "module",
+  "description": "React MCP Validation Server - Validates React components against best practices and Next.js RSC boundaries",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "@babel/parser": "^7.23.0",
+    "@babel/traverse": "^7.23.0"
+  },
+  "keywords": [
+    "mcp",
+    "react",
+    "validation",
+    "nextjs",
+    "rsc"
+  ],
+  "author": "AIBOS Platform",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
+

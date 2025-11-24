@@ -1,7 +1,7 @@
 # AI-BOS Token Constitution
 # Version: 1.1.0
 # Purpose: Token governance, immutability, RSC rules, and AI generation guardrails
-# Source of Truth: apps/web/app/globals.css (CSS variables)
+# Source of Truth: packages/ui/src/design/globals.css (CSS variables)
 
 $schema: "http://json-schema.org/draft-07/schema#"
 title: "AI-BOS Token Constitution"
@@ -10,7 +10,7 @@ description: "Token governance, immutability, RSC rules, and AI generation guard
 
 # Source of Truth Reference
 sourceOfTruth:
-  file: "apps/web/app/globals.css"
+  file: "packages/ui/src/design/globals.css"
   description: "All base token values are defined in globals.css as CSS variables"
   validation: "Tokens in this constitution must match tokens defined in globals.css"
   sync: "When globals.css tokens change, update this constitution accordingly"
@@ -37,7 +37,7 @@ constitution:
         - "--text-base"
         - "--space-4"
       validation:
-        - "Must exist in apps/web/app/globals.css"
+        - "Must exist in packages/ui/src/design/globals.css"
         - "Must follow naming convention: --{category}-{name}"
         - "Cannot be overridden by tenants"
 

@@ -30,7 +30,7 @@ Token governance and hierarchy rules
 - RSC token rules
 - Tenant override boundaries
 - Safe mode rules
-- **Source of Truth:** `apps/web/app/globals.css`
+- **Source of Truth:** `packages/ui/src/design/globals.css`
 
 ---
 
@@ -42,7 +42,7 @@ These constitution files are used by:
    - Validates generated components against rules
    - Ensures AI-generated code follows design system
 
-2. **UI Constitution Validator** (`scripts/validate-ui-constitution.ts`)
+2. **UI Constitution Validator** (`.mcp/component-generator/tools/validate-constitution.ts`)
    - Validates existing code against rules
    - Prevents violations in codebase
 
@@ -55,7 +55,7 @@ These constitution files are used by:
 ## 🔗 Related Files
 
 ### Token Implementation
-- **Source of Truth:** `apps/web/app/globals.css` - CSS variable definitions
+- **Source of Truth:** `packages/ui/src/design/globals.css` - CSS variable definitions
 - **TypeScript Tokens:** `src/design/tokens.ts` - Type-safe token access
 
 ### Documentation
@@ -66,7 +66,7 @@ These constitution files are used by:
 
 ## 📝 Token Source of Truth
 
-**Important:** All base token values are defined in `apps/web/app/globals.css` as CSS variables.
+**Important:** All base token values are defined in `packages/ui/src/design/globals.css` as CSS variables.
 
 The `tokens.yml` file defines:
 - **Governance rules** for tokens
@@ -75,7 +75,7 @@ The `tokens.yml` file defines:
 - **Reference** to `globals.css` as source of truth
 
 When `globals.css` tokens change:
-1. Update token values in `globals.css`
+1. Update token values in `packages/ui/src/design/globals.css`
 2. Update `tokens.yml` if governance rules change
 3. Update `src/design/tokens.ts` if TypeScript types change
 
@@ -87,10 +87,10 @@ To validate code against constitution rules:
 
 ```bash
 # Validate UI constitution
-node scripts/validate-ui-constitution.ts
+pnpm lint:ui-constitution
 
 # Generate component (validates against constitution)
-node tools/mcp-component-generator.mjs
+# Use MCP component-generator server or CLI tool
 ```
 
 ---

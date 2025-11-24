@@ -1,0 +1,27 @@
+{
+  "name": "@aibos/documentation-mcp",
+  "version": "2.0.0",
+  "description": "AI-BOS Documentation automation MCP server",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0"
+  },
+  "keywords": [
+    "mcp",
+    "documentation",
+    "automation",
+    "aibos"
+  ],
+  "author": "AI-BOS Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
+

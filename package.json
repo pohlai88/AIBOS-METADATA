@@ -8,13 +8,19 @@
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
-    "sync-mcp-prompt": "tsx scripts/sync-mcp-prompt.ts",
-    "lint:ui-constitution": "tsx scripts/validate-ui-constitution.ts",
-    "generate:ui": "tsx scripts/generate-ui-component.ts"
+    "sync-mcp-prompt": "tsx .mcp/ui-generator/tools/sync-prompt.ts",
+    "lint:ui-constitution": "tsx .mcp/component-generator/tools/validate-constitution.ts",
+    "generate:ui": "tsx .mcp/ui-generator/tools/generate-component.ts",
+    "docs:sync": "tsx apps/docs/scripts/sync-docs.ts"
   },
   "devDependencies": {
-    "turbo": "^2.3.0",
-    "tsx": "^4.19.2"
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.0"
   },
   "engines": {
     "node": ">=18.0.0",
