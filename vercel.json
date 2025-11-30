@@ -1,0 +1,6 @@
+{
+    "buildCommand": "pnpm --filter @aibos/web build",
+    "installCommand": "pnpm install",
+    "framework": "nextjs",
+    "rootDirectory": "apps"
+}
