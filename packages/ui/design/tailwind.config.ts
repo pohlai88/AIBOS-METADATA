@@ -34,19 +34,26 @@ const config: Config = {
         danger: "rgb(var(--color-danger-rgb) / <alpha-value>)",
         info: "rgb(var(--color-info-rgb) / <alpha-value>)",
 
-        // Text colors
-        "text-base": "rgb(var(--color-text-base) / <alpha-value>)",
-        "text-muted": "rgb(var(--color-text-muted) / <alpha-value>)",
-        "text-subtle": "rgb(var(--color-text-subtle) / <alpha-value>)",
+        // Foreground (text) colors
+        // Use 'fg' prefix to avoid conflict with Tailwind's 'text-{size}' utilities
+        fg: {
+          DEFAULT: "rgb(var(--color-text-base) / <alpha-value>)",
+          muted: "rgb(var(--color-text-muted) / <alpha-value>)",
+          subtle: "rgb(var(--color-text-subtle) / <alpha-value>)",
+        },
 
         // Background colors
-        "bg-base": "rgb(var(--color-background-base) / <alpha-value>)",
-        "bg-subtle": "rgb(var(--color-background-subtle) / <alpha-value>)",
-        "bg-muted": "rgb(var(--color-background-muted) / <alpha-value>)",
+        bg: {
+          DEFAULT: "rgb(var(--color-background-base) / <alpha-value>)",
+          subtle: "rgb(var(--color-background-subtle) / <alpha-value>)",
+          muted: "rgb(var(--color-background-muted) / <alpha-value>)",
+        },
 
         // Border colors
-        "border-base": "rgb(var(--color-border-base) / <alpha-value>)",
-        "border-muted": "rgb(var(--color-border-muted) / <alpha-value>)",
+        border: {
+          DEFAULT: "rgb(var(--color-border-base) / <alpha-value>)",
+          muted: "rgb(var(--color-border-muted) / <alpha-value>)",
+        },
 
         // Metadata-specific colors
         metadata: {
@@ -86,10 +93,23 @@ const config: Config = {
         "2xl": "var(--spacing-2xl)",
       },
 
-      // Font family
+      // Font family (with fallbacks for better compatibility)
       fontFamily: {
-        sans: "var(--font-family-base)",
-        mono: "var(--font-family-mono)",
+        sans: [
+          "var(--font-family-base)",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif",
+        ],
+        mono: [
+          "var(--font-family-mono)",
+          "SF Mono",
+          "Monaco",
+          "Consolas",
+          "monospace",
+        ],
       },
 
       // Font sizes

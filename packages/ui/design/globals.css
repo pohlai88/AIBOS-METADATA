@@ -36,6 +36,8 @@
   --color-info-rgb: 14 165 233;           /* sky-500 */
   
   /* ===== TEXT COLORS ===== */
+  /* Note: In Tailwind config, these map to 'fg' (foreground) to avoid conflicts */
+  /* Usage: text-fg, text-fg-muted, text-fg-subtle */
   --color-text-base: 17 24 39;            /* gray-900 - Primary text */
   --color-text-muted: 107 114 128;        /* gray-500 - Secondary text */
   --color-text-subtle: 156 163 175;       /* gray-400 - Tertiary text */
