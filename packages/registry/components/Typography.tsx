@@ -26,10 +26,18 @@
 import { type HTMLAttributes } from "react";
 import { cn } from "@aibos/ui/utils/cn";
 
-type TypographyVariant = 
-  | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
-  | "subtitle" | "body" | "caption"
-  | "display" | "hero";
+type TypographyVariant =
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "subtitle"
+  | "body"
+  | "caption"
+  | "display"
+  | "hero";
 type TypographyColor =
   | "text-fg" // Default foreground (was text-base)
   | "text-fg-muted" // Muted foreground
@@ -96,7 +104,7 @@ export function Typography({
     if (variant === "caption") return "span";
     return "p";
   };
-  
+
   const Component = as || getDefaultElement();
 
   // Base classes for all typography
@@ -106,21 +114,21 @@ export function Typography({
   // Type Scale Constitution: ~1.25 ratio from 16px base
   const variantStyles: Record<TypographyVariant, string> = {
     // Display & Hero (Marketing)
-    hero: "text-6xl font-extrabold tracking-tight",      // 60px - Marketing hero
-    display: "text-5xl font-bold tracking-tight",        // 48px - Hero headings
-    
+    hero: "text-6xl font-extrabold tracking-tight", // 60px - Marketing hero
+    display: "text-5xl font-bold tracking-tight", // 48px - Hero headings
+
     // Semantic Headings
-    h1: "text-3xl font-bold tracking-tight",             // 30px - Page titles
-    h2: "text-2xl font-semibold tracking-tight",         // 24px - Section headings
-    h3: "text-xl font-medium tracking-tight",            // 20px - Subsection headings
-    h4: "text-lg font-medium tracking-tight",            // 18px - Card titles
-    h5: "text-base font-medium tracking-tight",          // 16px - Small headings
-    h6: "text-sm font-medium tracking-tight",            // 14px - Micro headings
-    
+    h1: "text-3xl font-bold tracking-tight", // 30px - Page titles
+    h2: "text-2xl font-semibold tracking-tight", // 24px - Section headings
+    h3: "text-xl font-medium tracking-tight", // 20px - Subsection headings
+    h4: "text-lg font-medium tracking-tight", // 18px - Card titles
+    h5: "text-base font-medium tracking-tight", // 16px - Small headings
+    h6: "text-sm font-medium tracking-tight", // 14px - Micro headings
+
     // Body Text
-    subtitle: "text-lg font-medium leading-relaxed",     // 18px - Subtitles
-    body: "text-base font-normal leading-relaxed",       // 16px - Body text
-    caption: "text-xs font-normal text-fg-muted",        // 12px - Small text
+    subtitle: "text-lg font-medium leading-relaxed", // 18px - Subtitles
+    body: "text-base font-normal leading-relaxed", // 16px - Body text
+    caption: "text-xs font-normal text-fg-muted", // 12px - Small text
   };
 
   // Color styles (using design tokens)

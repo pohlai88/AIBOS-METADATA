@@ -85,17 +85,17 @@ const config: Config = {
 
       // Spacing using tokens (8-point grid constitution)
       spacing: {
-        1: "var(--spacing-1)",   // 4px
-        2: "var(--spacing-2)",   // 8px
-        3: "var(--spacing-3)",   // 12px
-        4: "var(--spacing-4)",   // 16px
-        5: "var(--spacing-5)",   // 24px
-        6: "var(--spacing-6)",   // 32px
-        7: "var(--spacing-7)",   // 40px
-        8: "var(--spacing-8)",   // 48px
+        1: "var(--spacing-1)", // 4px
+        2: "var(--spacing-2)", // 8px
+        3: "var(--spacing-3)", // 12px
+        4: "var(--spacing-4)", // 16px
+        5: "var(--spacing-5)", // 24px
+        6: "var(--spacing-6)", // 32px
+        7: "var(--spacing-7)", // 40px
+        8: "var(--spacing-8)", // 48px
         10: "var(--spacing-10)", // 64px
         12: "var(--spacing-12)", // 96px
-        
+
         // Legacy aliases (use numbered scale instead)
         xs: "var(--spacing-1)",
         sm: "var(--spacing-2)",
@@ -126,11 +126,11 @@ const config: Config = {
 
       // Font sizes (type scale constitution ~1.25 ratio)
       fontSize: {
-        xs: "var(--font-size-xs)",     // 12px
-        sm: "var(--font-size-sm)",     // 14px
+        xs: "var(--font-size-xs)", // 12px
+        sm: "var(--font-size-sm)", // 14px
         base: "var(--font-size-base)", // 16px
-        lg: "var(--font-size-lg)",     // 18px
-        xl: "var(--font-size-xl)",     // 20px
+        lg: "var(--font-size-lg)", // 18px
+        xl: "var(--font-size-xl)", // 20px
         "2xl": "var(--font-size-2xl)", // 24px
         "3xl": "var(--font-size-3xl)", // 30px
         "4xl": "var(--font-size-4xl)", // 36px
@@ -149,28 +149,52 @@ const config: Config = {
         full: "var(--radius-full)",
       },
 
-      // Box shadows
+      // Box shadows (depth layer constitution)
       boxShadow: {
         sm: "var(--shadow-sm)",
         DEFAULT: "var(--shadow-md)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
         xl: "var(--shadow-xl)",
+        
+        // Semantic elevation shadows
+        raised: "var(--shadow-raised)",       // Cards, raised surfaces
+        floating: "var(--shadow-floating)",   // Dropdowns, popovers
+        overlay: "var(--shadow-overlay)",     // Modals, dialogs
+        high: "var(--shadow-high)",           // Highest elevation
       },
       
+      // Motion durations (time layer constitution)
+      transitionDuration: {
+        instant: "var(--motion-duration-instant)",   // 50ms
+        fast: "var(--motion-duration-fast)",         // 120ms
+        normal: "var(--motion-duration-normal)",     // 200ms (default)
+        slow: "var(--motion-duration-slow)",         // 280ms
+        slower: "var(--motion-duration-slower)",     // 400ms
+      },
+      
+      // Motion easing (time layer constitution)
+      transitionTimingFunction: {
+        standard: "var(--motion-ease-standard)",     // cubic-bezier(0.4, 0, 0.2, 1)
+        in: "var(--motion-ease-in)",                 // Deceleration
+        out: "var(--motion-ease-out)",               // Acceleration
+        "in-out": "var(--motion-ease-in-out)",       // Both
+        bounce: "var(--motion-ease-bounce)",         // Bounce effect
+      },
+
       // Max-width (layout constitution)
       maxWidth: {
-        sm: "var(--layout-max-width-sm)",   // 640px
-        md: "var(--layout-max-width-md)",   // 768px
-        lg: "var(--layout-max-width-lg)",   // 1024px
-        xl: "var(--layout-max-width-xl)",   // 1280px
+        sm: "var(--layout-max-width-sm)", // 640px
+        md: "var(--layout-max-width-md)", // 768px
+        lg: "var(--layout-max-width-lg)", // 1024px
+        xl: "var(--layout-max-width-xl)", // 1280px
         "2xl": "var(--layout-max-width-2xl)", // 1536px
         full: "var(--layout-max-width-full)", // 100%
       },
-      
+
       // Width (for fixed sidebars)
       width: {
-        sidebar: "var(--layout-sidebar-width)",           // 280px
+        sidebar: "var(--layout-sidebar-width)", // 280px
         "sidebar-collapsed": "var(--layout-sidebar-width-collapsed)", // 64px
       },
     },

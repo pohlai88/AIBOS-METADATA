@@ -116,11 +116,35 @@
   --font-size-5xl: 3rem;       /* 48px - Hero headings */
   --font-size-6xl: 3.75rem;    /* 60px - Marketing hero */
   
-  /* ===== SHADOWS ===== */
+  /* ===== MOTION TOKENS (TIME LAYER CONSTITUTION) ===== */
+  /* All animations must use approved duration + easing */
+  /* Figma variables: motion/duration/fast, motion/ease/standard */
+  --motion-duration-instant: 50ms;    /* Instant feedback (checkbox, toggle) */
+  --motion-duration-fast: 120ms;      /* Fast transitions (hover, focus) */
+  --motion-duration-normal: 200ms;    /* Normal transitions (modals, dropdowns) */
+  --motion-duration-slow: 280ms;      /* Slow transitions (page transitions) */
+  --motion-duration-slower: 400ms;    /* Slower transitions (complex animations) */
+  
+  /* Motion Easing Functions (Bezier Curves) */
+  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);  /* Standard easing */
+  --motion-ease-in: cubic-bezier(0.4, 0, 1, 1);          /* Deceleration */
+  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);         /* Acceleration */
+  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);    /* Both */
+  --motion-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce */
+  
+  /* ===== SHADOWS (DEPTH LAYER CONSTITUTION) ===== */
+  /* Elevation levels for virtual Z-axis */
+  /* Figma variables: shadow/raised, shadow/overlay */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Elevation (Semantic Shadow Naming) */
+  --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);     /* Cards, raised surfaces */
+  --shadow-floating: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Dropdowns, popovers */
+  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); /* Modals, dialogs */
+  --shadow-high: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);   /* Highest elevation */
   
   /* ===== BORDER RADIUS ===== */
   --radius-sm: 0.25rem;   /* 4px */
@@ -171,6 +195,12 @@
   /* Border Colors - Inverted */
   --color-border-base: 75 85 99;          /* gray-600 - Default borders */
   --color-border-muted: 55 65 81;         /* gray-700 - Subtle borders */
+  
+  /* Shadows - Softer in dark mode (use white with lower opacity) */
+  --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-floating: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-high: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
   
   /* Metadata Colors - Adjusted for dark mode */
   --color-metadata-glossary: 96 165 250;       /* blue-400 */
