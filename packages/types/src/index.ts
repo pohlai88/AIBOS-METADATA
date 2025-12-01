@@ -59,6 +59,35 @@ export type {
 } from "@aibos/metadata-studio";
 
 // ============================================
+// CONTROLLED VOCABULARY (Approved Terms Only!)
+// ============================================
+// These are the ONLY terms developers can use in code.
+// Using unapproved terms will cause TypeScript errors.
+
+export {
+  // Approved term dictionaries
+  APPROVED_FINANCE_TERMS,
+  APPROVED_HR_TERMS,
+  APPROVED_OPERATIONS_TERMS,
+  BLOCKED_FINANCE_TERMS,
+  
+  // Controlled vocabulary types
+  type ApprovedFinanceTerm,
+  type ApprovedHRTerm,
+  type ApprovedOperationsTerm,
+  type ApprovedTerm,
+  
+  // Validation schemas
+  ApprovedFinanceTermSchema,
+  
+  // Utility functions
+  isApprovedTerm,
+  getSuggestion,
+  validateTerm,
+  ControlledVocabulary,
+} from "@aibos/metadata-studio/glossary/controlled-vocabulary";
+
+// ============================================
 // ADDITIONAL SHARED TYPES (not in schemas)
 // ============================================
 
