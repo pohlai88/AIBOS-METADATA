@@ -99,15 +99,14 @@ export function ThemeProvider({
   }, [theme, mounted]);
 
   const setTheme = (newTheme: Theme) => {
-    localStorage.setItem(storageKey, newTheme);
+    if (mounted) {
+      localStorage.setItem(storageKey, newTheme);
+    }
     setThemeState(newTheme);
   };
 
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
+  // Always provide context, even before mounting
+  // This prevents "useTheme must be used within ThemeProvider" errors
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
       {children}

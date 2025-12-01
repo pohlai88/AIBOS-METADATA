@@ -1,18 +1,26 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+  useMotionTemplate,
+  AnimatePresence,
+} from "framer-motion";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { 
-  Cpu, 
-  Activity, 
-  ShieldCheck, 
-  Zap, 
-  ChevronRight, 
-  Box, 
-  Lock, 
-  Search 
+import {
+  Cpu,
+  Activity,
+  ShieldCheck,
+  Zap,
+  ChevronRight,
+  Box,
+  Lock,
+  Search,
 } from "lucide-react";
 
 // --- UTILS ---
@@ -36,34 +44,39 @@ const AuroraBackground = () => {
 };
 
 // 2. THE NEURAL ORB (The "Brain")
-const NeuralOrb = ({ state = "idle" }: { state?: "idle" | "active" | "thinking" }) => {
+const NeuralOrb = ({
+  state = "idle",
+}: {
+  state?: "idle" | "active" | "thinking";
+}) => {
   return (
     <div className="relative flex items-center justify-center w-24 h-24">
       {/* Outer Rings */}
-      <motion.div 
+      <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         className="absolute inset-0 rounded-full border border-dashed border-primary/20"
       />
-      <motion.div 
+      <motion.div
         animate={{ rotate: -360 }}
         transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         className="absolute inset-2 rounded-full border border-primary/10"
       />
-      
+
       {/* The Core */}
-      <motion.div 
-        animate={{ 
+      <motion.div
+        animate={{
           scale: state === "active" ? [1, 1.2, 1] : [1, 1.05, 1],
           opacity: state === "active" ? 0.8 : 0.5,
-          boxShadow: state === "active" 
-            ? "0 0 50px var(--color-primary)" 
-            : "0 0 20px var(--color-primary-soft)"
+          boxShadow:
+            state === "active"
+              ? "0 0 50px var(--color-primary)"
+              : "0 0 20px var(--color-primary-soft)",
         }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         className="w-8 h-8 rounded-full bg-primary shadow-lg z-10"
       />
-      
+
       {/* Pulse Effect */}
       <div className="absolute inset-0 rounded-full bg-primary/5 blur-xl animate-pulse" />
     </div>
@@ -71,11 +84,21 @@ const NeuralOrb = ({ state = "idle" }: { state?: "idle" | "active" | "thinking" 
 };
 
 // 3. 3D SPOTLIGHT CARD (Mouse-aware Physics)
-const SpotlightCard = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+const SpotlightCard = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
@@ -107,7 +130,7 @@ const SpotlightCard = ({ children, className }: { children: React.ReactNode, cla
 };
 
 // 4. TEXT REVEAL (Typewriter / Cipher)
-const RevealText = ({ text, delay = 0 }: { text: string, delay?: number }) => {
+const RevealText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
   const words = text.split(" ");
   return (
     <motion.span className="inline-block overflow-hidden">
@@ -130,14 +153,14 @@ const RevealText = ({ text, delay = 0 }: { text: string, delay?: number }) => {
 const TracingBeam = () => {
   const { scrollYProgress } = useScroll();
   const y = useSpring(useTransform(scrollYProgress, [0, 1], [0, 1000]), {
-    stiffness: 500, 
-    damping: 90 
+    stiffness: 500,
+    damping: 90,
   });
 
   return (
     <div className="absolute left-8 top-0 bottom-0 w-[2px] hidden md:block">
       <div className="h-full w-full bg-border-subtle" />
-      <motion.div 
+      <motion.div
         style={{ height: y }}
         className="absolute top-0 left-0 w-full bg-gradient-to-b from-primary via-secondary to-success shadow-[0_0_15px_var(--color-primary)]"
       />
@@ -145,28 +168,26 @@ const TracingBeam = () => {
   );
 };
 
-
 // --- PAGE COMPONENT ---
 
 export default function NanoShowcasePage() {
-  const [activeTab, setActiveTab] = useState<"analysis" | "execution" | "result">("analysis");
+  const [activeTab, setActiveTab] = useState<
+    "analysis" | "execution" | "result"
+  >("analysis");
 
   return (
     <div className="min-h-screen font-sans text-fg selection:bg-primary/30 relative">
-      
       {/* LAYER 0: ATMOSPHERE */}
       <AuroraBackground />
 
       {/* LAYER 1: CONTENT */}
       <div className="relative max-w-7xl mx-auto px-6 py-24 md:pl-24">
-        
         {/* The Timeline Spine */}
         <TracingBeam />
 
         {/* HERO SECTION */}
         <section className="mb-32 relative">
           <div className="flex flex-col md:flex-row items-center gap-12">
-            
             {/* The Brain */}
             <div className="flex-shrink-0">
               <NeuralOrb state="active" />
@@ -181,7 +202,7 @@ export default function NanoShowcasePage() {
                 </span>
                 SYSTEM ONLINE v3.0
               </div>
-              
+
               <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-[1.1]">
                 <RevealText text="Beyond the Dashboard." />
                 <br />
@@ -189,11 +210,11 @@ export default function NanoShowcasePage() {
                   <RevealText text="Biomimetic Intelligence." delay={0.5} />
                 </span>
               </h1>
-              
+
               <p className="text-xl text-fg-muted max-w-2xl leading-relaxed">
-                <RevealText 
-                  text="Experience an ERP that breathes. Built on the Nano Banana Physics Engine, adapting to risk, trust, and human intent in real-time." 
-                  delay={1.0} 
+                <RevealText
+                  text="Experience an ERP that breathes. Built on the Nano Banana Physics Engine, adapting to risk, trust, and human intent in real-time."
+                  delay={1.0}
                 />
               </p>
 
@@ -206,7 +227,10 @@ export default function NanoShowcasePage() {
                   <Zap className="w-4 h-4" /> Initialize Cockpit
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: "var(--color-bg-elevated)" }}
+                  whileHover={{
+                    scale: 1.05,
+                    backgroundColor: "var(--color-bg-elevated)",
+                  }}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-4 bg-bg-muted/50 border border-border text-fg font-semibold rounded-xl backdrop-blur-md"
                 >
@@ -219,14 +243,14 @@ export default function NanoShowcasePage() {
 
         {/* FEATURE GRID (Glass + Physics) */}
         <section className="grid md:grid-cols-3 gap-6 mb-32">
-          
           <SpotlightCard className="p-8">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6 text-primary">
               <Cpu className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold mb-2">Real-Time Processing</h3>
             <p className="text-fg-muted">
-              Data isn&apos;t just displayed; it flows. The system pulses with live updates from the Kernel.
+              Data isn&apos;t just displayed; it flows. The system pulses with
+              live updates from the Kernel.
             </p>
           </SpotlightCard>
 
@@ -236,7 +260,8 @@ export default function NanoShowcasePage() {
             </div>
             <h3 className="text-xl font-bold mb-2">Adaptive Trust</h3>
             <p className="text-fg-muted">
-              The UI physically shifts contrast modes when high-risk variances are detected.
+              The UI physically shifts contrast modes when high-risk variances
+              are detected.
             </p>
           </SpotlightCard>
 
@@ -246,61 +271,61 @@ export default function NanoShowcasePage() {
             </div>
             <h3 className="text-xl font-bold mb-2">Biomimetic Feedback</h3>
             <p className="text-fg-muted">
-              Interfaces that respond to touch with spring physics, mimicking organic material.
+              Interfaces that respond to touch with spring physics, mimicking
+              organic material.
             </p>
           </SpotlightCard>
-
         </section>
 
         {/* INTERACTIVE DEMO (The "Cockpit") */}
         <section className="relative rounded-3xl border border-border bg-bg-elevated/30 backdrop-blur-xl overflow-hidden">
-          
           {/* Header Bar */}
           <div className="flex items-center justify-between p-6 border-b border-border bg-bg/50">
             <div className="flex items-center gap-4">
-               <div className="flex gap-2">
-                 <div className="w-3 h-3 rounded-full bg-danger/50" />
-                 <div className="w-3 h-3 rounded-full bg-warning/50" />
-                 <div className="w-3 h-3 rounded-full bg-success/50" />
-               </div>
-               <span className="text-sm font-mono text-fg-subtle">AI-BOS // COCKPIT EXECUTION PLANE</span>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-danger/50" />
+                <div className="w-3 h-3 rounded-full bg-warning/50" />
+                <div className="w-3 h-3 rounded-full bg-success/50" />
+              </div>
+              <span className="text-sm font-mono text-fg-subtle">
+                AI-BOS // COCKPIT EXECUTION PLANE
+              </span>
             </div>
             <div className="flex gap-4 text-xs font-mono">
-               <span className="text-primary">LATENCY: 12ms</span>
-               <span className="text-success">KERNEL: SECURE</span>
+              <span className="text-primary">LATENCY: 12ms</span>
+              <span className="text-success">KERNEL: SECURE</span>
             </div>
           </div>
 
           {/* Main Interface */}
           <div className="p-8 md:p-12 flex flex-col md:flex-row gap-12">
-            
             {/* Sidebar Controls */}
             <div className="w-full md:w-64 space-y-2">
-               {[
-                 { id: "analysis", label: "Analysis", icon: Search },
-                 { id: "execution", label: "Execution", icon: Box },
-                 { id: "result", label: "Result", icon: Lock },
-               ].map((item) => (
-                 <button
-                   key={item.id}
-                   onClick={() => setActiveTab(item.id as any)}
-                   className={cn(
-                     "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
-                     activeTab === item.id 
-                       ? "bg-primary/10 text-primary border border-primary/20" 
-                       : "text-fg-muted hover:bg-bg-muted hover:text-fg"
-                   )}
-                 >
-                   <item.icon className="w-4 h-4" />
-                   {item.label}
-                   {activeTab === item.id && (
-                     <motion.div 
-                       layoutId="active-pill"
-                       className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
-                     />
-                   )}
-                 </button>
-               ))}
+              {[
+                { id: "analysis", label: "Analysis", icon: Search },
+                { id: "execution", label: "Execution", icon: Box },
+                { id: "result", label: "Result", icon: Lock },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
+                    activeTab === item.id
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-fg-muted hover:bg-bg-muted hover:text-fg"
+                  )}
+                >
+                  <item.icon className="w-4 h-4" />
+                  {item.label}
+                  {activeTab === item.id && (
+                    <motion.div
+                      layoutId="active-pill"
+                      className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
+                    />
+                  )}
+                </button>
+              ))}
             </div>
 
             {/* Dynamic Viewport */}
@@ -315,32 +340,38 @@ export default function NanoShowcasePage() {
                   className="h-full"
                 >
                   {activeTab === "analysis" && (
-                     <div className="space-y-6">
-                       <h3 className="text-2xl font-bold">Scope Analysis</h3>
-                       <div className="p-6 rounded-xl border border-dashed border-border bg-bg/50">
-                          <div className="flex items-center gap-4 mb-4">
-                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center animate-spin-slow">
-                              <Cpu className="w-4 h-4 text-primary" />
-                            </div>
-                            <span className="font-mono text-sm">Scanning GL Entries...</span>
+                    <div className="space-y-6">
+                      <h3 className="text-2xl font-bold">Scope Analysis</h3>
+                      <div className="p-6 rounded-xl border border-dashed border-border bg-bg/50">
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center animate-spin-slow">
+                            <Cpu className="w-4 h-4 text-primary" />
                           </div>
-                          <div className="h-2 w-full bg-bg-muted rounded-full overflow-hidden">
-                             <motion.div 
-                               initial={{ width: "0%" }}
-                               animate={{ width: "100%" }}
-                               transition={{ duration: 2, ease: "easeInOut" }}
-                               className="h-full bg-primary"
-                             />
-                          </div>
-                       </div>
-                     </div>
+                          <span className="font-mono text-sm">
+                            Scanning GL Entries...
+                          </span>
+                        </div>
+                        <div className="h-2 w-full bg-bg-muted rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: "0%" }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 2, ease: "easeInOut" }}
+                            className="h-full bg-primary"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   )}
 
                   {activeTab === "execution" && (
                     <div className="space-y-6">
-                      <h3 className="text-2xl font-bold text-warning">Variance Detected</h3>
+                      <h3 className="text-2xl font-bold text-warning">
+                        Variance Detected
+                      </h3>
                       <div className="p-6 rounded-xl border border-warning/30 bg-warning/5">
-                        <p className="text-fg mb-4">Tier 1 Risk: Unmatched FX revaluation of $4.2M.</p>
+                        <p className="text-fg mb-4">
+                          Tier 1 Risk: Unmatched FX revaluation of $4.2M.
+                        </p>
                         <button className="px-4 py-2 bg-warning text-warning-foreground font-bold rounded-lg text-sm">
                           Review Diff
                         </button>
@@ -350,13 +381,17 @@ export default function NanoShowcasePage() {
 
                   {activeTab === "result" && (
                     <div className="space-y-6">
-                      <h3 className="text-2xl font-bold text-success">Audit Locked</h3>
+                      <h3 className="text-2xl font-bold text-success">
+                        Audit Locked
+                      </h3>
                       <div className="flex items-center justify-center h-48 rounded-xl border border-success/20 bg-success/5">
                         <div className="text-center">
                           <div className="inline-flex p-4 rounded-full bg-success/10 text-success mb-4">
                             <ShieldCheck className="w-8 h-8" />
                           </div>
-                          <p className="font-mono text-sm text-success">Evidence Locker #EL-992 Sealed</p>
+                          <p className="font-mono text-sm text-success">
+                            Evidence Locker #EL-992 Sealed
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -364,10 +399,76 @@ export default function NanoShowcasePage() {
                 </motion.div>
               </AnimatePresence>
             </div>
-
           </div>
         </section>
 
+        {/* QUICK NAVIGATION - Access Your Pages */}
+        <section className="relative px-8 py-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold mb-8 text-center bg-gradient-to-r from-primary via-secondary to-success bg-clip-text text-transparent">
+              🚀 Quick Navigation
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Glossary Card */}
+              <a
+                href="/metadata/glossary"
+                className="group relative p-6 rounded-xl border border-border bg-bg-subtle hover:bg-bg hover:shadow-raised transition-all duration-fast ease-standard hover:scale-[1.02]"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-metadata-glossary/10 text-metadata-glossary">
+                    <Search className="w-6 h-6" />
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-fg-muted group-hover:text-primary transition-colors" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-fg">
+                  Business Glossary
+                </h3>
+                <p className="text-sm text-fg-muted">
+                  Browse approved business terms across Finance, HR, and
+                  Operations domains
+                </p>
+                <div className="mt-4 text-xs font-mono text-primary">
+                  /metadata/glossary →
+                </div>
+              </a>
+
+              {/* SDK Card */}
+              <a
+                href="/metadata/sdk"
+                className="group relative p-6 rounded-xl border border-border bg-bg-subtle hover:bg-bg hover:shadow-raised transition-all duration-fast ease-standard hover:scale-[1.02]"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="p-3 rounded-lg bg-primary/10 text-primary">
+                    <Box className="w-6 h-6" />
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-fg-muted group-hover:text-primary transition-colors" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-fg">
+                  SDK Documentation
+                </h3>
+                <p className="text-sm text-fg-muted">
+                  Versioned SDK for controlled vocabulary with OpenMetadata
+                  compatibility
+                </p>
+                <div className="mt-4 text-xs font-mono text-primary">
+                  /metadata/sdk →
+                </div>
+              </a>
+            </div>
+
+            {/* Helper Text */}
+            <div className="mt-8 p-4 rounded-lg border border-border-subtle bg-bg-muted">
+              <p className="text-sm text-fg-muted text-center">
+                💡 <strong>Tip:</strong> You can also navigate directly by
+                typing URLs like{" "}
+                <code className="px-2 py-1 rounded bg-bg font-mono text-xs text-primary">
+                  localhost:3000/metadata/glossary
+                </code>
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

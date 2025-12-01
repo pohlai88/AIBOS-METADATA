@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@aibos/ui";
+import { FloatingThemeToggle } from "@/components/FloatingThemeToggle";
 import { initializeSDK } from "../lib/sdk-guard";
 import "@aibos/ui/design/globals.css";
 
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <ThemeProvider defaultTheme="system">
           {children}
+          <FloatingThemeToggle />
           <SpeedInsights />
         </ThemeProvider>
       </body>
