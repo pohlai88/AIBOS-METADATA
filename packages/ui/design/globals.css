@@ -32,6 +32,12 @@
  */
 @custom-variant hocus (&:hover, &:focus);
 
+/**
+ * Group hover + focus (for parent-child interactions)
+ * Usage: group-hocus:opacity-100
+ */
+@custom-variant group-hocus (.group:where(:hover, :focus) &);
+
 /* ============================================ */
 /* @THEME - Auto-Generated Utilities           */
 /* These tokens automatically become utilities */
@@ -58,6 +64,12 @@
   --color-primary-800: oklch(0.40 0.20 250);
   --color-primary-900: oklch(0.30 0.15 250);
   --color-primary-950: oklch(0.20 0.10 250);
+
+  /**
+   * Primary base (maps to default shade)
+   * Usage: bg-primary, text-primary (without number)
+   */
+  --color-primary: var(--color-primary-500);
 
   /**
    * Semantic Colors
@@ -148,17 +160,32 @@
   --duration-fast: 120ms;
   --duration-normal: 200ms;
   --duration-slow: 280ms;
+  
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
 
   /* ========================================== */
-  /* LAYOUT - Max Widths & Container Queries   */
-  /* Usage: max-w-lg, @sm:grid-cols-2          */
+  /* LAYOUT - Max Widths                       */
+  /* Usage: max-w-sm, max-w-lg, max-w-xl       */
   /* ========================================== */
   
-  --container-sm: 24rem;      /* 384px */
-  --container-md: 28rem;      /* 448px */
-  --container-lg: 32rem;      /* 512px */
-  --container-xl: 36rem;      /* 576px */
-  --container-2xl: 42rem;     /* 672px */
+  --max-width-sm: 24rem;      /* 384px */
+  --max-width-md: 28rem;      /* 448px */
+  --max-width-lg: 32rem;      /* 512px */
+  --max-width-xl: 36rem;      /* 576px */
+  --max-width-2xl: 42rem;     /* 672px */
+
+  /* ========================================== */
+  /* CONTAINER QUERIES                         */
+  /* Usage: @container(min-width: sm)          */
+  /* ========================================== */
+  
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
 
   /* ========================================== */
   /* 3D TRANSFORMS - Perspective              */
@@ -195,15 +222,17 @@
   /**
    * Dark Theme
    * Applied when <html class="dark">
+   * 
+   * NOTE: Subtle brand hue (250) for richer, branded dark theme
    */
   .dark {
-    /* Semantic color overrides */
+    /* Semantic color overrides with subtle blue tint */
     --color-text: oklch(0.95 0 0);              /* Near white */
     --color-text-muted: oklch(0.65 0 0);        /* Light gray */
     --color-text-subtle: oklch(0.50 0 0);       /* Darker gray */
-    --color-background: oklch(0.15 0 0);        /* Near black */
-    --color-background-subtle: oklch(0.18 0 0); /* Slightly lighter */
-    --color-background-muted: oklch(0.22 0 0);  /* Card background */
+    --color-background: oklch(0.15 0.01 250);        /* Near black with subtle brand hue */
+    --color-background-subtle: oklch(0.18 0.01 250); /* Slightly lighter with hue */
+    --color-background-muted: oklch(0.22 0.01 250);  /* Card background with hue */
     --color-border: oklch(0.30 0 0);            /* Border gray */
     --color-border-muted: oklch(0.25 0 0);      /* Subtle border */
 
@@ -355,14 +384,14 @@
 
 /**
  * Respect user's motion preferences
+ * PREMIUM APPROACH: Override motion tokens at root
+ * Cleaner than using * !important
  */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  :root {
+    --duration-fast: 1ms !important;
+    --duration-normal: 1ms !important;
+    --duration-slow: 1ms !important;
   }
 }
 
