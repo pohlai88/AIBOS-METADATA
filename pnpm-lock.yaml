@@ -154,11 +154,11 @@ importers:
         specifier: ^4.3.19
         version: 4.3.19(react@19.2.0)(zod@3.25.76)
 
-  apps:
+  apps/web:
     dependencies:
       '@aibos/types':
         specifier: 0.1.0
-        version: link:../packages/types
+        version: link:../../packages/types
       '@headlessui/react':
         specifier: ^2.2.9
         version: 2.2.9(react-dom@19.2.0)(react@19.2.0)
@@ -189,7 +189,7 @@ importers:
     devDependencies:
       '@aibos/config-eslint':
         specifier: 0.1.0
-        version: link:../packages/config
+        version: link:../../packages/config
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.10(tailwindcss@4.1.17)
@@ -272,6 +272,10 @@ importers:
         version: 5.9.3
 
   packages/types:
+    dependencies:
+      '@aibos/metadata-studio':
+        specifier: workspace:*
+        version: link:../../metadata-studio
     devDependencies:
       '@aibos/config-eslint':
         specifier: 0.1.0
@@ -282,6 +286,19 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+
+  tools/workspace-scaffold:
+    dependencies:
+      chalk:
+        specifier: ^5.3.0
+        version: 5.6.2
+      prompts:
+        specifier: ^2.4.2
+        version: 2.4.2
+    devDependencies:
+      '@types/prompts':
+        specifier: ^2.4.9
+        version: 2.4.9
 
 packages:
 
@@ -1804,6 +1821,13 @@ packages:
       '@types/node': 22.19.1
       pg-protocol: 1.10.3
       pg-types: 2.2.0
+
+  /@types/prompts@2.4.9:
+    resolution: {integrity: sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==}
+    dependencies:
+      '@types/node': 22.19.1
+      kleur: 3.0.3
+    dev: true
 
   /@types/react-dom@19.2.3(@types/react@19.2.4):
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -3911,7 +3935,6 @@ packages:
   /kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
-    dev: true
 
   /language-subtag-registry@0.3.23:
     resolution: {integrity: sha512-0K65Lea881pHotoGEa5gDlMxt3pctLi2RplBb7Ezh4rRdLEOtgi7n4EwK9lamnUCkKBqaeKRVebTq6BAxSkpXQ==}
@@ -4550,7 +4573,6 @@ packages:
     dependencies:
       kleur: 3.0.3
       sisteransi: 1.0.5
-    dev: true
 
   /prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
@@ -4941,7 +4963,6 @@ packages:
 
   /sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
-    dev: true
 
   /slash@5.1.0:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}

@@ -8,7 +8,7 @@
  * - This SDK is versioned to ensure compatibility
  * - Clients MUST use compatible SDK version
  * - Mismatched versions will cause deployment errors
- * 
+ *
  * OPENMETADATA COMPATIBLE:
  * - Follows OpenMetadata schema patterns
  * - Compatible with OpenMetadata v1.4.0
@@ -233,37 +233,41 @@ export const ControlledVocabulary = {
   // SDK Version (MUST match client version)
   version: SDK_VERSION.full,
   sdkName: "@aibos/controlled-vocabulary-sdk",
-  
+
   // Approved terms by domain
   finance: APPROVED_FINANCE_TERMS,
   hr: APPROVED_HR_TERMS,
   operations: APPROVED_OPERATIONS_TERMS,
-  
+
   // Blocked terms (for validation)
   blocked: BLOCKED_FINANCE_TERMS,
-  
+
   // Metadata
   metadata: {
     lastUpdated: new Date().toISOString(),
-    totalApprovedTerms: 
+    totalApprovedTerms:
       Object.keys(APPROVED_FINANCE_TERMS).length +
       Object.keys(APPROVED_HR_TERMS).length +
       Object.keys(APPROVED_OPERATIONS_TERMS).length,
-    domains: ['finance', 'hr', 'operations'],
+    domains: ["finance", "hr", "operations"],
   },
 } as const;
 
 /**
  * Initialize SDK with version check
- * 
+ *
  * Call this at app startup to ensure version compatibility
  */
 export function initializeControlledVocabularySDK(clientVersion: string) {
   assertVersionCompatibility(clientVersion);
-  
+
   console.log(`✅ Controlled Vocabulary SDK v${SDK_VERSION.full} initialized`);
-  console.log(`   Total approved terms: ${ControlledVocabulary.metadata.totalApprovedTerms}`);
-  console.log(`   Domains: ${ControlledVocabulary.metadata.domains.join(', ')}`);
-  
+  console.log(
+    `   Total approved terms: ${ControlledVocabulary.metadata.totalApprovedTerms}`
+  );
+  console.log(
+    `   Domains: ${ControlledVocabulary.metadata.domains.join(", ")}`
+  );
+
   return ControlledVocabulary;
 }

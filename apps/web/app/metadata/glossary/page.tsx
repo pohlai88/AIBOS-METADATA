@@ -1,11 +1,16 @@
 /**
  * Business Glossary UI
- * 
+ *
  * OpenMetadata-style glossary browser
  * Shows all approved terms with their definitions
  */
 
-import { ControlledVocabulary, APPROVED_FINANCE_TERMS, APPROVED_HR_TERMS, APPROVED_OPERATIONS_TERMS } from "@aibos/types";
+import {
+  ControlledVocabulary,
+  APPROVED_FINANCE_TERMS,
+  APPROVED_HR_TERMS,
+  APPROVED_OPERATIONS_TERMS,
+} from "@aibos/types";
 
 export default function GlossaryPage() {
   const stats = {
@@ -28,11 +33,15 @@ export default function GlossaryPage() {
       {/* Statistics */}
       <div className="mb-8 grid grid-cols-4 gap-4">
         <div className="rounded-lg bg-white p-6 shadow-sm">
-          <div className="text-3xl font-bold text-blue-600">{stats.totalTerms}</div>
+          <div className="text-3xl font-bold text-blue-600">
+            {stats.totalTerms}
+          </div>
           <div className="mt-1 text-sm text-gray-600">Total Approved Terms</div>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
-          <div className="text-3xl font-bold text-green-600">{stats.finance}</div>
+          <div className="text-3xl font-bold text-green-600">
+            {stats.finance}
+          </div>
           <div className="mt-1 text-sm text-gray-600">Finance Terms</div>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
@@ -40,17 +49,24 @@ export default function GlossaryPage() {
           <div className="mt-1 text-sm text-gray-600">HR Terms</div>
         </div>
         <div className="rounded-lg bg-white p-6 shadow-sm">
-          <div className="text-3xl font-bold text-orange-600">{stats.operations}</div>
+          <div className="text-3xl font-bold text-orange-600">
+            {stats.operations}
+          </div>
           <div className="mt-1 text-sm text-gray-600">Operations Terms</div>
         </div>
       </div>
 
       {/* Finance Domain */}
       <div className="mb-8 rounded-lg bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-xl font-semibold text-blue-600">Finance Domain (IFRS/MFRS)</h3>
+        <h3 className="mb-4 text-xl font-semibold text-blue-600">
+          Finance Domain (IFRS/MFRS)
+        </h3>
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(APPROVED_FINANCE_TERMS).map(([key, value]) => (
-            <div key={key} className="rounded-md border p-4 hover:border-blue-300">
+            <div
+              key={key}
+              className="rounded-md border p-4 hover:border-blue-300"
+            >
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-medium text-gray-900">{key}</h4>
@@ -67,10 +83,15 @@ export default function GlossaryPage() {
 
       {/* HR Domain */}
       <div className="mb-8 rounded-lg bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-xl font-semibold text-purple-600">HR Domain</h3>
+        <h3 className="mb-4 text-xl font-semibold text-purple-600">
+          HR Domain
+        </h3>
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(APPROVED_HR_TERMS).map(([key, value]) => (
-            <div key={key} className="rounded-md border p-4 hover:border-purple-300">
+            <div
+              key={key}
+              className="rounded-md border p-4 hover:border-purple-300"
+            >
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-medium text-gray-900">{key}</h4>
@@ -87,10 +108,15 @@ export default function GlossaryPage() {
 
       {/* Operations Domain */}
       <div className="rounded-lg bg-white p-6 shadow-sm">
-        <h3 className="mb-4 text-xl font-semibold text-orange-600">Operations Domain</h3>
+        <h3 className="mb-4 text-xl font-semibold text-orange-600">
+          Operations Domain
+        </h3>
         <div className="grid grid-cols-2 gap-4">
           {Object.entries(APPROVED_OPERATIONS_TERMS).map(([key, value]) => (
-            <div key={key} className="rounded-md border p-4 hover:border-orange-300">
+            <div
+              key={key}
+              className="rounded-md border p-4 hover:border-orange-300"
+            >
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="font-medium text-gray-900">{key}</h4>
@@ -107,4 +133,3 @@ export default function GlossaryPage() {
     </div>
   );
 }
-

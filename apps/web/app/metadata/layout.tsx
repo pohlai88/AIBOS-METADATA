@@ -1,6 +1,6 @@
 /**
  * Metadata Studio UI Layout
- * 
+ *
  * OpenMetadata-inspired UI for business metadata management
  * Compatible with OpenMetadata schema v1.4.0
  */
@@ -23,7 +23,7 @@ export default function MetadataLayout({
               Central Nervous System for Business Terminology
             </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {/* SDK Version Indicator */}
             <div className="rounded-md bg-blue-50 px-3 py-1.5">
@@ -31,7 +31,7 @@ export default function MetadataLayout({
                 SDK v{SDK_VERSION.full}
               </span>
             </div>
-            
+
             {/* OpenMetadata Compatible Badge */}
             <div className="rounded-md bg-green-50 px-3 py-1.5">
               <span className="text-xs font-medium text-green-700">
@@ -46,27 +46,42 @@ export default function MetadataLayout({
       <nav className="border-b bg-gray-50 px-6 py-3">
         <ul className="flex gap-6 text-sm font-medium">
           <li>
-            <a href="/metadata/glossary" className="text-gray-700 hover:text-gray-900">
+            <a
+              href="/metadata/glossary"
+              className="text-gray-700 hover:text-gray-900"
+            >
               Glossary
             </a>
           </li>
           <li>
-            <a href="/metadata/lineage" className="text-gray-700 hover:text-gray-900">
+            <a
+              href="/metadata/lineage"
+              className="text-gray-700 hover:text-gray-900"
+            >
               Lineage
             </a>
           </li>
           <li>
-            <a href="/metadata/quality" className="text-gray-700 hover:text-gray-900">
+            <a
+              href="/metadata/quality"
+              className="text-gray-700 hover:text-gray-900"
+            >
               Data Quality
             </a>
           </li>
           <li>
-            <a href="/metadata/governance" className="text-gray-700 hover:text-gray-900">
+            <a
+              href="/metadata/governance"
+              className="text-gray-700 hover:text-gray-900"
+            >
               Governance
             </a>
           </li>
           <li>
-            <a href="/metadata/sdk" className="text-gray-700 hover:text-gray-900">
+            <a
+              href="/metadata/sdk"
+              className="text-gray-700 hover:text-gray-900"
+            >
               SDK Documentation
             </a>
           </li>
@@ -74,9 +89,7 @@ export default function MetadataLayout({
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-gray-50">
-        {children}
-      </main>
+      <main className="flex-1 overflow-auto bg-gray-50">{children}</main>
 
       {/* Footer */}
       <footer className="border-t bg-white px-6 py-3">
@@ -87,4 +100,3 @@ export default function MetadataLayout({
     </div>
   );
 }
-
