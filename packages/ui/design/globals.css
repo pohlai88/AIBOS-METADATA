@@ -292,14 +292,30 @@ body {
   outline-offset: 2px;
 }
 
-/* Reduced motion for accessibility */
+/* ============================================ */
+/* ACCESSIBILITY: REDUCED MOTION               */
+/* ============================================ */
+
+/**
+ * Premium approach: Override motion tokens instead of brute-force !important.
+ * Because all Tailwind utilities use these tokens, the entire app
+ * respects reduced motion without changing any component code.
+ */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 0ms;
+    --motion-duration-normal: 0ms;
+    --motion-duration-slow: 0ms;
+    --motion-duration-slower: 0ms;
+  }
+  
+  /* Fallback for any animations not using tokens */
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
 

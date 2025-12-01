@@ -151,13 +151,11 @@ const config: Config = {
 
       // Box shadows (depth layer constitution)
       boxShadow: {
-        sm: "var(--shadow-sm)",
-        DEFAULT: "var(--shadow-md)",
-        md: "var(--shadow-md)",
-        lg: "var(--shadow-lg)",
-        xl: "var(--shadow-xl)",
-
-        // Semantic elevation shadows
+        /**
+         * GRCD: Elevation Constitution
+         * Only expose semantic shadows to enforce design decisions.
+         * "shadow-raised" = design intent, not "shadow-md because it looks nice"
+         */
         raised: "var(--shadow-raised)", // Cards, raised surfaces
         floating: "var(--shadow-floating)", // Dropdowns, popovers
         overlay: "var(--shadow-overlay)", // Modals, dialogs
