@@ -7,7 +7,6 @@
   "exports": {
     ".": "./index.ts",
     "./design/globals.css": "./design/globals.css",
-    "./design/tailwind.config": "./design/tailwind.config.ts",
     "./components/ThemeProvider": "./components/ThemeProvider.tsx",
     "./utils/cn": "./utils/cn.ts"
   },

@@ -16,8 +16,8 @@ export { ThemeProvider, useTheme, ThemeToggle } from './components/ThemeProvider
 // Export utility functions
 export { cn } from './utils/cn';
 
-// Re-export Tailwind config for apps to extend
-export { default as tailwindConfig } from './design/tailwind.config';
+// Note: In Tailwind v4, each app has its own tailwind.config.js
+// No need to share/extend config files - use CSS variables instead
 
 /**
  * Design Token Documentation
