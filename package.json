@@ -24,6 +24,10 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
+    "create": "node tools/workspace-scaffold/cli.mjs",
+    "create:app": "node tools/workspace-scaffold/cli.mjs",
+    "create:service": "node tools/workspace-scaffold/cli.mjs",
+    "create:package": "node tools/workspace-scaffold/cli.mjs",
     "deps:check": "syncpack list-mismatches",
     "deps:clean": "pnpm dedupe && syncpack format",
     "deps:fix": "syncpack fix-mismatches && syncpack format",

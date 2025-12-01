@@ -3,3 +3,4 @@ packages:
   - "packages/*"
   - "metadata-studio"
   - ".mcp/*"
+  - "tools/*"
