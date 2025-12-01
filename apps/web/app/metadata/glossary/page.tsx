@@ -39,12 +39,11 @@ export default function GlossaryPage() {
     <CenteredContent maxWidth="2xl" padding={8}>
       {/* Spacing Constitution: space-y-8 (64px) on 8-point grid */}
       <div className="space-y-8">
-        
         {/* Page Header */}
         <div className="space-y-2">
           {/* Typography Constitution: H2 component */}
           <H2>Business Glossary</H2>
-          
+
           {/* Typography Constitution: Body component with semantic color */}
           <Body color="text-fg-muted">
             Controlled vocabulary - Only approved terms can be used in code
@@ -70,9 +69,7 @@ export default function GlossaryPage() {
           </div>
 
           <div className="rounded-lg bg-bg shadow-raised p-6 transition-all duration-fast hover:shadow-floating hover:scale-[1.02]">
-            <div className="text-3xl font-bold text-primary">
-              {stats.hr}
-            </div>
+            <div className="text-3xl font-bold text-primary">{stats.hr}</div>
             <Caption>HR Terms</Caption>
           </div>
 
@@ -106,7 +103,7 @@ export default function GlossaryPage() {
                     <h4 className="font-medium text-fg">{key}</h4>
                     <Caption>{value}</Caption>
                   </div>
-                  
+
                   {/* Finance Badge using semantic token */}
                   <span className="shrink-0 rounded-full bg-finance-revenue/10 text-finance-revenue px-2 py-1 text-xs font-medium border border-finance-revenue/20">
                     IFRS
@@ -137,7 +134,7 @@ export default function GlossaryPage() {
                     <h4 className="font-medium text-fg">{key}</h4>
                     <Caption>{value}</Caption>
                   </div>
-                  
+
                   <span className="shrink-0 rounded-full bg-primary/10 text-primary px-2 py-1 text-xs font-medium border border-primary/20">
                     HR
                   </span>
@@ -167,7 +164,7 @@ export default function GlossaryPage() {
                     <h4 className="font-medium text-fg">{key}</h4>
                     <Caption>{value}</Caption>
                   </div>
-                  
+
                   <span className="shrink-0 rounded-full bg-warning/10 text-warning px-2 py-1 text-xs font-medium border border-warning/20">
                     Operations
                   </span>
@@ -176,7 +173,6 @@ export default function GlossaryPage() {
             ))}
           </GridLayout>
         </div>
-
       </div>
     </CenteredContent>
   );

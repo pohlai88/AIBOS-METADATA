@@ -41,13 +41,12 @@ export default function GlossaryPage() {
     <CenteredContent maxWidth="2xl" padding={8}>
       {/* ✅ CONSTITUTION #1: Spacing - 8-point grid (space-y-8) */}
       <div className="space-y-8">
-        
         {/* Page Header */}
         {/* ✅ CONSTITUTION #1: Spacing - space-y-2 (8px) */}
         <div className="space-y-2">
           {/* ✅ CONSTITUTION #3: Typography - H2 component */}
           <H2>Business Glossary</H2>
-          
+
           {/* ✅ CONSTITUTION #3: Typography - Body component */}
           {/* ✅ Color: Semantic text-fg-muted */}
           <Body color="text-fg-muted">
@@ -82,9 +81,7 @@ export default function GlossaryPage() {
 
           {/* HR Card */}
           <div className="rounded-lg bg-bg shadow-raised p-6 transition-all duration-fast hover:shadow-floating hover:scale-[1.02]">
-            <div className="text-3xl font-bold text-primary">
-              {stats.hr}
-            </div>
+            <div className="text-3xl font-bold text-primary">{stats.hr}</div>
             <Caption>HR Terms</Caption>
           </div>
 
@@ -122,11 +119,11 @@ export default function GlossaryPage() {
                   <div className="space-y-1">
                     {/* ✅ CONSTITUTION #3: Typography - semantic font-medium */}
                     <h4 className="font-medium text-fg">{key}</h4>
-                    
+
                     {/* ✅ CONSTITUTION #3: Typography - Caption component */}
                     <Caption>{value}</Caption>
                   </div>
-                  
+
                   {/* ✅ Color: Semantic finance token */}
                   <span className="rounded-full bg-finance-revenue/10 text-finance-revenue px-2 py-1 text-xs font-medium border border-finance-revenue/20">
                     IFRS
@@ -192,7 +189,6 @@ export default function GlossaryPage() {
             ))}
           </GridLayout>
         </div>
-
       </div>
     </CenteredContent>
   );
@@ -210,4 +206,3 @@ export default function GlossaryPage() {
 //
 // BEFORE: 33 violations
 // AFTER: 0 violations ✅
-
