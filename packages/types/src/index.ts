@@ -70,16 +70,16 @@ export {
   APPROVED_HR_TERMS,
   APPROVED_OPERATIONS_TERMS,
   BLOCKED_FINANCE_TERMS,
-  
+
   // Controlled vocabulary types
   type ApprovedFinanceTerm,
   type ApprovedHRTerm,
   type ApprovedOperationsTerm,
   type ApprovedTerm,
-  
+
   // Validation schemas
   ApprovedFinanceTermSchema,
-  
+
   // Utility functions
   isApprovedTerm,
   getSuggestion,
