@@ -50,11 +50,7 @@ apps/your-app/
 | Component | Purpose | Uses Tokens |
 |-----------|---------|-------------|
 | **Button.tsx** | Primary button component | ✅ `--color-primary-rgb` |
-| **Badge.tsx** | Status and label badges | ✅ `--color-*-rgb` |
-| **Card.tsx** | Content containers | ✅ `--color-background-*` |
-| **MetadataBadge.tsx** | Metadata domain badges | ✅ `--color-metadata-*` |
-| **TierBadge.tsx** | Governance tier indicators | ✅ `--color-tier-*` |
-| **FinanceBadge.tsx** | Finance domain badges | ✅ `--color-finance-*` |
+| **MetadataBadges.tsx** | Metadata, Tier, and Finance badges | ✅ `--color-metadata-*`, `--color-tier-*`, `--color-finance-*` |
 
 ---
 
@@ -63,7 +59,7 @@ apps/your-app/
 All components use CSS variables from `@aibos/ui/design/globals.css`:
 
 ```tsx
-// Example: MetadataBadge.tsx uses controlled vocabulary for colors
+// Example: MetadataBadges.tsx uses controlled vocabulary for colors
 export function MetadataBadge({ domain }: { domain: string }) {
   const colors = {
     glossary: 'bg-[rgb(var(--color-metadata-glossary)/0.1)]',

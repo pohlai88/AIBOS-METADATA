@@ -231,9 +231,7 @@ They live in `packages/registry/` and are **copied** (not imported) into apps.
 ### Available Registry Components
 
 - `Button.tsx` - Primary button with variants
-- `MetadataBadge.tsx` - Metadata domain badges
-- `TierBadge.tsx` - Governance tier badges
-- `FinanceBadge.tsx` - Finance type badges
+- `MetadataBadges.tsx` - Metadata domain, governance tier, and finance type badges (all in one file)
 
 See `packages/registry/README.md` for details.
 
