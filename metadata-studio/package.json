@@ -4,6 +4,11 @@
   "description": "Nexus Metadata Studio - Centralized metadata management, lineage, governance, and observability",
   "main": "./index.ts",
   "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./sdk/version": "./sdk/version.ts",
+    "./glossary/controlled-vocabulary": "./glossary/controlled-vocabulary.ts"
+  },
   "private": true,
   "scripts": {
     "bootstrap": "tsx bootstrap/index.ts",
@@ -12,7 +17,7 @@
     "test:conformance": "vitest --grep conformance",
     "test:unit": "vitest --grep unit",
     "test:run": "vitest run",
-    "lint": "eslint . --config ../../eslint.config.mjs",
+    "lint": "eslint . --config ../eslint.config.mjs",
     "type-check": "tsc --noEmit"
   },
   "keywords": [

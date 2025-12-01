@@ -4,7 +4,7 @@
  * Shows SDK version, installation instructions, and usage examples
  */
 
-import { SDK_VERSION, SDK_METADATA, OPENMETADATA_SCHEMA_VERSION } from "@aibos/metadata-studio/sdk/version";
+import { SDK_VERSION, SDK_METADATA, OPENMETADATA_SCHEMA_VERSION } from "@aibos/metadata-studio";
 import { ControlledVocabulary } from "@aibos/types";
 
 export default function SDKPage() {
@@ -131,7 +131,7 @@ const accountType: ApprovedFinanceTerm =
               initializeControlledVocabularySDK(clientVersion: string)
             </code>
             <p className="mt-2 text-sm text-gray-600">
-              Initialize SDK and check version compatibility. Throws error if versions don't match.
+              Initialize SDK and check version compatibility. Throws error if versions don&apos;t match.
             </p>
           </div>
 

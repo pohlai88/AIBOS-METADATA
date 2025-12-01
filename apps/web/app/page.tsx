@@ -226,7 +226,7 @@ export default function NanoShowcasePage() {
             </div>
             <h3 className="text-xl font-bold mb-2">Real-Time Processing</h3>
             <p className="text-fg-muted">
-              Data isn't just displayed; it flows. The system pulses with live updates from the Kernel.
+              Data isn&apos;t just displayed; it flows. The system pulses with live updates from the Kernel.
             </p>
           </SpotlightCard>
 

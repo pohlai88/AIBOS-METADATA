@@ -5,7 +5,7 @@
  * Compatible with OpenMetadata schema v1.4.0
  */
 
-import { SDK_VERSION } from "@aibos/metadata-studio/sdk/version";
+import { SDK_VERSION } from "@aibos/metadata-studio";
 
 export default function MetadataLayout({
   children,

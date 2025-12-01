@@ -36,3 +36,7 @@ export * from './mcp/tools/usage.tools';
 
 export { bootstrap } from './bootstrap';
 
+// SDK Version & Controlled Vocabulary
+export * from './sdk/version';
+export * from './glossary/controlled-vocabulary';
+

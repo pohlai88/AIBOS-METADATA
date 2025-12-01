@@ -5,8 +5,7 @@
  * Checks version compatibility at app startup
  */
 
-import { SDK_VERSION, assertVersionCompatibility } from "@aibos/metadata-studio/sdk/version";
-import { initializeControlledVocabularySDK } from "@aibos/types";
+import { SDK_VERSION, assertVersionCompatibility, initializeControlledVocabularySDK } from "@aibos/metadata-studio";
 
 /**
  * Client SDK Version

@@ -9,7 +9,8 @@
   "scripts": {
     "create:app": "node cli.mjs app",
     "create:service": "node cli.mjs service",
-    "create:package": "node cli.mjs package"
+    "create:package": "node cli.mjs package",
+    "lint": "echo 'No linting configured for workspace-scaffold'"
   },
   "keywords": [
     "scaffold",
@@ -27,4 +28,5 @@
     "@types/prompts": "^2.4.9"
   }
 }
+
 

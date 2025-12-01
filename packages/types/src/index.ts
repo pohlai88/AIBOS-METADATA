@@ -84,6 +84,7 @@ export {
   isApprovedTerm,
   getSuggestion,
   validateTerm,
+  initializeControlledVocabularySDK,
   ControlledVocabulary,
 } from "@aibos/metadata-studio/glossary/controlled-vocabulary";
 

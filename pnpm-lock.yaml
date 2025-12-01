@@ -156,6 +156,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@aibos/metadata-studio':
+        specifier: 0.1.0
+        version: link:../../metadata-studio
       '@aibos/types':
         specifier: 0.1.0
         version: link:../../packages/types
