@@ -10,6 +10,7 @@
  */
 
 import { type ButtonHTMLAttributes } from 'react';
+import { cn } from '@aibos/ui/utils/cn';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'success';
@@ -42,7 +43,7 @@ export function Button({
   
   return (
     <button
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={cn(baseClasses, variantClasses[variant], sizeClasses[size], className)}
       {...props}
     >
       {children}

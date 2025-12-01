@@ -13,6 +13,9 @@
 // Export ThemeProvider and useTheme hook
 export { ThemeProvider, useTheme, ThemeToggle } from './components/ThemeProvider';
 
+// Export utility functions
+export { cn } from './utils/cn';
+
 // Re-export Tailwind config for apps to extend
 export { default as tailwindConfig } from './design/tailwind.config';
 

@@ -94,6 +94,47 @@ export default function HomePage() {
 
 ---
 
+## 🛠️ Utility Functions
+
+### `cn()` - Class Name Utility
+
+The `cn` utility intelligently merges Tailwind CSS classes, resolving conflicts and handling conditional classes.
+
+**Installation:**
+```tsx
+import { cn } from '@aibos/ui';
+// or
+import { cn } from '@aibos/ui/utils/cn';
+```
+
+**Usage:**
+```tsx
+// Conflict resolution (last value wins)
+cn('p-4', 'p-6')  // → 'p-6'
+
+// Conditional classes
+cn('bg-primary', isActive && 'bg-primary-hover')
+
+// Merge with props
+cn('default-class', props.className)
+
+// Complex example
+cn(
+  'px-4 py-2 rounded-md',
+  isLarge ? 'text-lg' : 'text-sm',
+  isDisabled && 'opacity-50 cursor-not-allowed',
+  className
+)
+```
+
+**How it works:**
+- Uses `clsx` for conditional class handling
+- Uses `tailwind-merge` for conflict resolution
+- Prevents duplicate classes (e.g., `p-4 p-6` becomes `p-6`)
+- Handles arrays, objects, and conditional expressions
+
+---
+
 ## 📚 Three Layers of the Design System
 
 ### **Layer 1: Base Directives**
@@ -228,10 +269,15 @@ They live in `packages/registry/` and are **copied** (not imported) into apps.
 ✅ **Learning** - Developers see the source code  
 ✅ **Consistency** - Components still use the same design tokens  
 
+### Available Utility Functions
+
+- `cn()` - Intelligent Tailwind class merging (resolves conflicts, handles conditionals)
+
 ### Available Registry Components
 
 - `Button.tsx` - Primary button with variants
 - `MetadataBadges.tsx` - Metadata domain, governance tier, and finance type badges (all in one file)
+- `Typography.tsx` - Type scale and visual hierarchy component (H1-H3, Subtitle, Body, Caption)
 
 See `packages/registry/README.md` for details.
 

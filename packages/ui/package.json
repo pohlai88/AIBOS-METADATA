@@ -8,7 +8,8 @@
     ".": "./index.ts",
     "./design/globals.css": "./design/globals.css",
     "./design/tailwind.config": "./design/tailwind.config.ts",
-    "./components/ThemeProvider": "./components/ThemeProvider.tsx"
+    "./components/ThemeProvider": "./components/ThemeProvider.tsx",
+    "./utils/cn": "./utils/cn.ts"
   },
   "scripts": {
     "lint": "eslint . --config ../../eslint.config.mjs",
@@ -23,6 +24,10 @@
   ],
   "author": "AIBOS Platform Team",
   "license": "UNLICENSED",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
+  },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

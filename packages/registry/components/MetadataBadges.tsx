@@ -9,6 +9,8 @@
  *   <MetadataBadge domain="lineage" label="Data Lineage" />
  */
 
+import { cn } from '@aibos/ui/utils/cn';
+
 interface MetadataBadgeProps {
   domain: 'glossary' | 'lineage' | 'quality' | 'governance' | 'tags' | 'kpi';
   label?: string;
@@ -42,12 +44,11 @@ export function MetadataBadge({
   
   return (
     <span 
-      className={`
-        inline-flex items-center px-2 py-1 text-xs font-semibold 
-        rounded-md border
-        ${domainStyles[domain]}
-        ${className}
-      `}
+      className={cn(
+        'inline-flex items-center px-2 py-1 text-xs font-semibold rounded-md border',
+        domainStyles[domain],
+        className
+      )}
     >
       {label || domainLabels[domain]}
     </span>
@@ -86,12 +87,11 @@ export function TierBadge({
   
   return (
     <span 
-      className={`
-        inline-flex items-center px-2 py-1 text-xs font-semibold 
-        rounded-md border
-        ${tierStyles[tier]}
-        ${className}
-      `}
+      className={cn(
+        'inline-flex items-center px-2 py-1 text-xs font-semibold rounded-md border',
+        tierStyles[tier],
+        className
+      )}
     >
       {label || tierLabels[tier]}
     </span>
@@ -132,12 +132,11 @@ export function FinanceBadge({
   
   return (
     <span 
-      className={`
-        inline-flex items-center px-2 py-1 text-xs font-semibold 
-        rounded-md border
-        ${financeStyles[type]}
-        ${className}
-      `}
+      className={cn(
+        'inline-flex items-center px-2 py-1 text-xs font-semibold rounded-md border',
+        financeStyles[type],
+        className
+      )}
     >
       {label || financeLabels[type]}
     </span>

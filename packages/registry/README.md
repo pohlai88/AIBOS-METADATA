@@ -51,6 +51,7 @@ apps/your-app/
 |-----------|---------|-------------|
 | **Button.tsx** | Primary button component | ✅ `--color-primary-rgb` |
 | **MetadataBadges.tsx** | Metadata, Tier, and Finance badges | ✅ `--color-metadata-*`, `--color-tier-*`, `--color-finance-*` |
+| **Typography.tsx** | Type scale and visual hierarchy | ✅ Font size tokens, text color tokens |
 
 ---
 
