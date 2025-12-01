@@ -162,6 +162,9 @@ importers:
       '@aibos/types':
         specifier: 0.1.0
         version: link:../../packages/types
+      '@aibos/ui':
+        specifier: 0.1.0
+        version: link:../../packages/ui
       '@headlessui/react':
         specifier: ^2.2.9
         version: 2.2.9(react-dom@19.2.0)(react@19.2.0)
@@ -283,6 +286,34 @@ importers:
       '@aibos/config-eslint':
         specifier: 0.1.0
         version: link:../config
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/ui:
+    dependencies:
+      react:
+        specifier: ^19.0.0
+        version: 19.2.0
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.0(react@19.2.0)
+    devDependencies:
+      '@aibos/config-eslint':
+        specifier: 0.1.0
+        version: link:../config
+      '@types/node':
+        specifier: ^22.19.1
+        version: 22.19.1
+      '@types/react':
+        specifier: 19.2.4
+        version: 19.2.4
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.4)
       eslint:
         specifier: ^9.39.1
         version: 9.39.1
