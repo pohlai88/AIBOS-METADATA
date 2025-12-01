@@ -17,7 +17,9 @@
  */
 
 import { type ReactNode } from "react";
-import { cn } from "@aibos/ui/utils/cn";
+// Note: When copying to your app, change this import to:
+// import { cn } from "@/lib/cn";
+import { cn } from "@aibos/ui";
 
 /* ============================================ */
 /* PAGE SHELL - App-Level Layout              */

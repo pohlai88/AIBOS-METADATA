@@ -9,7 +9,9 @@
  *   <MetadataBadge domain="lineage" label="Data Lineage" />
  */
 
-import { cn } from '@aibos/ui/utils/cn';
+// Note: When copying to your app, change this import to:
+// import { cn } from "@/lib/cn";
+import { cn } from '@aibos/ui';
 
 interface MetadataBadgeProps {
   domain: 'glossary' | 'lineage' | 'quality' | 'governance' | 'tags' | 'kpi';

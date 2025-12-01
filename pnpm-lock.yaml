@@ -283,6 +283,21 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/registry:
+    devDependencies:
+      '@aibos/ui':
+        specifier: workspace:*
+        version: link:../ui
+      '@types/react':
+        specifier: 19.2.4
+        version: 19.2.4
+      react:
+        specifier: 19.2.0
+        version: 19.2.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   packages/types:
     dependencies:
       '@aibos/metadata-studio':
@@ -4679,7 +4694,6 @@ packages:
   /react@19.2.0:
     resolution: {integrity: sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /read-yaml-file@2.1.0:
     resolution: {integrity: sha512-UkRNRIwnhG+y7hpqnycCL/xbTk7+ia9VuVTC0S+zVbwd65DI9eUpRMfsWIGrCWxTU/mi+JW8cHQCrv+zfCbEPQ==}
