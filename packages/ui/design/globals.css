@@ -12,10 +12,9 @@
 
 /* ============================================ */
 /* LAYER 1: BASE DIRECTIVES                    */
+/* Tailwind CSS v4 uses a single import        */
 /* ============================================ */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss";
 
 /* ============================================ */
 /* LAYER 2: DESIGN TOKENS (LIGHT THEME)        */
