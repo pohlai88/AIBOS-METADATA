@@ -8,6 +8,7 @@
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
+    "tailwindcss": "^4.1.6",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "syncpack": "13.0.2",
@@ -41,6 +42,7 @@
     "start": "turbo run start",
     "sync-mcp-prompt": "tsx .mcp/ui-generator/tools/sync-prompt.ts",
     "workspace:repair": "pnpm -w run deps:fix",
-    "workspace:verify": "pnpm -w run deps:check"
+    "workspace:verify": "pnpm -w run deps:check",
+    "check:mcp": "pnpm -C tools/mcp-enforcer check"
   }
 }

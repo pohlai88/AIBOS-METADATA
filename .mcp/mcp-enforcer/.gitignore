@@ -1,0 +1,8 @@
+# MCP Enforcer - Local files to ignore
+node_modules/
+*.log
+.cache/
+tmp/
+.DS_Store
+desktop.ini
+

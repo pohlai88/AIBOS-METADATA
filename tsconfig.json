@@ -16,7 +16,8 @@
     "paths": {
       "@aibos/ui/*": ["./packages/ui/src/*"],
       "@aibos/utils/*": ["./packages/utils/src/*"],
-      "@aibos/types/*": ["./packages/types/src/*"]
+      "@aibos/types/*": ["./packages/types/src/*"],
+      "@aibos/kernel-finance/*": ["./packages/kernel-finance/src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

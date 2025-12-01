@@ -1,0 +1,171 @@
+# config/orchestrator.frontend.yaml
+
+schema_version: "1.0.0"
+orchestrator_id: "frontend_dev_orchestra"
+description: >
+  Frontend Dev Orchestra for AI-BOS. Coordinates agentic UI/UX design,
+  React/Tailwind implementation, a11y enforcement, and testing under GRCD rules.
+
+environments:
+  - name: dev
+    allowed_models:
+      - "gpt-4.1-mini"
+      - "gpt-4o-mini"
+      - "local-llm"
+    max_concurrent_runs: 3
+
+  - name: prod
+    allowed_models:
+      - "gpt-4.1"
+      - "claude-3.5"
+    max_concurrent_runs: 5
+    require_human_approval_for:
+      - "critical_fs_changes"
+      - "schema_migration"
+      - "prod_release"
+      - "kernel_touch"
+
+topology:
+  pattern: "supervisor_worker"
+  supervisor_agent_id: "orchestra_conductor"
+  notes: >
+    LangGraph supervisor → worker pattern. No mesh / peer-to-peer agent calls
+    without explicit design. All workflows start from the supervisor node.
+
+roles:
+  python_side: "orchestration_infra"     # LangGraph, FastAPI, Redis, Postgres
+  typescript_side: "contract_layer"      # Zod schemas, GRCD rules, design tokens
+
+human_in_the_loop:
+  enabled: true
+  approval_channels:
+    - "slack:#frontend-orchestra-review"
+  require_for_tags:
+    - "prod_release"
+    - "schema_migration"
+    - "kernel_touch"
+    - "high_risk_change"
+  default_timeout_seconds: 1800  # 30 minutes for approvals
+
+quality_pipeline:
+  # Declarative description of the quality gates. The orchestrator uses this
+  # to assemble the pipeline; agents use it to understand their responsibilities.
+  - id: lint
+    type: static_check
+    description: "ESLint / TypeScript checks for the changed files."
+    required: true
+    owner_agent_id: "test_conductor"
+
+  - id: unit_tests
+    type: test_suite
+    description: "Run unit tests relevant to the modified components."
+    required: true
+    owner_agent_id: "test_conductor"
+
+  - id: a11y
+    type: static_check
+    description: "Accessibility checks (WCAG, safe-mode tokens, aria)."
+    required: false         # flip to true when tooling is stable
+    owner_agent_id: "a11y_guardian"
+
+  - id: visual_checks
+    type: snapshot_suite
+    description: "Optional visual regression checks."
+    required: false
+    owner_agent_id: "test_conductor"
+
+persistence:
+  redis:
+    ttl_seconds:
+      run_state: 3600      # 1 hour for in-flight graph state
+      tool_cache: 900      # 15 minutes for ephemeral tool results
+  postgres:
+    retention_days:
+      runs: 90             # keep orchestration runs 3 months
+      incidents: 365       # keep incidents 1 year
+      evaluations: 365     # keep eval results 1 year
+  replay:
+    enabled: true
+    redacted_fields:
+      - "api_key"
+      - "access_token"
+      - "password"
+      - "authorization"
+    notes: >
+      Replay is used for debugging and evaluation only. Secrets and sensitive
+      fields are redacted on write.
+
+observability:
+  tracing:
+    correlation_id_header: "x-aibos-correlation-id"
+    sample_rate: 0.2       # trace 20% of runs
+  logging:
+    format: "json"
+    level: "info"
+    include_fields:
+      - "timestamp"
+      - "orchestrator_id"
+      - "environment"
+      - "agent_id"
+      - "correlation_id"
+      - "severity"
+      - "message"
+  metrics:
+    namespace: "aibos_frontend_orchestra"
+    key_dimensions:
+      - "agent_id"
+      - "environment"
+      - "tenant_id"
+      - "pipeline_stage"
+
+incidents:
+  severities:
+    - id: S1
+      description: "Dangerous or unapproved production change detected."
+      auto_actions:
+        - "pause_orchestrator"
+        - "notify:oncall"
+        - "require_manual_approval_for_all"
+    - id: S2
+      description: "Repeated quality gate failures or unexpected tool behavior."
+      auto_actions:
+        - "notify:oncall"
+    - id: S3
+      description: "Non-critical errors, degraded performance."
+      auto_actions:
+        - "log_only"
+
+  default_severity: "S3"
+
+routing:
+  # High-level routing hints for the supervisor. The actual implementation
+  # lives in Python/LangGraph, but these rules act as declarative hints.
+  default_agent: "task_classifier"
+  rules:
+    - when: "task.tags contains 'uiux' or task.type == 'design'"
+      target_agent: "uiux_designer"
+    - when: "task.tags contains 'component_implementation'"
+      target_agent: "code_implementer"
+    - when: "task.tags contains 'a11y'"
+      target_agent: "a11y_guardian"
+    - when: "task.tags contains 'testing' or task.type == 'qa'"
+      target_agent: "test_conductor"
+    - when: "task.tags contains 'docs' or task.type == 'documentation'"
+      target_agent: "docs_narrator"
+
+safety:
+  allow_shell_access: false     # frontend orchestra never directly uses shell
+  max_total_steps_per_run: 40   # global circuit breaker
+  forbidden_global_actions:
+    - "delete_repo"
+    - "modify_kernel_code"
+    - "change_auth_config"
+    - "rotate_prod_secrets"
+
+versioning:
+  config_version: "1.0.0"
+  requires_orchestrator_min_version: "1.0.0"
+  notes: >
+    Changes to this file must be reviewed under GRCD-FRONTEND-ORCHESTRA
+    and recorded in the configuration changelog.
+

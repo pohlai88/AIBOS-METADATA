@@ -86,6 +86,34 @@
   /* Layout tokens */
   --sidebar-width: 16rem;
   --topbar-height: 3.5rem;
+
+  /* ------------------------------------------------------------------
+     Icon Colors (Tech Stack Identity & System Status)
+     LIGHT MODE: Darker, Richer Colors for White Backgrounds
+     Focus: Readability and Contrast
+     ------------------------------------------------------------------ */
+
+  /* Tech Stack Identity */
+  --icon-js:    #D97706; /* Amber-600 (Readable Yellow) */
+  --icon-ts:    #2563EB; /* Blue-600 */
+  --icon-py:    #0284C7; /* Sky-600 */
+  --icon-html:  #EA580C; /* Orange-600 */
+  --icon-css:   #0891B2; /* Cyan-600 */
+  --icon-react: #059669; /* Emerald-600 (Distinct from Cyan) */
+  --icon-vue:   #16A34A; /* Green-600 */
+  --icon-node:  #4D7C0F; /* Lime-700 */
+  --icon-git:   #DC2626; /* Red-600 */
+
+  /* System Status */
+  --icon-success: #16A34A; /* Green-600 */
+  --icon-warning: #D97706; /* Amber-600 */
+  --icon-error:   #DC2626; /* Red-600 */
+  --icon-info:    #2563EB; /* Blue-600 */
+
+  /* Base UI */
+  --icon-primary:   #4F46E5; /* Indigo-600 */
+  --icon-secondary: #64748B; /* Slate-500 */
+  --icon-muted:     #94A3B8; /* Slate-400 */
 }
 
 /* Dark mode overrides
@@ -138,6 +166,34 @@
   --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.9), 0 1px 2px -1px rgb(15 23 42 / 0.9);
   --shadow-md: 0 10px 24px 0 rgb(15 23 42 / 0.9);
   --shadow-lg: 0 18px 40px 0 rgb(15 23 42 / 1);
+
+  /* ------------------------------------------------------------------
+     Icon Colors (Tech Stack Identity & System Status)
+     DARK MODE: Brighter, Pastel/Neon Colors for Dark Backgrounds
+     Focus: "Pop" and Glow
+     ------------------------------------------------------------------ */
+
+  /* Tech Stack Identity */
+  --icon-js:    #FCD34D; /* Amber-300 (Neon Yellow) */
+  --icon-ts:    #60A5FA; /* Blue-400 */
+  --icon-py:    #38BDF8; /* Sky-400 */
+  --icon-html:  #FB923C; /* Orange-400 */
+  --icon-css:   #22D3EE; /* Cyan-400 */
+  --icon-react: #34D399; /* Emerald-400 */
+  --icon-vue:   #4ADE80; /* Green-400 */
+  --icon-node:  #A3E635; /* Lime-400 */
+  --icon-git:   #F87171; /* Red-400 */
+
+  /* System Status */
+  --icon-success: #4ADE80; /* Green-400 */
+  --icon-warning: #FBBF24; /* Amber-400 */
+  --icon-error:   #F87171; /* Red-400 */
+  --icon-info:    #60A5FA; /* Blue-400 */
+
+  /* Base UI */
+  --icon-primary:   #818CF8; /* Indigo-400 */
+  --icon-secondary: #94A3B8; /* Slate-400 */
+  --icon-muted:     #475569; /* Slate-600 */
 }
 
 /* 4. Tailwind v4 theme tokens (via @theme inline)
@@ -185,6 +241,24 @@
   --color-danger: var(--color-danger);
   --color-danger-soft: var(--color-danger-soft);
   --color-danger-foreground: var(--color-danger-foreground);
+
+  /* Icon colors */
+  --icon-js: var(--icon-js);
+  --icon-ts: var(--icon-ts);
+  --icon-py: var(--icon-py);
+  --icon-html: var(--icon-html);
+  --icon-css: var(--icon-css);
+  --icon-react: var(--icon-react);
+  --icon-vue: var(--icon-vue);
+  --icon-node: var(--icon-node);
+  --icon-git: var(--icon-git);
+  --icon-success: var(--icon-success);
+  --icon-warning: var(--icon-warning);
+  --icon-error: var(--icon-error);
+  --icon-info: var(--icon-info);
+  --icon-primary: var(--icon-primary);
+  --icon-secondary: var(--icon-secondary);
+  --icon-muted: var(--icon-muted);
 
   /* Radii */
   --radius-xs: var(--radius-xs);
@@ -288,3 +362,18 @@ a:hover {
   box-shadow: var(--shadow-xs);
 }
 
+/* Blob animation keyframes (for use with Tailwind config) */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}

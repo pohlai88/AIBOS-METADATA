@@ -1,0 +1,160 @@
+orchestrator:
+  name: "frontend-orchestrator"
+  version: "1.0.0"
+  schema_version: "1.0.0"
+  min_orchestrator_version: "1.0.0"
+  
+  # Environments & Tiers
+  environments:
+    - name: dev
+      allowed_models: ["gpt-4.1-mini", "gpt-4o-mini", "local-llm"]
+      max_concurrent_runs: 3
+      require_human_approval_for: []
+    
+    - name: prod
+      allowed_models: ["gpt-4.1", "claude-3.5"]
+      max_concurrent_runs: 5
+      require_human_approval_for:
+        - "critical_fs_changes"
+        - "schema_migration"
+        - "prod_release"
+  
+  # Human-in-the-Loop (HITL)
+  human_in_the_loop:
+    enabled: true
+    approval_channels:
+      - "slack:#orchestra-review"
+    require_for_tags:
+      - "prod_release"
+      - "schema_migration"
+      - "kernel_touch"
+    timeout_seconds: 3600  # 1 hour for human approval
+    auto_escalate: true
+  
+  # Agent Coordination
+  max_concurrent_agents: 4
+  task_timeout_seconds: 1800  # 30 minutes
+  retry_attempts: 3
+  retry_backoff_strategy: "exponential"  # exponential, linear, fixed
+  retry_backoff_base: 1.0  # seconds
+  
+  # Quality Gate Pipeline (Declarative)
+  quality_pipeline:
+    - id: lint
+      type: static_check
+      required: true
+      timeout_seconds: 60
+      parallel_execution: false
+    - id: unit_tests
+      type: test_suite
+      required: true
+      timeout_seconds: 300
+      parallel_execution: false
+    - id: a11y
+      type: static_check
+      required: false  # turn to true when a11y suite is stable
+      timeout_seconds: 120
+      parallel_execution: false
+    - id: visual_checks
+      type: snapshot_suite
+      required: false
+      timeout_seconds: 180
+      parallel_execution: false
+  
+  # Agent Routing
+  routing:
+    strategy: "capability_based"  # capability_based, round_robin, load_balanced
+    enable_parallel_routing: false  # Sequential for frontend tasks
+    task_classification:
+      enabled: true
+      model: "gpt-4"  # For intent classification
+      fallback: "rule_based"
+  
+  # MCP Governance
+  mcp:
+    manifest_validation: true
+    schema_enforcement: true
+    tool_allocation_strategy: "scope_based"
+    audit_all_invocations: true
+    version_compatibility: "semver"
+  
+  # Persistence & Retention
+  persistence:
+    redis:
+      ttl_seconds:
+        run_state: 3600  # in-flight graphs (1 hour)
+        tool_cache: 900  # MCP tool response cache (15 minutes)
+        agent_session: 1800  # agent session state (30 minutes)
+    postgres:
+      retention_days:
+        runs: 90  # 3 months
+        incidents: 365  # 1 year
+        evaluations: 365
+        audit_logs: 730  # 2 years for compliance
+    replay:
+      enabled: true
+      redacted_fields:
+        - "api_key"
+        - "access_token"
+        - "password"
+        - "secret"
+      store_full_state: true
+  
+  # Observability & Incident Model
+  observability:
+    tracing:
+      enabled: true
+      correlation_id_header: "x-aibos-correlation-id"
+      sample_rate: 0.2  # 20% is plenty
+      backend: "jaeger"  # jaeger, zipkin, datadog
+    
+    metrics:
+      enabled: true
+      namespace: "aibos_frontend_orchestra"
+      key_dimensions:
+        - "agent_id"
+        - "environment"
+        - "tenant_id"
+        - "task_type"
+      backend: "prometheus"  # prometheus, datadog, custom
+  
+  incidents:
+    severities:
+      - id: S1
+        description: "Dangerous or unapproved production change"
+        auto_actions:
+          - "pause_orchestrator"
+          - "require_manual_approval_for_all"
+      - id: S2
+        description: "Repeated quality gate failures or unexpected tool behavior"
+        auto_actions:
+          - "notify:oncall"
+      - id: S3
+        description: "Agent timeout or error"
+        auto_actions:
+          - "retry_with_backoff"
+          - "log_to_incident_db"
+      - id: S4
+        description: "Warning or non-critical issue"
+        auto_actions:
+          - "log_to_metrics"
+  
+  # Health Monitoring
+  health_check:
+    interval_seconds: 30
+    agent_timeout_seconds: 5
+    enable_metrics: true
+    metrics_backend: "prometheus"  # prometheus, datadog, custom
+  
+  # Logging
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+    format: "structured"  # structured, json, text
+    outputs:
+      - "console"
+      - "file"
+    file:
+      path: "logs/orchestrator.log"
+      rotation: "daily"
+      retention_days: 30
+

@@ -61,11 +61,16 @@ next-env.d.ts
 # Keep these files (source code, generated files validated by CI, configs)
 !.mcp/**/server.ts
 !.mcp/**/server.mjs
+!.mcp/**/index.mjs
 !.mcp/**/README.md
 !.mcp/**/package.json
 !.mcp/**/systemPrompt.generated.ts
 !.mcp/**/config.json
 !.mcp/**/scripts/
+!.mcp/**/*.md
+!.mcp/**/COMPLIANCE_REPORT.md
+!.mcp/**/SHARING.md
+!.mcp/**/.gitignore
 
 # IDE
 .vscode/
@@ -97,3 +102,8 @@ storybook-static
 
 # Debug
 .vscode-test/
+
+# Tools build artifacts
+tools/**/dist/
+tools/**/node_modules/
+tools/**/*.tsbuildinfo

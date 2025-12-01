@@ -1,0 +1,210 @@
+# config/agents.frontend.yaml
+
+schema_version: "1.0.0"
+orchestra_id: "frontend_dev_orchestra"
+default_environment: "dev"
+
+agents:
+  - id: orchestra_conductor
+    display_name: "Frontend Orchestra Conductor"
+    role: "Supervises task routing and manages the full multi-agent workflow."
+    environment: "dev"
+    capabilities:
+      - "task_decomposition"
+      - "agent_routing"
+      - "pipeline_coordination"
+    memory:
+      type: "local"
+      window: 20
+    max_steps: 16
+    max_concurrent_tasks: 5
+    forbidden_actions:
+      - "write_application_code"
+      - "modify_auth_config"
+      - "touch_kernel_files"
+    mcp_permissions:
+      allowed_servers:
+        - "next-devtools"
+      denied_servers:
+        - "git"
+        - "shell"
+    quality_responsibilities:
+      - "ensure_quality_pipeline_configured"
+      - "aggregate_agent_reports"
+
+  - id: task_classifier
+    display_name: "Task Classifier"
+    role: "Classifies incoming tasks, tags them, and selects initial agent(s)."
+    environment: "dev"
+    capabilities:
+      - "task_tagging"
+      - "scope_detection"
+    memory:
+      type: "stateless"
+    max_steps: 6
+    max_concurrent_tasks: 5
+    forbidden_actions:
+      - "write_any_code"
+      - "invoke_high_risk_tools"
+    mcp_permissions:
+      allowed_servers: []
+      denied_servers:
+        - "git"
+        - "shell"
+        - "tests-runner"
+    quality_responsibilities:
+      - "assign_initial_tags"
+
+  - id: uiux_designer
+    display_name: "UI/UX Designer"
+    role: "Designs component APIs, UX flows, and ensures design token alignment."
+    environment: "dev"
+    capabilities:
+      - "design_tokens"
+      - "component_api"
+      - "ux_copy"
+      - "wireframe_description"
+    memory:
+      type: "local"
+      window: 10
+    max_steps: 8
+    max_concurrent_tasks: 4
+    forbidden_actions:
+      - "write_server_code"
+      - "modify_auth_config"
+      - "touch_kernel_files"
+      - "change_ci_config"
+    mcp_permissions:
+      allowed_servers:
+        - "next-devtools"
+      denied_servers:
+        - "git"
+        - "shell"
+        - "tests-runner"
+    quality_responsibilities:
+      - "define_component_contract"
+      - "validate_against_design_system"
+
+  - id: code_implementer
+    display_name: "Code Implementer"
+    role: "Implements React components, hooks, and tests according to UX spec."
+    environment: "dev"
+    capabilities:
+      - "react_components"
+      - "story_files"
+      - "unit_test_scaffolding"
+      - "refactor_with_constraints"
+    memory:
+      type: "local"
+      window: 12
+    max_steps: 10
+    max_concurrent_tasks: 3
+    forbidden_actions:
+      - "modify_auth_config"
+      - "touch_kernel_files"
+      - "change_env_files"
+      - "change_ci_config"
+    mcp_permissions:
+      allowed_servers:
+        - "git"
+        - "next-devtools"
+        - "tests-runner"
+      denied_servers:
+        - "shell"
+    quality_responsibilities:
+      - "respect_component_contract"
+      - "ensure_lint_clean"
+      - "attach_minimum_tests"
+
+  - id: a11y_guardian
+    display_name: "A11Y Guardian"
+    role: "Enforces WCAG and safe-mode token usage; flags violations."
+    environment: "dev"
+    capabilities:
+      - "a11y_audit"
+      - "token_validation"
+      - "aria_review"
+    memory:
+      type: "stateless"
+    max_steps: 4
+    max_concurrent_tasks: 4
+    forbidden_actions:
+      - "write_any_application_code"
+      - "modify_auth_config"
+      - "touch_kernel_files"
+    mcp_permissions:
+      allowed_servers:
+        - "next-devtools"
+      denied_servers:
+        - "git"
+        - "shell"
+        - "tests-runner"
+    quality_responsibilities:
+      - "a11y_gate_review"
+      - "safe_mode_token_verification"
+
+  - id: test_conductor
+    display_name: "Test Conductor"
+    role: "Runs lint/tests, interprets results, and feeds back into the pipeline."
+    environment: "dev"
+    capabilities:
+      - "run_lint"
+      - "run_unit_tests"
+      - "summarize_test_failures"
+    memory:
+      type: "local"
+      window: 8
+    max_steps: 8
+    max_concurrent_tasks: 3
+    forbidden_actions:
+      - "modify_auth_config"
+      - "touch_kernel_files"
+      - "change_ci_config"
+    mcp_permissions:
+      allowed_servers:
+        - "tests-runner"
+        - "git"            # for reading diffs only – enforce read-only at tool level
+      denied_servers:
+        - "shell"
+    quality_responsibilities:
+      - "execute_quality_pipeline"
+      - "report_quality_status"
+
+  - id: docs_narrator
+    display_name: "Docs Narrator"
+    role: "Maintains component docs, stories, and developer-facing documentation."
+    environment: "dev"
+    capabilities:
+      - "docs_generation"
+      - "changelog_updates"
+      - "readme_updates"
+    memory:
+      type: "local"
+      window: 10
+    max_steps: 8
+    max_concurrent_tasks: 3
+    forbidden_actions:
+      - "modify_auth_config"
+      - "touch_kernel_files"
+      - "change_ci_config"
+    mcp_permissions:
+      allowed_servers:
+        - "git"
+      denied_servers:
+        - "shell"
+        - "tests-runner"
+    quality_responsibilities:
+      - "update_docs_for_changes"
+      - "sync_with_grcd"
+
+defaults:
+  max_steps: 10
+  max_concurrent_tasks: 3
+  memory:
+    type: "local"
+    window: 10
+  forbidden_actions:
+    - "delete_repo"
+    - "modify_auth_config"
+    - "touch_kernel_files"
+    - "change_ci_config"

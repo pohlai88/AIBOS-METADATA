@@ -1,0 +1,16 @@
+{
+    "name": "@aibos/kernel-finance",
+    "version": "0.1.0",
+    "devDependencies": {
+        "@aibos/config-eslint": "0.1.0",
+        "eslint": "^9.39.1",
+        "typescript": "^5.9.3"
+    },
+    "main": "./src/index.ts",
+    "private": true,
+    "scripts": {
+        "lint": "eslint . --config ../../eslint.config.mjs",
+        "type-check": "tsc --noEmit"
+    },
+    "types": "./src/index.ts"
+}

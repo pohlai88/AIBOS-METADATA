@@ -1,22 +1,20 @@
 // packages/ui/src/lib/cn.ts
-// Class name combiner utility - TypeScript-safe, MCP-ready
+// Class name combiner utility using clsx and tailwind-merge
+// TypeScript-safe, MCP-ready
+
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 /**
- * Combines class names into a single string.
- * Filters out falsy values (false, null, undefined, empty strings).
+ * Combines class names into a single string using clsx and tailwind-merge.
+ * Filters out falsy values and intelligently merges Tailwind classes.
  *
  * @example
+ * cn("px-2 py-1", "px-4") // Returns: "py-1 px-4" (px-2 is overridden)
  * cn("base", condition && "conditional", className)
  * // Returns: "base conditional <className>" or "base <className>"
  */
-export function cn(...inputs: (string | false | null | undefined)[]): string {
-  const result: string[] = [];
-  for (let i = 0; i < inputs.length; i++) {
-    const value = inputs[i];
-    if (typeof value === "string" && value.length > 0) {
-      result.push(value);
-    }
-  }
-  return result.join(" ");
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
 }
 

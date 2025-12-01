@@ -2,41 +2,32 @@
   "mcpServers": {
     "next-devtools": {
       "command": "npx",
-      "args": [
-        "-y",
-        "next-devtools-mcp@latest"
-      ]
+      "args": ["-y", "next-devtools-mcp@latest"]
     },
     "supabase": {
       "url": "https://mcp.supabase.com/mcp"
     },
+    "neon": {
+      "command": "npx",
+      "args": ["-y", "@neondatabase/mcp-server-neon@latest"],
+      "env": {
+        "NEON_API_KEY": "${NEON_API_KEY}"
+      }
+    },
     "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
     },
     "git": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-git@latest"
-      ]
+      "args": ["-y", "mcp-git@latest"]
     },
     "shell": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-shell@latest"
-      ],
+      "args": ["-y", "mcp-shell@latest"],
       "permissions": {
         "allowedCommands": [
           "pnpm install",
@@ -51,59 +42,59 @@
     },
     "playwright": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-playwright@latest"
-      ]
+      "args": ["-y", "mcp-playwright@latest"]
     },
     "react-validation": {
-      "args": [
-        ".mcp/react/server.mjs"
-      ],
+      "args": [".mcp/react/server.mjs"],
       "command": "node"
     },
     "aibos-theme": {
-      "args": [
-        ".mcp/theme/server.mjs"
-      ],
+      "args": [".mcp/theme/server.mjs"],
       "command": "node"
     },
     "aibos-filesystem": {
-      "args": [
-        ".mcp/filesystem/server.mjs"
-      ],
+      "args": [".mcp/filesystem/server.mjs"],
       "command": "node"
     },
     "aibos-documentation": {
       "command": "node",
-      "args": [
-        ".mcp/documentation/server.mjs"
-      ],
+      "args": [".mcp/documentation/server.mjs"],
       "cwd": "D:\\AIBOS-PLATFORM"
     },
     "aibos-ui-generator": {
-      "args": [
-        ".mcp/ui-generator/server.mjs"
-      ],
+      "args": [".mcp/ui-generator/server.mjs"],
       "command": "node"
     },
     "aibos-component-generator": {
-      "args": [
-        ".mcp/component-generator/server.mjs"
-      ],
+      "args": [".mcp/component-generator/server.mjs"],
       "command": "node"
     },
     "aibos-a11y-validation": {
-      "args": [
-        ".mcp/a11y/server.mjs"
-      ],
+      "args": [".mcp/a11y/server.mjs"],
       "command": "node"
     },
     "aibos-convention-validation": {
       "command": "node",
-      "args": [
-        ".mcp/convention-validation/server.mjs"
-      ]
+      "args": [".mcp/convention-validation/server.mjs"]
+    },
+    "aibos-metadata": {
+      "command": "node",
+      "args": [".mcp/metadata/server.mjs"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      }
+    },
+    "aibos-accounting-knowledge": {
+      "command": "node",
+      "args": [".mcp/accounting-knowledge/server.mjs"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      }
+    },
+    "aibos-design-elegance-validator": {
+      "command": "node",
+      "args": [".mcp/design-elegance-validator/server.mjs"],
+      "cwd": "."
     }
   }
 }

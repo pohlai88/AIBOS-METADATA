@@ -1,0 +1,61 @@
+# config/mcp-servers.core.yaml
+
+schema_version: "1.0.0"
+orchestra_id: "frontend_dev_orchestra"
+
+servers:
+  - id: next-devtools
+    kind: "local"
+    command: "npx"
+    args:
+      - "-y"
+      - "next-devtools-mcp@latest"
+    capabilities:
+      - "inspect_components"
+      - "read_routes"
+      - "inspect_props"
+    risk: "medium"
+    notes: "Read-only introspection of the Next.js app; no file writes."
+
+  - id: git
+    kind: "local"
+    command: "npx"
+    args:
+      - "-y"
+      - "mcp-git@latest"
+    capabilities:
+      - "read_repo"
+      - "write_repo"
+      - "create_branch"
+    risk: "high"
+    notes: >
+      All write operations must be constrained via higher-level policies
+      (branches only, no force-push, no delete).
+
+  - id: tests-runner
+    kind: "local"
+    command: "npx"
+    args:
+      - "-y"
+      - "mcp-tests@latest"
+    capabilities:
+      - "run_unit_tests"
+      - "run_lint"
+    risk: "medium"
+    notes: "Executes test/lint commands in a sandboxed environment."
+
+  # Example remote MCP – wire later when needed
+  # - id: supabase
+  #   kind: "remote"
+  #   url: "https://mcp.supabase.com/mcp"
+  #   capabilities:
+  #     - "read_schema"
+  #     - "run_sql_readonly"
+  #   risk: "high"
+  #   notes: "Expose only read-only operations to this orchestra."
+
+defaults:
+  retry_policy:
+    max_retries: 2
+    backoff_seconds: 5
+  timeout_seconds: 300
