@@ -9,19 +9,27 @@
  *   <Typography variant="body" color="text-muted">Description text</Typography>
  *   <Typography variant="caption" as="span" className="ml-2">Metadata</Typography>
  *
- * Type Scale:
+ * Type Scale Constitution (~1.25 ratio from 16px base):
+ *   - hero: 6xl (60px) - Marketing hero
+ *   - display: 5xl (48px) - Display headings
  *   - h1: 3xl (30px) - Page titles
  *   - h2: 2xl (24px) - Section headings
  *   - h3: xl (20px) - Subsection headings
- *   - subtitle: lg (18px) - Subtitles, important text
+ *   - h4: lg (18px) - Card titles
+ *   - h5: base (16px) - Small headings
+ *   - h6: sm (14px) - Micro headings
+ *   - subtitle: lg (18px) - Subtitles
  *   - body: base (16px) - Default body text
- *   - caption: sm (14px) - Small text, metadata
+ *   - caption: xs (12px) - Small text, metadata
  */
 
 import { type HTMLAttributes } from "react";
 import { cn } from "@aibos/ui/utils/cn";
 
-type TypographyVariant = "h1" | "h2" | "h3" | "subtitle" | "body" | "caption";
+type TypographyVariant = 
+  | "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+  | "subtitle" | "body" | "caption"
+  | "display" | "hero";
 type TypographyColor =
   | "text-fg" // Default foreground (was text-base)
   | "text-fg-muted" // Muted foreground
@@ -80,20 +88,39 @@ export function Typography({
   ...props
 }: TypographyProps) {
   // Infer semantic HTML element from variant if not specified
-  const Component =
-    as || (variant.startsWith("h") ? (variant as TypographyElement) : "p");
+  const getDefaultElement = (): TypographyElement => {
+    if (variant.startsWith("h")) return variant as TypographyElement;
+    if (variant === "hero" || variant === "display") return "h1";
+    if (variant === "subtitle") return "p";
+    if (variant === "body") return "p";
+    if (variant === "caption") return "span";
+    return "p";
+  };
+  
+  const Component = as || getDefaultElement();
 
   // Base classes for all typography
   const baseClasses = "antialiased leading-tight";
 
   // Variant-specific styles (using design tokens from tailwind.config.ts)
+  // Type Scale Constitution: ~1.25 ratio from 16px base
   const variantStyles: Record<TypographyVariant, string> = {
-    h1: "text-3xl font-bold tracking-tight",
-    h2: "text-2xl font-semibold tracking-tight",
-    h3: "text-xl font-medium tracking-tight",
-    subtitle: "text-lg font-medium",
-    body: "text-base font-normal leading-relaxed",
-    caption: "text-sm font-normal text-fg-muted",
+    // Display & Hero (Marketing)
+    hero: "text-6xl font-extrabold tracking-tight",      // 60px - Marketing hero
+    display: "text-5xl font-bold tracking-tight",        // 48px - Hero headings
+    
+    // Semantic Headings
+    h1: "text-3xl font-bold tracking-tight",             // 30px - Page titles
+    h2: "text-2xl font-semibold tracking-tight",         // 24px - Section headings
+    h3: "text-xl font-medium tracking-tight",            // 20px - Subsection headings
+    h4: "text-lg font-medium tracking-tight",            // 18px - Card titles
+    h5: "text-base font-medium tracking-tight",          // 16px - Small headings
+    h6: "text-sm font-medium tracking-tight",            // 14px - Micro headings
+    
+    // Body Text
+    subtitle: "text-lg font-medium leading-relaxed",     // 18px - Subtitles
+    body: "text-base font-normal leading-relaxed",       // 16px - Body text
+    caption: "text-xs font-normal text-fg-muted",        // 12px - Small text
   };
 
   // Color styles (using design tokens)
