@@ -1,379 +1,325 @@
 /**
- * AIBOS Design System - Tailwind CSS v4.0 Full Implementation
+ * ============================================
+ * AIBOS DESIGN SYSTEM - Tailwind CSS v4
+ * ============================================
  * 
- * This CSS leverages ALL Tailwind v4 features:
- * - @theme directive for CSS-first configuration
- * - @layer for custom utilities
- * - @variant for custom state modifiers
- * - Container queries
- * - 3D transforms
- * - Advanced gradients
- * - Enter/exit transitions
- * - Dynamic utility values
- * - And much more!
+ * Based on official v4 patterns from:
+ * - https://tailwindcss.com/docs/installation/using-postcss
+ * - Real-world monorepo: turbo-with-tailwind-v4
  * 
- * Reference: https://tailwindcss.com/blog/tailwindcss-v4
+ * Philosophy:
+ * 1. @import "tailwindcss" - Single import
+ * 2. @theme - Auto-generates utilities from tokens
+ * 3. OKLCH colors - Perceptually uniform, human-readable
+ * 4. Minimal config - Most logic lives here, not in JS
  */
 
-/* ============================================ */
-/* LAYER 1: IMPORT TAILWIND                    */
-/* ============================================ */
 @import "tailwindcss";
 
 /* ============================================ */
-/* LAYER 2: @THEME - CSS-FIRST CONFIGURATION   */
-/* Dynamic utilities generated automatically!  */
+/* CUSTOM VARIANTS                             */
 /* ============================================ */
+
+/**
+ * Dark mode variant
+ * Usage: dark:bg-primary, dark:text-white
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/**
+ * Combined hover + focus
+ * Usage: hocus:scale-105
+ */
+@custom-variant hocus (&:hover, &:focus);
+
+/* ============================================ */
+/* @THEME - Auto-Generated Utilities           */
+/* These tokens automatically become utilities */
+/* ============================================ */
+
 @theme {
-  /* ===== SPACING SCALE (8-Point Grid) ===== */
-  /* Generates: p-*, m-*, gap-*, space-*, etc. */
-  --spacing-1: 0.25rem;   /* 4px */
+  /* ========================================== */
+  /* COLOR SYSTEM - OKLCH Format               */
+  /* Generated with: https://www.colorpalett.es/ */
+  /* ========================================== */
+  
+  /**
+   * Primary Color Scale
+   * Usage: bg-primary-500, text-primary-700, etc.
+   */
+  --color-primary-50: oklch(0.95 0.02 250);
+  --color-primary-100: oklch(0.90 0.05 250);
+  --color-primary-200: oklch(0.80 0.10 250);
+  --color-primary-300: oklch(0.70 0.15 250);
+  --color-primary-400: oklch(0.65 0.20 250);
+  --color-primary-500: oklch(0.62 0.25 250);   /* Default */
+  --color-primary-600: oklch(0.55 0.27 250);
+  --color-primary-700: oklch(0.48 0.25 250);
+  --color-primary-800: oklch(0.40 0.20 250);
+  --color-primary-900: oklch(0.30 0.15 250);
+  --color-primary-950: oklch(0.20 0.10 250);
+
+  /**
+   * Semantic Colors
+   * Usage: bg-success, text-danger, border-warning
+   */
+  --color-success: oklch(0.65 0.20 150);
+  --color-warning: oklch(0.75 0.18 70);
+  --color-danger: oklch(0.60 0.24 25);
+  --color-info: oklch(0.65 0.15 230);
+
+  /**
+   * Metadata Domain Colors
+   * Usage: bg-metadata-glossary, text-metadata-lineage
+   */
+  --color-metadata-glossary: oklch(0.60 0.18 250);
+  --color-metadata-lineage: oklch(0.62 0.20 280);
+  --color-metadata-quality: oklch(0.58 0.16 200);
+  --color-metadata-governance: oklch(0.55 0.14 150);
+  --color-metadata-tags: oklch(0.64 0.12 180);
+  --color-metadata-kpi: oklch(0.68 0.16 120);
+
+  /**
+   * Finance Domain Colors (IFRS/MFRS)
+   * Usage: text-finance-revenue, bg-finance-asset
+   */
+  --color-finance-revenue: oklch(0.65 0.20 150);
+  --color-finance-expense: oklch(0.62 0.22 25);
+  --color-finance-asset: oklch(0.60 0.16 220);
+  --color-finance-liability: oklch(0.58 0.18 40);
+  --color-finance-equity: oklch(0.66 0.14 280);
+
+  /**
+   * Governance Tiers
+   * Usage: bg-tier-1, border-tier-2
+   */
+  --color-tier-1: oklch(0.60 0.24 25);    /* Critical - Red */
+  --color-tier-2: oklch(0.70 0.18 70);    /* High - Orange */
+  --color-tier-3: oklch(0.75 0.12 120);   /* Medium - Yellow */
+  --color-tier-4: oklch(0.65 0.10 200);   /* Low - Blue */
+
+  /* ========================================== */
+  /* TYPOGRAPHY - Type Scale (1.25 ratio)      */
+  /* Usage: text-xs, text-3xl, text-display    */
+  /* ========================================== */
+  
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px - Body text */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px - H2 */
+  --font-size-3xl: 1.875rem;    /* 30px - H1 */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px - Display */
+  --font-size-6xl: 3.75rem;     /* 60px - Hero */
+
+  /* ========================================== */
+  /* SPACING - 8-Point Grid                    */
+  /* Usage: p-4, m-6, gap-8                    */
+  /* ========================================== */
+  
+  --spacing-1: 0.25rem;   /* 4px - Micro spacing */
   --spacing-2: 0.5rem;    /* 8px */
   --spacing-3: 0.75rem;   /* 12px */
-  --spacing-4: 1rem;      /* 16px */
+  --spacing-4: 1rem;      /* 16px - Base unit */
   --spacing-5: 1.5rem;    /* 24px */
-  --spacing-6: 2rem;      /* 32px */
+  --spacing-6: 2rem;      /* 32px - Section spacing */
   --spacing-7: 2.5rem;    /* 40px */
   --spacing-8: 3rem;      /* 48px */
   --spacing-10: 4rem;     /* 64px */
-  --spacing-12: 6rem;     /* 96px */
+  --spacing-12: 6rem;     /* 96px - Large gaps */
 
-  /* ===== TYPOGRAPHY SCALE ===== */
-  --font-size-xs: 0.75rem;     /* 12px */
-  --font-size-sm: 0.875rem;    /* 14px */
-  --font-size-base: 1rem;      /* 16px */
-  --font-size-lg: 1.125rem;    /* 18px */
-  --font-size-xl: 1.25rem;     /* 20px */
-  --font-size-2xl: 1.5rem;     /* 24px */
-  --font-size-3xl: 1.875rem;   /* 30px */
-  --font-size-4xl: 2.25rem;    /* 36px */
-  --font-size-5xl: 3rem;       /* 48px */
-  --font-size-6xl: 3.75rem;    /* 60px */
+  /* ========================================== */
+  /* ELEVATION - Shadow System                 */
+  /* Usage: shadow-raised, shadow-floating     */
+  /* ========================================== */
+  
+  --shadow-raised: 0 1px 3px oklch(0 0 0 / 0.1);
+  --shadow-floating: 0 4px 6px oklch(0 0 0 / 0.1);
+  --shadow-overlay: 0 10px 15px oklch(0 0 0 / 0.1);
+  --shadow-high: 0 20px 25px oklch(0 0 0 / 0.1);
 
-  /* ===== LAYOUT SCALE ===== */
-  --layout-max-width-sm: 640px;
-  --layout-max-width-md: 768px;
-  --layout-max-width-lg: 1024px;
-  --layout-max-width-xl: 1280px;
-  --layout-max-width-2xl: 1536px;
-  --layout-sidebar-width: 280px;
+  /* ========================================== */
+  /* MOTION - Animation Tokens                 */
+  /* Usage: duration-fast, ease-standard       */
+  /* ========================================== */
+  
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 280ms;
 
-  /* ===== MOTION TOKENS ===== */
-  --motion-duration-fast: 120ms;
-  --motion-duration-normal: 200ms;
-  --motion-duration-slow: 280ms;
-  --motion-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --motion-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  /* ========================================== */
+  /* LAYOUT - Max Widths & Container Queries   */
+  /* Usage: max-w-lg, @sm:grid-cols-2          */
+  /* ========================================== */
+  
+  --container-sm: 24rem;      /* 384px */
+  --container-md: 28rem;      /* 448px */
+  --container-lg: 32rem;      /* 512px */
+  --container-xl: 36rem;      /* 576px */
+  --container-2xl: 42rem;     /* 672px */
 
-  /* ===== CONTAINER QUERY BREAKPOINTS ===== */
-  --container-xs: 20rem;
-  --container-sm: 24rem;
-  --container-md: 28rem;
-  --container-lg: 32rem;
-  --container-xl: 36rem;
-  --container-2xl: 42rem;
+  /* ========================================== */
+  /* 3D TRANSFORMS - Perspective              */
+  /* Usage: perspective-normal                 */
+  /* ========================================== */
+  
+  --perspective-normal: 1000px;
+  --perspective-distant: 1500px;
 }
 
 /* ============================================ */
-/* LAYER 3: DESIGN TOKENS (CSS VARIABLES)      */
-/* These are NOT in @theme to keep them        */
-/* separate from Tailwind's automatic          */
-/* utility generation                          */
+/* BASE LAYER - Semantic Tokens & Dark Mode    */
 /* ============================================ */
 
-:root {
-  /* ===== CORE COLORS (RGB for color-mix() support) ===== */
-  --color-primary-rgb: 59 130 246;
-  --color-primary-hover-rgb: 37 99 235;
-  --color-success-rgb: 16 185 129;
-  --color-warning-rgb: 245 158 11;
-  --color-danger-rgb: 239 68 68;
-  --color-info-rgb: 14 165 233;
-  
-  /* ===== TEXT COLORS ===== */
-  --color-text-base: 17 24 39;
-  --color-text-muted: 107 114 128;
-  --color-text-subtle: 156 163 175;
-  
-  /* ===== BACKGROUND COLORS ===== */
-  --color-background-base: 255 255 255;
-  --color-background-subtle: 249 250 251;
-  --color-background-muted: 243 244 246;
-  
-  /* ===== BORDER COLORS ===== */
-  --color-border-base: 229 231 235;
-  --color-border-muted: 243 244 246;
-  
-  /* ===== METADATA COLORS ===== */
-  --color-metadata-glossary: 59 130 246;
-  --color-metadata-lineage: 139 92 246;
-  --color-metadata-quality: 16 185 129;
-  --color-metadata-governance: 245 158 11;
-  --color-metadata-tags: 236 72 153;
-  --color-metadata-kpi: 14 165 233;
-  
-  /* ===== FINANCE COLORS ===== */
-  --color-finance-revenue: 16 185 129;
-  --color-finance-expense: 239 68 68;
-  --color-finance-asset: 59 130 246;
-  --color-finance-liability: 245 158 11;
-  --color-finance-equity: 139 92 246;
-  
-  /* ===== TIER COLORS ===== */
-  --color-tier-1: 239 68 68;
-  --color-tier-2: 245 158 11;
-  --color-tier-3: 59 130 246;
-  --color-tier-4: 107 114 128;
-  
-  /* ===== ELEVATION (SHADOWS) ===== */
-  --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-floating: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-high: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+@layer base {
+  /**
+   * Light Theme (Default)
+   */
+  :root {
+    /* Semantic color mappings */
+    --color-text: oklch(0.20 0 0);              /* Near black */
+    --color-text-muted: oklch(0.45 0 0);        /* Gray */
+    --color-text-subtle: oklch(0.60 0 0);       /* Light gray */
+    --color-background: oklch(1 0 0);           /* White */
+    --color-background-subtle: oklch(0.98 0 0); /* Off-white */
+    --color-background-muted: oklch(0.95 0 0);  /* Light gray bg */
+    --color-border: oklch(0.88 0 0);            /* Border gray */
+    --color-border-muted: oklch(0.92 0 0);      /* Subtle border */
+
+    /* System preference */
+    color-scheme: light;
+  }
+
+  /**
+   * Dark Theme
+   * Applied when <html class="dark">
+   */
+  .dark {
+    /* Semantic color overrides */
+    --color-text: oklch(0.95 0 0);              /* Near white */
+    --color-text-muted: oklch(0.65 0 0);        /* Light gray */
+    --color-text-subtle: oklch(0.50 0 0);       /* Darker gray */
+    --color-background: oklch(0.15 0 0);        /* Near black */
+    --color-background-subtle: oklch(0.18 0 0); /* Slightly lighter */
+    --color-background-muted: oklch(0.22 0 0);  /* Card background */
+    --color-border: oklch(0.30 0 0);            /* Border gray */
+    --color-border-muted: oklch(0.25 0 0);      /* Subtle border */
+
+    /* System preference */
+    color-scheme: dark;
+  }
+
+  /**
+   * Body defaults
+   */
+  body {
+    color: var(--color-text);
+    background-color: var(--color-background);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /**
+   * Typography base
+   */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-text);
+  }
 }
 
 /* ============================================ */
-/* LAYER 4: DARK THEME OVERRIDES               */
-/* ============================================ */
-
-.dark {
-  /* Core Colors - Lighter for dark mode */
-  --color-primary-rgb: 96 165 250;
-  --color-primary-hover-rgb: 59 130 246;
-  
-  /* Text Colors - Inverted */
-  --color-text-base: 243 244 246;
-  --color-text-muted: 156 163 175;
-  --color-text-subtle: 107 114 128;
-  
-  /* Background Colors - Inverted */
-  --color-background-base: 17 24 39;
-  --color-background-subtle: 31 41 55;
-  --color-background-muted: 55 65 81;
-  
-  /* Border Colors - Inverted */
-  --color-border-base: 75 85 99;
-  --color-border-muted: 55 65 81;
-  
-  /* Shadows - Darker in dark mode */
-  --shadow-raised: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.2);
-  --shadow-floating: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.2);
-  --shadow-overlay: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-  --shadow-high: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
-  
-  /* Metadata Colors - Adjusted */
-  --color-metadata-glossary: 96 165 250;
-  --color-metadata-lineage: 167 139 250;
-  --color-metadata-quality: 52 211 153;
-  --color-metadata-governance: 251 191 36;
-  --color-metadata-tags: 244 114 182;
-  --color-metadata-kpi: 56 189 248;
-  
-  /* Finance Colors - Adjusted */
-  --color-finance-revenue: 52 211 153;
-  --color-finance-expense: 248 113 113;
-  --color-finance-asset: 96 165 250;
-  --color-finance-liability: 251 191 36;
-  --color-finance-equity: 167 139 250;
-
-  /* Native scrollbar theming (NEW v4 feature!) */
-  color-scheme: dark;
-}
-
-/* Light mode scrollbar */
-:root {
-  color-scheme: light;
-}
-
-/* ============================================ */
-/* LAYER 5: @VARIANT - CUSTOM STATE MODIFIERS  */
-/* Create your own variants like hover:, dark: */
-/* ============================================ */
-
-/* Both hover AND focus */
-@variant hocus (&:hover, &:focus);
-@variant group-hocus (.group:hover &, .group:focus &);
-
-/* Data attribute variants */
-@variant data-active (&[data-active="true"]);
-@variant data-inactive (&[data-active="false"]);
-@variant data-current (&[data-current="true"]);
-
-/* Financial states */
-@variant data-positive (&[data-positive="true"]);
-@variant data-negative (&[data-negative="true"]);
-@variant data-neutral (&[data-neutral="true"]);
-
-/* Metadata tier variants */
-@variant tier-1 (&[data-tier="1"]);
-@variant tier-2 (&[data-tier="2"]);
-@variant tier-3 (&[data-tier="3"]);
-@variant tier-4 (&[data-tier="4"]);
-
-/* ARIA states */
-@variant aria-selected (&[aria-selected="true"]);
-@variant aria-expanded (&[aria-expanded="true"]);
-@variant aria-invalid (&[aria-invalid="true"]);
-
-/* ============================================ */
-/* LAYER 6: @LAYER UTILITIES                   */
-/* Custom utilities that work with variants    */
+/* UTILITIES LAYER - Custom Utilities          */
 /* ============================================ */
 
 @layer utilities {
-  /* ===== TEXT EFFECTS ===== */
-  
-  /* Gradient text */
-  .text-gradient {
-    background: linear-gradient(to right, rgb(var(--color-primary-rgb)), rgb(var(--color-success-rgb)));
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  .text-gradient-finance {
-    background: linear-gradient(135deg, 
-      rgb(var(--color-finance-revenue)),
-      rgb(var(--color-finance-asset))
-    );
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  .text-gradient-metadata {
-    background: linear-gradient(135deg,
-      rgb(var(--color-metadata-glossary)),
-      rgb(var(--color-metadata-lineage)),
-      rgb(var(--color-metadata-quality))
-    );
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  /* ===== GLASSMORPHISM ===== */
-  
+  /**
+   * Glassmorphism effect
+   * Usage: class="glass"
+   */
   .glass {
     backdrop-filter: blur(12px);
-    background-color: color-mix(in srgb, rgb(var(--color-background-base)) 80%, transparent);
-    border: 1px solid color-mix(in srgb, rgb(var(--color-border-base)) 30%, transparent);
+    background-color: oklch(1 0 0 / 0.8);
+    border: 1px solid oklch(0 0 0 / 0.1);
   }
-  
-  .glass-strong {
-    backdrop-filter: blur(24px);
-    background-color: color-mix(in srgb, rgb(var(--color-background-base)) 90%, transparent);
-    border: 1px solid color-mix(in srgb, rgb(--color-border-base) 50%, transparent);
+
+  .dark .glass {
+    background-color: oklch(0.15 0 0 / 0.8);
+    border-color: oklch(1 1 1 / 0.1);
   }
-  
-  /* ===== TRUNCATE WITH FADE ===== */
-  
-  .truncate-fade {
-    position: relative;
-    overflow: hidden;
-    
-    &::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      width: 3rem;
-      background: linear-gradient(to right, transparent, rgb(var(--color-background-base)));
-    }
+
+  /**
+   * Text gradients
+   * Usage: class="text-gradient"
+   */
+  .text-gradient {
+    background: linear-gradient(
+      to right,
+      oklch(0.62 0.25 250),
+      oklch(0.65 0.20 150)
+    );
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  
-  /* ===== FINANCE UTILITIES ===== */
-  
-  .finance-positive {
-    color: rgb(var(--color-finance-revenue));
-    font-weight: 600;
-    
-    &::before {
-      content: "+";
-      margin-right: 0.125rem;
-    }
+
+  .text-gradient-finance {
+    background: linear-gradient(
+      135deg,
+      oklch(0.65 0.20 150),
+      oklch(0.60 0.16 220)
+    );
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  
-  .finance-negative {
-    color: rgb(var(--color-finance-expense));
-    font-weight: 600;
-    
-    &::before {
-      content: "-";
-      margin-right: 0.125rem;
-    }
+
+  .text-gradient-metadata {
+    background: linear-gradient(
+      135deg,
+      oklch(0.60 0.18 250),
+      oklch(0.62 0.20 280),
+      oklch(0.58 0.16 200)
+    );
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  
-  .finance-neutral {
-    color: rgb(var(--color-text-muted));
-    font-weight: 500;
-  }
-  
-  /* ===== METADATA BADGES ===== */
-  
-  .metadata-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 1;
-  }
-  
-  .metadata-badge-glossary {
-    background-color: color-mix(in srgb, rgb(var(--color-metadata-glossary)) 10%, transparent);
-    color: rgb(var(--color-metadata-glossary));
-  }
-  
-  .metadata-badge-tier-1 {
-    background-color: color-mix(in srgb, rgb(var(--color-tier-1)) 10%, transparent);
-    color: rgb(var(--color-tier-1));
-    border: 1px solid color-mix(in srgb, rgb(var(--color-tier-1)) 30%, transparent);
-  }
-  
-  /* ===== 3D CARD EFFECTS (NEW V4 FEATURE!) ===== */
-  
+
+  /**
+   * 3D card effects
+   * Usage: class="card-3d"
+   */
   .card-3d {
     transform-style: preserve-3d;
-    perspective: 1000px;
-    transition: transform var(--motion-duration-normal) var(--motion-ease-standard);
-    
-    &:hover {
-      transform: rotateX(5deg) rotateY(-5deg) translateY(-4px);
-    }
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
+  .card-3d:hover {
+    transform: rotateX(5deg) rotateY(-5deg);
+  }
+
   .card-3d-content {
-    transform: translateZ(50px);
+    transform: translateZ(30px);
   }
-  
-  /* ===== GRID TEMPLATES ===== */
-  
-  .grid-dashboard {
-    display: grid;
-    grid-template-columns: var(--layout-sidebar-width) 1fr;
-    grid-template-rows: auto 1fr auto;
-    gap: var(--spacing-4);
+
+  /**
+   * Perspective containers
+   * Usage: class="perspective-normal"
+   */
+  .perspective-normal {
+    perspective: var(--perspective-normal);
   }
-  
-  .grid-metadata-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--spacing-4);
+
+  .perspective-distant {
+    perspective: var(--perspective-distant);
   }
-  
-  .grid-kpi {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-6);
-    
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  /* ===== ANIMATIONS ===== */
-  
+
+  /**
+   * Custom animations
+   */
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -384,77 +330,32 @@
       transform: translateY(0);
     }
   }
-  
-  @keyframes slide-in-right {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
+
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 5px color-mix(in srgb, rgb(var(--color-primary-rgb)) 50%, transparent);
+      box-shadow: 0 0 10px oklch(0.62 0.25 250 / 0.3);
     }
     50% {
-      box-shadow: 0 0 20px rgb(var(--color-primary-rgb));
+      box-shadow: 0 0 20px oklch(0.62 0.25 250 / 0.6);
     }
   }
-  
+
   .animate-fade-in {
     animation: fade-in 0.5s ease-out;
   }
-  
-  .animate-slide-in-right {
-    animation: slide-in-right 0.5s ease-out;
-  }
-  
+
   .animate-pulse-glow {
     animation: pulse-glow 2s infinite;
   }
-  
-  /* ===== SCROLL SNAP ===== */
-  
-  .snap-container {
-    scroll-snap-type: x mandatory;
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
-  
-  .snap-item {
-    scroll-snap-align: start;
-  }
 }
 
 /* ============================================ */
-/* LAYER 7: BASE STYLES                        */
+/* ACCESSIBILITY                               */
 /* ============================================ */
 
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: var(--font-size-base);
-  line-height: 1.5;
-  color: rgb(var(--color-text-base));
-  background-color: rgb(var(--color-background-base));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ============================================ */
-/* LAYER 8: ACCESSIBILITY                      */
-/* ============================================ */
-
-/* Focus visible for keyboard navigation */
-*:focus-visible {
-  outline: 2px solid rgb(var(--color-primary-rgb));
-  outline-offset: 2px;
-}
-
-/* Reduced motion preferences */
+/**
+ * Respect user's motion preferences
+ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -465,3 +366,10 @@ body {
   }
 }
 
+/**
+ * Focus visible styles
+ */
+*:focus-visible {
+  outline: 2px solid oklch(0.62 0.25 250);
+  outline-offset: 2px;
+}
