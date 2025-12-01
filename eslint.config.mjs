@@ -63,5 +63,6 @@ export default defineConfig([
     "*.config.mjs",
     "*.config.ts",
     "next-env.d.ts",
+    "docs/archive/**",
   ]),
 ]);

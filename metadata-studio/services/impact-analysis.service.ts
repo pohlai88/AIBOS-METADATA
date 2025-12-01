@@ -6,7 +6,7 @@
 import { lineageService } from './lineage.service';
 import { metadataRepo } from '../db/metadata.repo';
 
-interface ImpactAnalysisResult {
+export interface ImpactAnalysisResult {
   entityId: string;
   impactedEntities: Array<{
     id: string;
@@ -30,7 +30,7 @@ export const impactAnalysisService = {
         .filter(node => node.entityId !== entityId)
         .map(async node => {
           const metadata = await metadataRepo.findById(node.entityId);
-          const impactLevel = node.level <= 2 ? 'high' : node.level <= 5 ? 'medium' : 'low';
+          const impactLevel: 'high' | 'medium' | 'low' = node.level <= 2 ? 'high' : node.level <= 5 ? 'medium' : 'low';
           
           return {
             id: node.entityId,

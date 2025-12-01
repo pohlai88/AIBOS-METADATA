@@ -14,12 +14,9 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@aibos/ui/*": ["./packages/ui/src/*"],
-      "@aibos/utils/*": ["./packages/utils/src/*"],
-      "@aibos/types/*": ["./packages/types/src/*"],
-      "@aibos/kernel-finance/*": ["./packages/kernel-finance/src/*"]
+      "@aibos/types/*": ["./packages/types/src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".next", "dist", ".mcp"]
+  "exclude": ["node_modules", ".next", "dist", ".mcp", "docs/archive/**"]
 }
