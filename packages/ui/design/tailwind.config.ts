@@ -156,30 +156,30 @@ const config: Config = {
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
         xl: "var(--shadow-xl)",
-        
+
         // Semantic elevation shadows
-        raised: "var(--shadow-raised)",       // Cards, raised surfaces
-        floating: "var(--shadow-floating)",   // Dropdowns, popovers
-        overlay: "var(--shadow-overlay)",     // Modals, dialogs
-        high: "var(--shadow-high)",           // Highest elevation
+        raised: "var(--shadow-raised)", // Cards, raised surfaces
+        floating: "var(--shadow-floating)", // Dropdowns, popovers
+        overlay: "var(--shadow-overlay)", // Modals, dialogs
+        high: "var(--shadow-high)", // Highest elevation
       },
-      
+
       // Motion durations (time layer constitution)
       transitionDuration: {
-        instant: "var(--motion-duration-instant)",   // 50ms
-        fast: "var(--motion-duration-fast)",         // 120ms
-        normal: "var(--motion-duration-normal)",     // 200ms (default)
-        slow: "var(--motion-duration-slow)",         // 280ms
-        slower: "var(--motion-duration-slower)",     // 400ms
+        instant: "var(--motion-duration-instant)", // 50ms
+        fast: "var(--motion-duration-fast)", // 120ms
+        normal: "var(--motion-duration-normal)", // 200ms (default)
+        slow: "var(--motion-duration-slow)", // 280ms
+        slower: "var(--motion-duration-slower)", // 400ms
       },
-      
+
       // Motion easing (time layer constitution)
       transitionTimingFunction: {
-        standard: "var(--motion-ease-standard)",     // cubic-bezier(0.4, 0, 0.2, 1)
-        in: "var(--motion-ease-in)",                 // Deceleration
-        out: "var(--motion-ease-out)",               // Acceleration
-        "in-out": "var(--motion-ease-in-out)",       // Both
-        bounce: "var(--motion-ease-bounce)",         // Bounce effect
+        standard: "var(--motion-ease-standard)", // cubic-bezier(0.4, 0, 0.2, 1)
+        in: "var(--motion-ease-in)", // Deceleration
+        out: "var(--motion-ease-out)", // Acceleration
+        "in-out": "var(--motion-ease-in-out)", // Both
+        bounce: "var(--motion-ease-bounce)", // Bounce effect
       },
 
       // Max-width (layout constitution)
