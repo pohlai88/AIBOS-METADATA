@@ -1,5 +1,5 @@
 // metadata-studio/middleware/auth.middleware.ts
-import type { MiddlewareHandler } from 'hono';
+import type { MiddlewareHandler, Context } from 'hono';
 
 export type Role =
   | 'kernel_architect'
@@ -11,6 +11,21 @@ export interface AuthContext {
   userId: string;
   role: Role;
   tenantId: string;
+}
+
+// Hono Variables type for typed context.get()
+export type AppVariables = {
+  auth: AuthContext;
+};
+
+// Helper type for route handlers
+export type AppContext = Context<{ Variables: AppVariables }>;
+
+/**
+ * Get auth from context with proper typing
+ */
+export function getAuth(c: Context): AuthContext {
+  return c.get('auth' as any) as AuthContext;
 }
 
 /**
@@ -39,7 +54,7 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
     role,
   };
 
-  c.set('auth', auth);
+  (c as any).set('auth', auth);
 
   await next();
 };

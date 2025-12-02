@@ -1,17 +1,8 @@
 /**
- * SDK Documentation Page (WITH Design System - 6 Constitutions Applied!)
+ * SDK Documentation Page
  *
- * ✅ IMPROVEMENTS from design system:
- * - Typography components (H2, H3, Body, Caption)
- * - Semantic colors (bg-primary, text-fg, finance tokens)
- * - 8-point grid spacing (p-6, gap-6, space-y-4)
- * - Elevation tokens (shadow-raised, shadow-floating)
- * - Layout components (CenteredContent, GridLayout)
- * - Motion tokens (duration-fast hover transitions)
+ * MVP Version - Simplified without controlled vocabulary SDK
  */
-
-import { SDK_VERSION, SDK_METADATA, OPENMETADATA_SCHEMA_VERSION } from "@aibos/metadata-studio";
-// import { CONTROLLED_VOCABULARY } from "@aibos/types";
 
 // Typography Constitution
 import { H2, H3, Body, Caption } from "@/components/Typography";
@@ -19,22 +10,32 @@ import { H2, H3, Body, Caption } from "@/components/Typography";
 // Layout Constitution
 import { CenteredContent, GridLayout } from "@/components/Layouts";
 
+// SDK Version (hardcoded for MVP)
+const SDK_VERSION = {
+  major: 1,
+  minor: 0,
+  patch: 0,
+  full: "1.0.0",
+  compatible: "^1.0.0",
+};
+
+const OPENMETADATA_SCHEMA_VERSION = "1.4.0";
+
 export default function SDKPage() {
   return (
     <CenteredContent maxWidth="2xl" padding={8}>
       <div className="space-y-8">
-        
         {/* Page Header */}
         <div className="space-y-2">
-          <H2>Controlled Vocabulary SDK</H2>
+          <H2>Metadata SDK</H2>
           <Body color="text-fg-muted">
-            Versioned SDK for consistent business terminology across all applications
+            Versioned SDK for consistent business terminology across all
+            applications
           </Body>
         </div>
 
         {/* SDK Info Card - Hero Banner */}
-        {/* Using semantic primary color gradient */}
-        <div className="rounded-lg bg-gradient-to-br from-primary to-primary-hover p-8 text-white shadow-overlay">
+        <div className="rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 p-8 text-white shadow-xl">
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-4">
               <H3 className="text-white">Current Version</H3>
@@ -45,12 +46,14 @@ export default function SDKPage() {
             </div>
             <div className="space-y-4">
               <H3 className="text-white">OpenMetadata Compatible</H3>
-              <div className="text-5xl font-bold">v{OPENMETADATA_SCHEMA_VERSION}</div>
+              <div className="text-5xl font-bold">
+                v{OPENMETADATA_SCHEMA_VERSION}
+              </div>
               <a
                 href="https://open-metadata.org/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-white/80 hover:text-white transition-colors duration-fast"
+                className="inline-block text-white/80 hover:text-white transition-colors"
               >
                 Learn more →
               </a>
@@ -58,22 +61,18 @@ export default function SDKPage() {
           </div>
         </div>
 
-        {/* Statistics - Using GridLayout */}
+        {/* Statistics */}
         <GridLayout cols={3} gap={6}>
-          <div className="rounded-lg bg-bg shadow-raised p-6 transition-all duration-fast hover:shadow-floating hover:scale-[1.02]">
-            <div className="text-3xl font-bold text-primary">
-              {ControlledVocabulary.metadata.totalApprovedTerms}
-            </div>
-            <Caption>Approved Terms</Caption>
+          <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 transition-all hover:shadow-lg hover:scale-[1.02]">
+            <div className="text-3xl font-bold text-indigo-600">15+</div>
+            <Caption>Core Concepts</Caption>
           </div>
-          <div className="rounded-lg bg-bg shadow-raised p-6 transition-all duration-fast hover:shadow-floating hover:scale-[1.02]">
-            <div className="text-3xl font-bold text-success">
-              {ControlledVocabulary.metadata.domains.length}
-            </div>
+          <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 transition-all hover:shadow-lg hover:scale-[1.02]">
+            <div className="text-3xl font-bold text-green-600">3</div>
             <Caption>Business Domains</Caption>
           </div>
-          <div className="rounded-lg bg-bg shadow-raised p-6 transition-all duration-fast hover:shadow-floating hover:scale-[1.02]">
-            <div className="text-3xl font-bold text-warning">
+          <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 transition-all hover:shadow-lg hover:scale-[1.02]">
+            <div className="text-3xl font-bold text-amber-600">
               {SDK_VERSION.major}
             </div>
             <Caption>Major Version</Caption>
@@ -81,111 +80,83 @@ export default function SDKPage() {
         </GridLayout>
 
         {/* Installation Section */}
-        <div className="rounded-lg bg-bg shadow-raised p-6 space-y-4">
+        <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 space-y-4">
           <H3>Installation</H3>
-          
-          {/* Code block with semantic colors */}
-          <div className="rounded-md bg-bg-muted p-4 border border-border font-mono">
-            <code className="text-sm text-success">
-              pnpm add @aibos/types@{SDK_VERSION.compatible}
+
+          <div className="rounded-md bg-slate-100 dark:bg-slate-700 p-4 border border-slate-200 dark:border-slate-600 font-mono">
+            <code className="text-sm text-green-600 dark:text-green-400">
+              pnpm add @aibos/metadata-studio@{SDK_VERSION.compatible}
             </code>
           </div>
-          
-          {/* Warning callout with semantic warning color */}
-          <div className="rounded-md bg-warning/10 border border-warning/20 p-4">
-            <Body className="text-warning">
-              ⚠️ Make sure to use compatible version ({SDK_VERSION.compatible}) to avoid deployment mismatches!
+
+          <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-4">
+            <Body className="text-amber-800 dark:text-amber-200">
+              ⚠️ Make sure to use compatible version ({SDK_VERSION.compatible})
+              to avoid deployment mismatches!
             </Body>
           </div>
         </div>
 
         {/* Usage Example Section */}
-        <div className="rounded-lg bg-bg shadow-raised p-6 space-y-4">
+        <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 space-y-4">
           <H3>Usage Example</H3>
-          
-          <div className="rounded-md bg-bg-muted p-4 border border-border overflow-x-auto">
-            <pre className="text-sm text-fg-muted font-mono">
-{`import { 
-  APPROVED_FINANCE_TERMS,
-  type ApprovedFinanceTerm,
-  initializeControlledVocabularySDK 
-} from "@aibos/types";
 
-// 1. Initialize SDK with version check
-initializeControlledVocabularySDK("${SDK_VERSION.full}");
+          <div className="rounded-md bg-slate-100 dark:bg-slate-700 p-4 border border-slate-200 dark:border-slate-600 overflow-x-auto">
+            <pre className="text-sm text-slate-700 dark:text-slate-300 font-mono">
+              {`import { 
+  GlossaryTermSchema,
+  type GlossaryTerm,
+} from "@aibos/metadata-studio/schemas";
 
-// 2. Use approved terms only
-const accountType: ApprovedFinanceTerm = 
-  APPROVED_FINANCE_TERMS.revenue; // ✅ OK
+// 1. Validate incoming data
+const term = GlossaryTermSchema.parse(data);
 
-// 3. Unapproved terms cause TypeScript error
-const accountType: ApprovedFinanceTerm = 
-  "sales"; // ❌ Type Error!`}
+// 2. Type-safe access
+const key: string = term.term;
+const definition: string = term.definition;`}
             </pre>
           </div>
         </div>
 
-        {/* Version Checking Section */}
-        <div className="rounded-lg bg-bg shadow-raised p-6 space-y-4">
-          <H3>Version Checking</H3>
-          
-          <Body>
-            The SDK automatically checks version compatibility on initialization. 
-            Mismatched versions will cause deployment errors.
-          </Body>
-          
-          {/* Info callout */}
-          <div className="rounded-md bg-info/10 border border-info/20 p-6 space-y-3">
-            <h4 className="font-semibold text-info">Why Version Checking?</h4>
-            <ul className="list-disc space-y-2 pl-5">
-              <Caption className="text-info/90">Prevents runtime errors from term mismatches</Caption>
-              <Caption className="text-info/90">Ensures all apps use same approved terminology</Caption>
-              <Caption className="text-info/90">Blocks deployments with incompatible SDKs</Caption>
-              <Caption className="text-info/90">Maintains data quality and consistency</Caption>
-            </ul>
-          </div>
-        </div>
-
         {/* API Reference Section */}
-        <div className="rounded-lg bg-bg shadow-raised p-6 space-y-6">
-          <H3>API Reference</H3>
-          
+        <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 space-y-6">
+          <H3>Available Types</H3>
+
           <div className="space-y-4">
-            {/* Function cards with consistent styling */}
             {[
               {
-                name: "initializeControlledVocabularySDK(clientVersion: string)",
-                description: "Initialize SDK and check version compatibility. Throws error if versions don't match.",
+                name: "MetadataConcept",
+                description: "Canonical business concept with governance tier",
               },
               {
-                name: "isApprovedTerm(term: string): boolean",
-                description: "Check if a term is in the approved glossary.",
+                name: "AliasRecord",
+                description:
+                  "Context-aware alias mapping to canonical concepts",
               },
               {
-                name: "validateTerm(term: string): void",
-                description: "Validate term and throw error if not approved. Provides suggestions for blocked terms.",
+                name: "NamingVariant",
+                description:
+                  "Technical naming variants (camelCase, snake_case, etc.)",
               },
               {
-                name: "getSuggestion(blockedTerm: string): string | undefined",
-                description: "Get suggested approved term for a blocked/ambiguous term.",
+                name: "StandardPack",
+                description: "Standard pack groupings (IFRS, MFRS, etc.)",
               },
-            ].map((func, idx) => (
-              <div 
+            ].map((type, idx) => (
+              <div
                 key={idx}
-                className="rounded-md border border-border bg-bg-subtle p-4 space-y-2
-                          transition-all duration-fast hover:border-primary hover:shadow-raised"
+                className="rounded-md border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50 p-4 space-y-2
+                          transition-all hover:border-indigo-400 hover:shadow-md"
               >
-                <code className="text-sm font-mono text-primary font-semibold">
-                  {func.name}
+                <code className="text-sm font-mono text-indigo-600 dark:text-indigo-400 font-semibold">
+                  {type.name}
                 </code>
-                <Caption>{func.description}</Caption>
+                <Caption>{type.description}</Caption>
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </CenteredContent>
   );
 }
-

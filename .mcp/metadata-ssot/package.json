@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
-    "@aibos/metadata-sdk": "workspace:*",
-    "@aibos/contracts": "workspace:*",
     "zod": "^3.23.8"
   },
   "devDependencies": {

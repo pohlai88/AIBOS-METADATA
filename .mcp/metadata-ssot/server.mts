@@ -5,9 +5,13 @@
  * 
  * Guardian of concepts, aliases, and naming variants.
  * 
- * This MCP server exposes the Metadata SSOT to AI agents via the SDK,
+ * This MCP server exposes the Metadata SSOT to AI agents,
  * ensuring governed access to canonical concepts, context-aware aliases,
  * and naming conventions.
+ * 
+ * Architecture:
+ * - MCP Server → HTTP → metadata-studio API
+ * - Schemas defined inline (SSOT: metadata-studio is source of truth)
  * 
  * Tools:
  * - metadata-list-concepts: List concepts by domain/pack/tier/search
@@ -23,19 +27,136 @@ import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-
-import {
-  MetadataConceptSchema,
-  ConceptFilterSchema,
-  ResolveAliasInputSchema,
-  ResolveAliasResultSchema,
-  ResolveNameInputSchema,
-} from '@aibos/contracts/metadata';
-import {
-  createConfig,
-  MetadataClient,
-} from '@aibos/metadata-sdk';
 import { z } from 'zod';
+
+// =============================================================================
+// Inline Schemas (SSOT: metadata-studio)
+// These mirror metadata-studio schemas for MCP validation
+// =============================================================================
+
+const TierSchema = z.enum(['tier1', 'tier2', 'tier3', 'tier4', 'tier5']);
+
+const MetadataConceptSchema = z.object({
+  canonicalKey: z.string().min(1).regex(/^[a-z0-9]+(_[a-z0-9]+)*$/, 'canonicalKey must be snake_case'),
+  label: z.string().min(1),
+  domain: z.string().min(1),
+  standardPackKey: z.string().min(1),
+  semanticType: z.string().min(1),
+  financialElement: z.string().nullable().optional(),
+  tier: TierSchema,
+  description: z.string().optional().default(''),
+});
+
+const ConceptFilterSchema = z.object({
+  domain: z.string().optional(),
+  standardPackKey: z.string().optional(),
+  tier: TierSchema.optional(),
+  search: z.string().optional(),
+});
+
+const ContextDomainSchema = z.enum([
+  'FINANCIAL_REPORTING',
+  'MANAGEMENT_REPORTING',
+  'OPERATIONS',
+  'STATUTORY_DISCLOSURE',
+  'GENERIC_SPEECH',
+]);
+
+const AliasStrengthSchema = z.enum([
+  'PRIMARY_LABEL',
+  'SECONDARY_LABEL',
+  'DISCOURAGED',
+  'FORBIDDEN',
+]);
+
+const ResolveAliasInputSchema = z.object({
+  aliasText: z.string().min(1),
+  contextDomain: ContextDomainSchema.optional(),
+  language: z.string().optional(),
+});
+
+const NamingContextSchema = z.enum(['db', 'typescript', 'graphql', 'api_path', 'const', 'bi', 'tax']);
+
+const ResolveNameInputSchema = z.object({
+  canonicalKey: z.string().min(1),
+  context: NamingContextSchema,
+});
+
+// =============================================================================
+// Simple HTTP Client (calls metadata-studio API)
+// =============================================================================
+
+class MetadataHttpClient {
+  private baseUrl: string;
+  private apiKey?: string;
+  private tenantId: string;
+
+  constructor(config: { baseUrl: string; apiKey?: string; tenantId: string }) {
+    this.baseUrl = config.baseUrl;
+    this.apiKey = config.apiKey;
+    this.tenantId = config.tenantId;
+  }
+
+  private async request<T>(path: string, options?: RequestInit): Promise<T> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'x-tenant-id': this.tenantId,
+    };
+    if (this.apiKey) {
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    }
+
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      ...options,
+      headers: { ...headers, ...options?.headers },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`HTTP ${response.status}: ${text}`);
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  async listConcepts(filter: z.infer<typeof ConceptFilterSchema>): Promise<unknown[]> {
+    const params = new URLSearchParams();
+    if (filter.domain) params.set('domain', filter.domain);
+    if (filter.standardPackKey) params.set('standardPackKey', filter.standardPackKey);
+    if (filter.tier) params.set('tier', filter.tier);
+    if (filter.search) params.set('search', filter.search);
+
+    const query = params.toString();
+    return this.request<unknown[]>(`/metadata${query ? `?${query}` : ''}`);
+  }
+
+  async getConcept(canonicalKey: string): Promise<unknown | null> {
+    try {
+      return await this.request<unknown>(`/metadata/${canonicalKey}`);
+    } catch {
+      return null;
+    }
+  }
+
+  async resolveAlias(input: z.infer<typeof ResolveAliasInputSchema>): Promise<unknown[]> {
+    const params = new URLSearchParams({ alias: input.aliasText });
+    if (input.contextDomain) params.set('context', input.contextDomain);
+    if (input.language) params.set('language', input.language);
+
+    return this.request<unknown[]>(`/glossary/resolve?${params.toString()}`);
+  }
+
+  async resolveNameForContext(input: z.infer<typeof ResolveNameInputSchema>): Promise<string> {
+    const result = await this.request<{ value: string }>(
+      `/naming/resolve?canonicalKey=${input.canonicalKey}&context=${input.context}`
+    );
+    return result.value;
+  }
+
+  async searchGlossary(query: string): Promise<unknown[]> {
+    return this.request<unknown[]>(`/glossary/search?q=${encodeURIComponent(query)}`);
+  }
+}
 
 // =============================================================================
 // Server Setup
@@ -54,16 +175,14 @@ const server = new Server(
 );
 
 // =============================================================================
-// Metadata SDK Client
+// Metadata HTTP Client
 // =============================================================================
 
-const metadataConfig = createConfig({
+const metadataClient = new MetadataHttpClient({
   baseUrl: process.env.METADATA_BASE_URL || 'http://localhost:8787',
   apiKey: process.env.METADATA_API_KEY,
-  defaultTenantId: process.env.METADATA_DEFAULT_TENANT_ID || '550e8400-e29b-41d4-a716-446655440000',
+  tenantId: process.env.METADATA_DEFAULT_TENANT_ID || '550e8400-e29b-41d4-a716-446655440000',
 });
-
-const metadataClient = new MetadataClient(metadataConfig);
 
 // =============================================================================
 // Tool Definitions
@@ -259,16 +378,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // -----------------------------------------------------------------------
       case 'metadata-list-concepts': {
         const input = ConceptFilterSchema.parse(args);
-
         const concepts = await metadataClient.listConcepts(input);
-
-        const payload = z.array(MetadataConceptSchema).parse(concepts);
+        const payload = z.array(MetadataConceptSchema).safeParse(concepts);
 
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(payload, null, 2),
+              text: JSON.stringify(payload.success ? payload.data : concepts, null, 2),
             },
           ],
         };
@@ -278,11 +395,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // metadata-get-concept
       // -----------------------------------------------------------------------
       case 'metadata-get-concept': {
-        const input = z
-          .object({
-            canonicalKey: MetadataConceptSchema.shape.canonicalKey,
-          })
-          .parse(args);
+        const input = z.object({
+          canonicalKey: z.string().min(1),
+        }).parse(args);
 
         const concept = await metadataClient.getConcept(input.canonicalKey);
 
@@ -297,13 +412,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         }
 
-        const payload = MetadataConceptSchema.parse(concept);
-
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(payload, null, 2),
+              text: JSON.stringify(concept, null, 2),
             },
           ],
         };
@@ -314,10 +427,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // -----------------------------------------------------------------------
       case 'metadata-resolve-alias': {
         const input = ResolveAliasInputSchema.parse(args);
-
         const results = await metadataClient.resolveAlias(input);
 
-        if (results.length === 0) {
+        if (!Array.isArray(results) || results.length === 0) {
           return {
             content: [
               {
@@ -328,30 +440,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         }
 
-        const payload = z.array(ResolveAliasResultSchema).parse(results);
-
-        // Format output with strength indicators
-        const formatted = payload.map((result) => ({
-          aliasText: result.alias.aliasText,
-          canonicalKey: result.alias.canonicalKey,
-          contextDomain: result.alias.contextDomain,
-          strength: result.alias.strength,
-          notes: result.alias.notes,
-          concept: result.concept
-            ? {
-                label: result.concept.label,
-                domain: result.concept.domain,
-                tier: result.concept.tier,
-                description: result.concept.description,
-              }
-            : null,
-        }));
-
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(formatted, null, 2),
+              text: JSON.stringify(results, null, 2),
             },
           ],
         };
@@ -362,7 +455,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // -----------------------------------------------------------------------
       case 'metadata-resolve-name': {
         const input = ResolveNameInputSchema.parse(args);
-
         const resolved = await metadataClient.resolveNameForContext(input);
 
         const payload = {
@@ -385,15 +477,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // metadata-search-glossary
       // -----------------------------------------------------------------------
       case 'metadata-search-glossary': {
-        const input = z
-          .object({
-            q: z.string().min(1),
-          })
-          .parse(args);
+        const input = z.object({
+          q: z.string().min(1),
+        }).parse(args);
 
         const results = await metadataClient.searchGlossary(input.q);
 
-        if (results.length === 0) {
+        if (!Array.isArray(results) || results.length === 0) {
           return {
             content: [
               {
@@ -404,27 +494,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         }
 
-        const payload = z.array(ResolveAliasResultSchema).parse(results);
-
-        // Format output for readability
-        const formatted = payload.map((result) => ({
-          aliasText: result.alias.aliasText,
-          canonicalKey: result.alias.canonicalKey,
-          strength: result.alias.strength,
-          concept: result.concept
-            ? {
-                label: result.concept.label,
-                tier: result.concept.tier,
-                description: result.concept.description,
-              }
-            : null,
-        }));
-
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(formatted, null, 2),
+              text: JSON.stringify(results, null, 2),
             },
           ],
         };
@@ -433,13 +507,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
     return {
       isError: true,
       content: [
         {
           type: 'text',
-          text: `Metadata MCP error for tool "${name}": ${err.message}`,
+          text: `Metadata MCP error for tool "${name}": ${message}`,
         },
       ],
     };
@@ -454,4 +529,3 @@ const transport = new StdioServerTransport();
 await server.connect(transport);
 
 console.error('Metadata SSOT MCP Server running on stdio');
-

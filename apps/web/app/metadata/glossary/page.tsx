@@ -13,7 +13,13 @@ export default function GlossaryPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // TODO: Replace with your actual metadata
-  const glossaryTerms = [
+  const glossaryTerms: Array<{
+    id: string;
+    term: string;
+    definition: string;
+    category?: string;
+    tags?: string[];
+  }> = [
     // Add your terms here
     // Example format:
     // {

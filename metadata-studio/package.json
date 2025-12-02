@@ -9,8 +9,8 @@
     },
     "scripts": {
         "dev": "tsx watch index.ts",
-        "build": "tsc",
-        "start": "node dist/index.js",
+        "build": "echo 'metadata-studio runs via tsx - no build needed' && exit 0",
+        "start": "tsx index.ts",
         "test": "vitest",
         "test:unit": "vitest run tests/unit",
         "test:integration": "vitest run tests/integration",
@@ -19,7 +19,7 @@
         "db:migrate": "tsx ./scripts/migrate.ts",
         "db:push": "drizzle-kit generate --config ./drizzle.config.ts && tsx ./scripts/migrate.ts",
         "db:studio": "drizzle-kit studio",
-        "metadata:bootstrap": "tsx ../bootstrap/metadata/load-metadata.ts",
+        "db:seed": "tsx ./seed/load-metadata.ts",
         "lint": "eslint .",
         "format": "prettier --write ."
     },

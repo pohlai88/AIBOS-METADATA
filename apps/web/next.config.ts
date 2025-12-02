@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   // Transpile local packages from monorepo (Next.js 16 feature)
   // This replaces next-transpile-modules package
   transpilePackages: [
-    '@aibos/types',
+    '@aibos/metadata-studio',
     '@tailwindcss/postcss'
   ],
 

@@ -5,7 +5,10 @@
  * Compatible with OpenMetadata schema v1.4.0
  */
 
-import { SDK_VERSION } from "@aibos/metadata-studio";
+// SDK Version (hardcoded for MVP)
+const SDK_VERSION = {
+  full: "1.0.0",
+};
 
 export default function MetadataLayout({
   children,

@@ -1,17 +1,5 @@
-# Reference Repos - Exclude unnecessary files
-reference-repos/**/node_modules/
-reference-repos/**/.next/
-reference-repos/**/.turbo/
-reference-repos/**/dist/
-reference-repos/**/build/
-reference-repos/**/.git/
-reference-repos/**/coverage/
-reference-repos/**/.cache/
-reference-repos/**/*.log
-reference-repos/**/.env*
-reference-repos/**/package-lock.json
-reference-repos/**/yarn.lock
-reference-repos/**/pnpm-lock.yaml
+# Reference Repos - Fully ignore (these are external reference repos, not part of this project)
+reference-repos/
 
-# Only index important files
-# Keep: source code, config files, examples, documentation
+# Node modules (already ignored but explicit)
+**/node_modules/

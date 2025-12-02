@@ -14,7 +14,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@aibos/types/*": ["./packages/types/src/*"]
+      "@aibos/metadata-studio/*": ["./metadata-studio/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
