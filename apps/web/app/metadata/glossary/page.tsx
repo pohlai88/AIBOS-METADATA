@@ -33,6 +33,8 @@ import {
 import { MicroActionDrawer, useMicroActionDrawer } from "@/components/governance/MicroActionDrawer";
 import { ChangeRequestForm } from "@/components/governance/ChangeRequestForm";
 import type { ChangeRequest } from "@/components/governance/ChangeRequestForm";
+import { FieldImpactAnalysis } from "@/components/analytics/FieldImpactAnalysis";
+import { getFieldImpactAnalysis } from "@/lib/sample-analytics";
 import { QualityScoreBadge, QualityScoreIndicator } from "@/components/ui/quality-badge";
 import { TierBadge } from "@/components/ui/metadata-badges";
 import { Input } from "@/components/ui/input";
@@ -71,14 +73,20 @@ export default function MetadataGlossaryPage() {
 
   // Micro Action Drawer for change requests
   const changeRequestDrawer = useMicroActionDrawer();
+  const impactAnalysisDrawer = useMicroActionDrawer();
 
   const stats = getSampleDataStats();
 
   const handleSubmitChangeRequest = (request: ChangeRequest) => {
     console.log("Change request submitted:", request);
-    // In real app: call API to submit change request
-    alert(`Change request submitted for ${request.fieldName}`);
+    // In real app: Show impact analysis first
     changeRequestDrawer.close();
+    impactAnalysisDrawer.open();
+  };
+
+  const handleProceedWithChange = () => {
+    alert("Change request submitted successfully!");
+    impactAnalysisDrawer.close();
   };
 
   // Filter data based on search, domain, and module
@@ -410,19 +418,35 @@ export default function MetadataGlossaryPage() {
 
       {/* Change Request Drawer */}
       {selectedField && (
-        <MicroActionDrawer
-          open={changeRequestDrawer.isOpen}
-          onClose={changeRequestDrawer.close}
-          title="Request Metadata Change"
-          size="md"
-        >
-          <ChangeRequestForm
-            fieldName={selectedField.fieldName}
-            currentTier={typeof selectedField.tier === "string" ? parseInt(selectedField.tier.replace("tier", "")) : selectedField.tier}
-            onSubmit={handleSubmitChangeRequest}
-            onCancel={changeRequestDrawer.close}
-          />
-        </MicroActionDrawer>
+        <>
+          <MicroActionDrawer
+            open={changeRequestDrawer.isOpen}
+            onClose={changeRequestDrawer.close}
+            title="Request Metadata Change"
+            size="md"
+          >
+            <ChangeRequestForm
+              fieldName={selectedField.fieldName}
+              currentTier={typeof selectedField.tier === "string" ? parseInt(selectedField.tier.replace("tier", "")) : selectedField.tier}
+              onSubmit={handleSubmitChangeRequest}
+              onCancel={changeRequestDrawer.close}
+            />
+          </MicroActionDrawer>
+
+          {/* Impact Analysis Drawer */}
+          <MicroActionDrawer
+            open={impactAnalysisDrawer.isOpen}
+            onClose={impactAnalysisDrawer.close}
+            title="Impact Analysis"
+            size="lg"
+          >
+            <FieldImpactAnalysis
+              data={getFieldImpactAnalysis(selectedField.fieldName)}
+              onProceed={handleProceedWithChange}
+              onCancel={impactAnalysisDrawer.close}
+            />
+          </MicroActionDrawer>
+        </>
       )}
     </WorkbenchLayout>
   );
