@@ -11,7 +11,7 @@
  */
 
 import { SDK_VERSION, SDK_METADATA, OPENMETADATA_SCHEMA_VERSION } from "@aibos/metadata-studio";
-import { ControlledVocabulary } from "@aibos/types";
+// import { CONTROLLED_VOCABULARY } from "@aibos/types";
 
 // Typography Constitution
 import { H2, H3, Body, Caption } from "@/components/Typography";

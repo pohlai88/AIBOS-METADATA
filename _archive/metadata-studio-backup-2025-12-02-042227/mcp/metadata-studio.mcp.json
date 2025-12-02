@@ -1,0 +1,119 @@
+{
+  "profile": {
+    "name": "metadata-studio",
+    "version": "1.0.0",
+    "description": "Nexus Metadata Studio - Centralized metadata management, lineage, governance, and observability",
+    "author": "AIBOS Platform Team"
+  },
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": false
+  },
+  "tools": [
+    {
+      "name": "metadata_get",
+      "description": "Retrieve metadata for an entity by ID or FQN",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "fqn": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "metadata_search",
+      "description": "Search metadata entities",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string" },
+          "filters": { "type": "object" }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "lineage_get_upstream",
+      "description": "Get upstream lineage for an entity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityId": { "type": "string" },
+          "depth": { "type": "number", "default": 5 }
+        },
+        "required": ["entityId"]
+      }
+    },
+    {
+      "name": "lineage_get_downstream",
+      "description": "Get downstream lineage for an entity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityId": { "type": "string" },
+          "depth": { "type": "number", "default": 5 }
+        },
+        "required": ["entityId"]
+      }
+    },
+    {
+      "name": "impact_analyze",
+      "description": "Analyze impact of changes to an entity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityId": { "type": "string" }
+        },
+        "required": ["entityId"]
+      }
+    },
+    {
+      "name": "glossary_get_term",
+      "description": "Get glossary term by ID",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "termId": { "type": "string" }
+        },
+        "required": ["termId"]
+      }
+    },
+    {
+      "name": "quality_get_score",
+      "description": "Get data quality score for an entity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityId": { "type": "string" }
+        },
+        "required": ["entityId"]
+      }
+    },
+    {
+      "name": "usage_get_stats",
+      "description": "Get usage statistics for an entity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entityId": { "type": "string" }
+        },
+        "required": ["entityId"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "metadata://entities",
+      "name": "All Metadata Entities",
+      "description": "List of all metadata entities in the system"
+    },
+    {
+      "uri": "metadata://standard-packs",
+      "name": "Standard Packs",
+      "description": "Available standard metadata packs (SOT Packs)"
+    }
+  ]
+}
+

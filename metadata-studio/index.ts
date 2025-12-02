@@ -1,42 +1,68 @@
-/**
- * Metadata Studio - Main Entry Point
- * Nexus Metadata Studio for centralized metadata management
- */
+// metadata-studio/index.ts
+import 'dotenv/config'; // Load .env file FIRST
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
+import { authMiddleware } from './middleware/auth.middleware';
+import { rulesRouter } from './api/rules.routes';
+import { approvalsRouter } from './api/approvals.routes';
+import { metadataRouter } from './api/metadata.routes';
+import { lineageRouter } from './api/lineage.routes';
+import { glossaryRouter } from './api/glossary.routes';
+import { tagsRouter } from './api/tags.routes';
+import { kpiRouter } from './api/kpi.routes';
+import { impactRouter } from './api/impact.routes';
+import { qualityRouter } from './api/quality.routes';
+import { registerMetricsRoutes } from './api/metrics.routes';
+import { initializeEventSystem } from './events';
 
-export * from './schemas/mdm-global-metadata.schema';
-export * from './schemas/observability.schema';
-export * from './schemas/standard-pack.schema';
-export * from './schemas/lineage.schema';
-export * from './schemas/glossary.schema';
-export * from './schemas/tags.schema';
-export * from './schemas/kpi.schema';
+export function createApp() {
+  const app = new Hono();
 
-export * from './services/metadata.service';
-export * from './services/lineage.service';
-export * from './services/impact-analysis.service';
-export * from './services/glossary.service';
-export * from './services/tags.service';
-export * from './services/quality.service';
-export * from './services/usage.service';
+  // Attach auth for all routes
+  app.use('*', authMiddleware);
 
-export * from './api/metadata.routes';
-export * from './api/lineage.routes';
-export * from './api/impact.routes';
-export * from './api/glossary.routes';
-export * from './api/tags.routes';
-export * from './api/quality.routes';
-export * from './api/usage.routes';
+  // Health check
+  app.get('/healthz', (c) =>
+    c.json({ status: 'ok', service: 'metadata-studio' }),
+  );
 
-export * from './mcp/tools/metadata.tools';
-export * from './mcp/tools/lineage.tools';
-export * from './mcp/tools/impact.tools';
-export * from './mcp/tools/glossary.tools';
-export * from './mcp/tools/quality.tools';
-export * from './mcp/tools/usage.tools';
+  // Prometheus metrics endpoint
+  registerMetricsRoutes(app);
 
-export { bootstrap } from './bootstrap';
+  // Business rules + approvals + metadata + lineage + glossary + tags + kpi + impact + quality
+  app.route('/rules', rulesRouter);
+  app.route('/approvals', approvalsRouter);
+  app.route('/metadata', metadataRouter);
+  app.route('/lineage', lineageRouter);
+  app.route('/glossary', glossaryRouter);
+  app.route('/tags', tagsRouter);
+  app.route('/kpi', kpiRouter);
+  app.route('/impact', impactRouter);
+  app.route('/quality', qualityRouter);
 
-// SDK Version & Controlled Vocabulary
-export * from './sdk/version';
-export * from './glossary/controlled-vocabulary';
+  return app;
+}
+
+// If run directly: start an HTTP server
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // Bootstrap application
+  async function bootstrap() {
+    // Initialize event system (subscribers)
+    await initializeEventSystem();
+
+    const app = createApp();
+    const port = Number(process.env.PORT ?? 8787);
+
+    serve({ fetch: app.fetch, port });
+
+    // eslint-disable-next-line no-console
+    console.log(`metadata-studio listening on http://localhost:${port}`);
+  }
+
+  // Start application
+  bootstrap().catch((error) => {
+    console.error('Failed to start metadata-studio:', error);
+    process.exit(1);
+  });
+}
 

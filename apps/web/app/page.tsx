@@ -1,581 +1,721 @@
-import React from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Database,
-  GitBranch,
-  Target,
-  Zap,
   Shield,
-  ChevronRight,
-  Check,
-  Star,
-  TrendingUp,
-  Layers,
-  Code2,
-  Boxes,
+  Zap,
+  Database,
+  Activity,
+  Clock,
+  CheckCircle2,
+  Cpu,
+  Network,
+  Sun,
+  Moon,
+  Play,
+  Pause,
   ArrowRight,
   Sparkles,
+  Lock,
+  AlertCircle,
+  Radio,
+  GitBranch,
+  Brain,
+  Bot,
+  Workflow,
+  Boxes,
 } from "lucide-react";
 
-export default function LandingPage() {
+export default function AIOrchestration() {
+  const [mode, setMode] = useState<"day" | "night">("day");
+  const [time, setTime] = useState(9);
+  const [isPaused, setIsPaused] = useState(false);
+  const [orchestratorActive, setConductorActive] = useState(false);
+
+  // Orchestrator pulse
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setConductorActive((prev) => !prev);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 24-hour clock
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setTime((t) => (t + 1) % 24);
+      setMode(time >= 6 && time < 18 ? "day" : "night");
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [time, isPaused]);
+
+  // Live metrics
+  const [metrics, setMetrics] = useState({
+    processing: 127,
+    validated: 1453,
+    indexed: 8921,
+    archived: 12304,
+  });
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setMetrics((m) => ({
+        processing: m.processing + Math.floor(Math.random() * 5),
+        validated: m.validated + Math.floor(Math.random() * 10),
+        indexed: m.indexed + Math.floor(Math.random() * 15),
+        archived: m.archived + Math.floor(Math.random() * 3),
+      }));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
+  const isDay = mode === "day";
+
   return (
-    <div className="min-h-screen bg-background text-text">
-      {/* PREMIUM HERO - Enhanced Depth with 3D Content Wrapper */}
-      <section className="relative py-24 md:py-32 overflow-hidden text-center perspective-distant">
-        {/* Subtle Background Glow - Refined Mask */}
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative">
+      {/* AI MESH NETWORK - Background */}
+      <div className="fixed inset-0 opacity-20 pointer-events-none">
         <div
-          className="absolute inset-0 bg-background-base opacity-90 -z-10"
+          className="absolute inset-0 transition-opacity duration-1000"
           style={{
-            maskImage:
-              "radial-gradient(ellipse at top, transparent 40%, oklch(0 0 0) 90%)",
+            backgroundImage: `
+              radial-gradient(circle at 20% 30%, ${isDay ? "rgba(251, 146, 60, 0.4)" : "rgba(147, 51, 234, 0.5)"} 0%, transparent 40%),
+              radial-gradient(circle at 80% 70%, ${isDay ? "rgba(245, 158, 11, 0.3)" : "rgba(99, 102, 241, 0.4)"} 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, ${isDay ? "rgba(234, 179, 8, 0.2)" : "rgba(168, 85, 247, 0.3)"} 0%, transparent 50%)
+            `,
           }}
         />
+      </div>
 
-        {/* Grid Pattern - Slightly Darker */}
-        <div
-          className="absolute inset-0 opacity-[0.03] -z-10"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
-            backgroundSize: "64px 64px",
-          }}
-        />
-
-        {/* 3D Content Wrapper with subtle hover */}
-        <div className="card-3d group max-w-4xl mx-auto px-4">
-          <div className="card-3d-content">
-          {/* Premium Badge */}
+      {/* AGENT PARTICLES - Floating AI Nodes */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
           <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full 
-                          bg-background-muted border border-border shadow-raised
-                          transition-all duration-normal hocus:border-primary/50 hocus:shadow-floating
-                          mb-8"
+            key={i}
+            className="absolute"
+            style={{
+              left: `${(i * 7) % 100}%`,
+              top: `${(i * 13) % 100}%`,
+              animation: `agentFloat ${4 + i * 0.3}s ease-in-out infinite`,
+              animationDelay: `${i * 0.2}s`,
+            }}
           >
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            <span className="text-sm font-medium text-text-muted">
-              OpenMetadata Compatible
-            </span>
+            <div
+              className={`w-3 h-3 rounded ${
+                i % 4 === 0
+                  ? "bg-blue-400"
+                  : i % 4 === 1
+                    ? "bg-green-400"
+                    : i % 4 === 2
+                      ? isDay
+                        ? "bg-orange-400"
+                        : "bg-purple-400"
+                      : "bg-cyan-400"
+              }`}
+              style={{ opacity: 0.4, filter: "blur(1px)" }}
+            />
           </div>
+        ))}
+      </div>
 
-          {/* Headline with Text Gradient */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
-            <span className="text-gradient-metadata">
-              The central nervous system
-            </span>
-            <br />
-            <span className="text-text">for business metadata</span>
-          </h1>
-
-          {/* Subhead */}
-          <p className="text-xl md:text-2xl text-text-muted max-w-3xl mx-auto mb-12 leading-relaxed">
-            Unify lineage, quality, and compliance in a single, high-density
-            platform.
-          </p>
-
-          {/* Premium CTA with Micro-Interaction */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
-            <Link
-              href="/metadata/glossary"
-              className="group inline-flex items-center justify-center px-8 py-4 
-                         bg-primary text-white rounded-xl font-semibold text-lg
-                         shadow-floating hocus:shadow-overlay 
-                         transition-all duration-normal ease-standard
-                         hocus:scale-[1.03] hocus:bg-primary-600"
-            >
-              <span>Start free trial</span>
-              <ChevronRight className="ml-2 w-5 h-5 transition-transform duration-fast group-hover:translate-x-1" />
-            </Link>
-
-            <Link
-              href="/metadata/sdk"
-              className="group inline-flex items-center justify-center px-8 py-4 
-                         bg-background-muted text-text rounded-xl font-semibold text-lg
-                         border border-border shadow-raised
-                         transition-all duration-normal ease-standard
-                         hocus:border-primary hocus:shadow-floating hocus:scale-[1.02]"
-            >
-              <span>View documentation</span>
-            </Link>
-          </div>
-
-          {/* Stats - High Density */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            {[
-              { value: "10K+", label: "Entities" },
-              { value: "100%", label: "Coverage" },
-              { value: "4", label: "Gov Tiers" },
-              { value: "<50ms", label: "Response" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center group">
-                <div
-                  className="text-3xl md:text-4xl font-bold text-primary mb-1 
-                                transition-transform duration-fast group-hover:scale-110"
-                >
-                  {stat.value}
-                </div>
-                <div className="text-xs md:text-sm text-text-muted">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUSTED BY - Subtle Separator */}
-      <section className="py-8 border-y border-border/50 bg-background-subtle">
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="text-center text-xs text-text-subtle mb-6 uppercase tracking-wider">
-            Trusted by leading engineering teams
-          </p>
-          <div className="flex items-center justify-center gap-12 flex-wrap opacity-40">
-            {["Company A", "Company B", "Company C", "Company D"].map(
-              (company) => (
-                <div
-                  key={company}
-                  className="text-lg font-bold text-text-muted transition-opacity duration-fast hover:opacity-100"
-                >
-                  {company}
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* FLOATING 3D FEATURE CARDS */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-12 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Everything you need to ship faster
-            </h2>
-            <p className="text-lg text-text-muted">
-              One end-to-end tool to simplify and accelerate your workflow
-            </p>
-          </div>
-
-          {/* 3D Feature Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: GitBranch,
-                title: "Metadata lineage",
-                description:
-                  "Trace data flow with pixel-perfect precision. Every transform, every source, instantly visualized.",
-                color: "metadata-lineage",
-                isHighlighted: true, // Premium first card
-              },
-              {
-                icon: Target,
-                title: "Data quality checks",
-                description:
-                  "Run automated governance tiers (Tier 1, Tier 2) directly against production pipelines.",
-                color: "metadata-quality",
-              },
-              {
-                icon: Shield,
-                title: "Regulatory compliance",
-                description:
-                  "Map IFRS/MFRS financial domains and Tiers to your datasets for audit readiness.",
-                color: "metadata-governance",
-              },
-              {
-                icon: Layers,
-                title: "Multi-tier governance",
-                description:
-                  "Enforce compliance with HITL workflows for Tier 1/2 assets. Automated lineage for all flows.",
-                color: "tier-1",
-              },
-              {
-                icon: Database,
-                title: "Controlled vocabulary",
-                description:
-                  "Type-safe, versioned SDK ensures only approved terms are used. Compile-time checks prevent drift.",
-                color: "metadata-glossary",
-              },
-              {
-                icon: Boxes,
-                title: "SoT packs",
-                description:
-                  "IFRS/MFRS finance packs built-in. Extend with custom domain standards. Always audit-ready.",
-                color: "finance-revenue",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                className="card-3d group perspective-normal"
-              >
-                <div
-                  className={`card-3d-content h-full p-6 rounded-xl 
-                            border border-border bg-background-muted 
-                            shadow-raised transition-all duration-normal ease-standard
-                            group-hocus:border-${feature.color}/50 
-                            group-hocus:shadow-overlay 
-                            group-hocus:translate-y-[-2px]
-                            ${
-                              feature.isHighlighted
-                                ? "border-2 border-primary/60 shadow-floating animate-pulse-glow"
-                                : ""
-                            }`}
-                >
-                  <feature.icon
-                    className={`w-8 h-8 text-${feature.color} mb-4 
-                                           transition-transform duration-fast 
-                                           group-hover:rotate-3`}
-                  />
-                  <h3 className="text-lg font-semibold mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-text-subtle leading-relaxed mb-4">
-                    {feature.description}
-                  </p>
-
-                  {/* Interactive Link */}
+      {/* CONTROL CENTER - Header */}
+      <header className="relative z-50 px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="backdrop-blur-2xl bg-gradient-to-r from-white/5 to-white/10 border border-white/20 rounded-3xl px-8 py-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                {/* AI Orchestrator Icon */}
+                <div className="relative">
                   <div
-                    className="flex items-center text-primary text-sm font-medium 
-                                  transition-colors duration-fast group-hocus:text-primary-600"
+                    className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${
+                      isDay
+                        ? "from-orange-500 to-amber-500"
+                        : "from-purple-600 to-indigo-600"
+                    } blur-xl transition-all duration-1000 ${
+                      orchestratorActive
+                        ? "opacity-100 scale-110"
+                        : "opacity-50 scale-100"
+                    }`}
+                  />
+                  <div
+                    className={`relative p-3 rounded-2xl bg-gradient-to-br ${
+                      isDay
+                        ? "from-orange-500 to-amber-500"
+                        : "from-purple-600 to-indigo-600"
+                    } transition-transform duration-500 ${
+                      orchestratorActive ? "scale-110" : "scale-100"
+                    }`}
                   >
-                    <span>Explore module</span>
-                    <ArrowRight className="ml-1 w-4 h-4 transition-transform duration-fast group-hover:translate-x-1" />
+                    <Boxes className="w-7 h-7 text-white" />
                   </div>
                 </div>
+
+                <div>
+                  <h1 className="text-2xl font-bold flex items-center gap-2">
+                    AI Orchestration Studio
+                  </h1>
+                  <p className="text-sm text-white/70">
+                    Agentic AI • Generative Workflows • MCP Governance
+                  </p>
+                </div>
               </div>
-            ))}
+
+              <div className="flex items-center gap-4">
+                {/* Control */}
+                <button
+                  onClick={() => setIsPaused(!isPaused)}
+                  className={`p-3 rounded-2xl transition-all ${
+                    isPaused
+                      ? "bg-red-500/20 hover:bg-red-500/30"
+                      : "bg-green-500/20 hover:bg-green-500/30"
+                  }`}
+                >
+                  {isPaused ? (
+                    <Play className="w-6 h-6" />
+                  ) : (
+                    <Pause className="w-6 h-6" />
+                  )}
+                </button>
+
+                {/* Clock */}
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-white/5 blur-md" />
+                  <div className="relative px-5 py-3 rounded-full bg-white/10 backdrop-blur font-mono font-bold flex items-center gap-2 border border-white/20">
+                    {isDay ? (
+                      <Sun className="w-5 h-5 text-amber-400" />
+                    ) : (
+                      <Moon className="w-5 h-5 text-indigo-400" />
+                    )}
+                    <span className="text-lg">
+                      {time.toString().padStart(2, "0")}:00
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mode Badge */}
+                <div
+                  className={`px-6 py-3 rounded-full font-bold shadow-2xl transition-all duration-700 ${
+                    isDay
+                      ? "bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500"
+                      : "bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600"
+                  }`}
+                >
+                  {isDay ? "Active Mode" : "Autonomous Mode"}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* PREMIUM PRODUCT SHOWCASE */}
-      <section className="py-20 px-4 bg-background-subtle">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Content */}
-            <div>
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full 
-                              bg-primary/10 border border-primary/20 mb-6"
-              >
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">
-                  AI-Powered
+      {/* HERO - AI ORCHESTRATOR */}
+      <section className="relative px-6 lg:px-8 pt-16 pb-24">
+        <div className="max-w-7xl mx-auto">
+          {/* Central Orchestrator Node */}
+          <div className="relative mb-16">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 pointer-events-none">
+              {/* Coordination Waves */}
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`absolute inset-0 rounded-full border-2 ${
+                    isDay ? "border-orange-500/30" : "border-purple-500/30"
+                  }`}
+                  style={{
+                    animation: `ripple 3s ease-out infinite`,
+                    animationDelay: `${i * 1}s`,
+                  }}
+                />
+              ))}
+
+              {/* AI Orchestrator Core */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div
+                  className={`w-24 h-24 rounded-full bg-gradient-to-br ${
+                    isDay
+                      ? "from-orange-500 to-amber-500"
+                      : "from-purple-600 to-indigo-600"
+                  } shadow-2xl flex items-center justify-center transition-all duration-500 ${
+                    orchestratorActive ? "scale-110" : "scale-100"
+                  }`}
+                >
+                  <Brain className="w-12 h-12 text-white" />
+                </div>
+              </div>
+            </div>
+
+            {/* Hero Text */}
+            <div className="text-center relative z-10 pt-32">
+              <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-8">
+                <Sparkles className="w-5 h-5" />
+                <span className="font-semibold">
+                  {isDay
+                    ? "Agentic AI • Real-time Coordination • Human-in-Loop"
+                    : "Autonomous Agents • Background Processing • Self-Governance"}
                 </span>
               </div>
 
-              <h2 className="text-4xl font-bold mb-6">
-                Review faster, ship sooner
-              </h2>
-              <p className="text-xl text-text-muted mb-8 leading-relaxed">
-                Get high signal AI reviews on every PR to catch critical bugs
-                and get suggested fixes, pre-merge.
-              </p>
+              <h1
+                className={`text-7xl sm:text-8xl lg:text-9xl font-black mb-10 leading-none transition-all duration-700 ${
+                  isDay
+                    ? "bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400"
+                    : "bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"
+                } bg-clip-text text-transparent`}
+                style={{
+                  textShadow: isDay
+                    ? "0 0 80px rgba(251, 146, 60, 0.3)"
+                    : "0 0 80px rgba(147, 51, 234, 0.3)",
+                }}
+              >
+                AI
+                <br />
+                Orchestration
+                <br />
+                Studio
+              </h1>
 
-              {/* High-Density List with Subtle Separators & Icon Rings */}
-              <ul className="space-y-3 mb-8 divide-y divide-border/30">
-                {[
-                  "Automatic lineage tracking",
-                  "Real-time impact analysis",
-                  "Type-safe controlled vocabulary",
-                  "HITL approval workflows",
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 pt-3 first:pt-0 
-                                           group transition-all duration-fast hover:translate-x-1"
-                  >
-                    {/* Check icon with subtle ring and muted background */}
-                    <div className="p-1 rounded-full bg-success/10 border border-success/20 flex-shrink-0">
-                      <Check className="w-4 h-4 text-success" />
-                    </div>
-                    <span className="text-text-muted group-hover:text-text transition-colors duration-fast">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <p className="text-2xl text-white/80 max-w-4xl mx-auto mb-4 leading-relaxed">
+                Where Agentic AI, Generative Workflows, and MCP Governance
+                <br />
+                unite under intelligent metadata orchestration
+              </p>
+              <p className="text-lg text-white/60 max-w-3xl mx-auto mb-12">
+                Coordinating autonomous agents, generative AI tasks, and
+                compliance checks across 24/7 cycles
+              </p>
 
               <Link
                 href="/metadata/glossary"
-                className="group inline-flex items-center gap-2 text-primary font-semibold
-                           transition-all duration-fast hover:gap-3"
+                className={`inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-xl shadow-2xl transition-all hover:scale-105 ${
+                  isDay
+                    ? "bg-gradient-to-r from-orange-500 to-amber-500 hover:shadow-orange-500/50"
+                    : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-purple-500/50"
+                }`}
               >
-                <span>Learn more</span>
-                <ArrowRight className="w-5 h-5" />
+                <span>Enter Orchestration Studio</span>
+                <ArrowRight className="w-6 h-6" />
               </Link>
-            </div>
-
-            {/* Right: Visual with Floating Badge */}
-            <div className="relative">
-              <div
-                className="aspect-video rounded-2xl border border-border bg-background-muted 
-                              shadow-overlay overflow-hidden 
-                              transition-all duration-normal hover:shadow-high"
-              >
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Code2 className="w-16 h-16 text-text-muted opacity-20" />
-                </div>
-              </div>
-
-              {/* Floating Stats Badge - Premium Depth */}
-              <div
-                className="absolute -bottom-6 -left-6 px-6 py-4 rounded-xl 
-                              bg-background border border-border shadow-floating
-                              transition-all duration-normal hover:shadow-overlay hover:scale-105"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-primary border-2 border-background" />
-                    <div className="w-8 h-8 rounded-full bg-success border-2 border-background" />
-                    <div className="w-8 h-8 rounded-full bg-metadata-lineage border-2 border-background" />
-                  </div>
-                  <div className="text-sm">
-                    <div className="font-semibold">100+ teams</div>
-                    <div className="text-text-muted text-xs">using AIBOS</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* INTERACTIVE PRICING TIERS */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+      {/* AGENTIC AI DASHBOARD */}
+      <section className="relative px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Pricing tiers</h2>
-            <p className="text-lg text-text-muted">
-              Scale from individual contributor to enterprise
+            <h2 className="text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+              <Bot className="w-12 h-12" />
+              Agentic AI Agents
+            </h2>
+            <p className="text-xl text-white/70">
+              Autonomous agents executing tasks under MCP governance
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* TIER 1: Free */}
-            <div
-              className="p-8 rounded-xl border border-border bg-background-muted shadow-raised
-                            transition-all duration-normal hover:shadow-floating"
-            >
-              <h3 className="text-xl font-semibold mb-2">Free</h3>
-              <p className="text-text-subtle text-sm mb-6">
-                Always free for basic usage
-              </p>
-
-              <div className="mb-8">
-                <span className="text-4xl font-bold">Free</span>
-              </div>
-
-              <button
-                className="w-full py-3 border border-border text-text rounded-lg font-medium
-                                 transition-all duration-fast hover:bg-background-subtle"
-              >
-                Sign up
-              </button>
-            </div>
-
-            {/* TIER 2: Enterprise (PREMIUM - Highlighted) */}
-            <div
-              className="relative p-8 rounded-xl border-2 border-primary bg-background-muted 
-                            shadow-floating overflow-hidden
-                            transition-all duration-normal hover:shadow-overlay hover:scale-[1.02]"
-            >
-              {/* Top Banner */}
+          {/* AI Agent Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {[
+              {
+                label: "Validation Agents",
+                value: metrics.processing,
+                icon: CheckCircle2,
+                color: isDay ? "blue" : "cyan",
+                type: "Agentic",
+              },
+              {
+                label: "Generative Tasks",
+                value: metrics.validated,
+                icon: Sparkles,
+                color: "green",
+                type: "GenAI",
+              },
+              {
+                label: "MCP Workflows",
+                value: metrics.indexed,
+                icon: Workflow,
+                color: isDay ? "orange" : "purple",
+                type: "Protocol",
+              },
+              {
+                label: "Metadata Ops",
+                value: metrics.archived,
+                icon: Database,
+                color: isDay ? "amber" : "indigo",
+                type: "Studio",
+              },
+            ].map((agent) => (
               <div
-                className="absolute top-0 right-0 px-3 py-1 bg-primary text-white 
-                              text-xs font-semibold rounded-bl-lg"
+                key={agent.label}
+                className="relative group"
+                style={{
+                  animation: `agentPulse 3s ease-in-out infinite`,
+                  animationDelay: `${Math.random() * 2}s`,
+                }}
               >
-                Recommended
+                <div
+                  className={`absolute inset-0 rounded-3xl bg-gradient-to-br from-${agent.color}-500/20 to-${agent.color}-600/20 blur-2xl transition-all duration-500 group-hover:scale-110`}
+                />
+
+                <div className="relative backdrop-blur-xl bg-white/5 border-2 border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all shadow-2xl">
+                  {/* Agent Type Badge */}
+                  <div className="absolute -top-3 -right-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur text-xs font-bold border border-white/20">
+                    {agent.type}
+                  </div>
+
+                  <agent.icon className="w-10 h-10 mb-4 text-white/90" />
+                  <div className="text-5xl font-black mb-2">
+                    {agent.value.toLocaleString()}
+                  </div>
+                  <div className="text-sm font-semibold text-white/70 uppercase tracking-wider">
+                    {agent.label}
+                  </div>
+
+                  {/* Activity Indicator */}
+                  <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full bg-gradient-to-r from-${agent.color}-500 to-${agent.color}-400 rounded-full transition-all duration-1000`}
+                      style={{
+                        width: `${50 + Math.random() * 50}%`,
+                        animation: "activityPulse 2s ease-in-out infinite",
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
+            ))}
+          </div>
 
-              <h3 className="text-xl font-semibold mb-2 text-primary">
-                Enterprise
-              </h3>
-              <p className="text-text-subtle text-sm mb-6">
-                Full suite with advanced governance tools
-              </p>
-
-              <div className="mb-8">
-                <span className="text-4xl font-bold text-primary">$299</span>
-                <span className="text-text-muted">/month</span>
-              </div>
-
-              <button
-                className="w-full py-3 bg-primary text-white rounded-lg font-medium 
-                                 shadow-raised transition-all duration-fast 
-                                 hover:bg-primary-600 hover:shadow-floating animate-pulse-glow"
+          {/* AI WORKFLOW TYPES */}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Agentic AI",
+                desc: "Autonomous decision-making agents",
+                icon: Bot,
+                color: isDay ? "blue" : "cyan",
+                features: ["Self-directed", "Goal-oriented", "Adaptive"],
+              },
+              {
+                name: "Generative AI",
+                desc: "Content & code generation tasks",
+                icon: Sparkles,
+                color: isDay ? "amber" : "pink",
+                features: [
+                  "Metadata synthesis",
+                  "Schema generation",
+                  "Auto-docs",
+                ],
+              },
+              {
+                name: "MCP Governance",
+                desc: "Protocol-based coordination",
+                icon: Shield,
+                color: isDay ? "orange" : "purple",
+                features: ["Policy enforcement", "Audit trails", "Compliance"],
+              },
+            ].map((workflow) => (
+              <div
+                key={workflow.name}
+                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-white/20 transition-all"
               >
-                Contact sales
-              </button>
+                <div className="flex items-center gap-3 mb-6">
+                  <div
+                    className={`p-3 rounded-2xl bg-gradient-to-br from-${workflow.color}-500/20 to-${workflow.color}-600/20`}
+                  >
+                    <workflow.icon className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold">{workflow.name}</h3>
+                    <p className="text-sm text-white/60">{workflow.desc}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  {workflow.features.map((feature) => (
+                    <div
+                      key={feature}
+                      className="px-4 py-2 rounded-lg bg-white/5 text-sm font-semibold border border-white/10"
+                    >
+                      ✓ {feature}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MCP GOVERNANCE LAYER */}
+      <section className="relative px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-12">
+            <div className="flex items-center gap-3 mb-10">
+              <Shield className="w-10 h-10" />
+              <h2 className="text-4xl font-bold">MCP Governance Layer</h2>
+              <div className="text-sm text-white/60">
+                (Model Context Protocol + Policy Enforcement)
+              </div>
             </div>
 
-            {/* TIER 3: Starter */}
-            <div
-              className="p-8 rounded-xl border border-border bg-background-muted shadow-raised
-                            transition-all duration-normal hover:shadow-floating"
-            >
-              <h3 className="text-xl font-semibold mb-2">Starter</h3>
-              <p className="text-text-subtle text-sm mb-6">
-                For small teams and side projects
-              </p>
-
-              <div className="mb-8">
-                <span className="text-4xl font-bold">$19</span>
-                <span className="text-text-muted">/month</span>
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* External - Untrusted */}
+              <div className="relative p-8 rounded-2xl bg-red-500/10 border-2 border-red-500/30 overflow-hidden">
+                <div
+                  className="absolute top-0 right-0 w-20 h-20 bg-red-500 rounded-full blur-3xl"
+                  style={{
+                    animation: "warnPulse 2s ease-in-out infinite",
+                  }}
+                />
+                <AlertCircle className="w-8 h-8 text-red-400 mb-4" />
+                <h3 className="text-xl font-bold mb-2">External Layer</h3>
+                <p className="text-sm text-white/70 mb-4">
+                  Untrusted sources • MCP validation required
+                </p>
+                <div className="space-y-2">
+                  {["External APIs", "User Uploads", "3rd Party Data"].map(
+                    (item) => (
+                      <div
+                        key={item}
+                        className="px-4 py-2 rounded-lg bg-red-500/20 text-red-300 text-sm font-semibold"
+                      >
+                        ⚠ {item}
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
 
-              <button
-                className="w-full py-3 bg-success text-white rounded-lg font-medium
-                                 transition-all duration-fast hover:bg-success/90"
+              {/* MCP Validation */}
+              <div
+                className={`relative p-8 rounded-2xl border-2 transition-all ${
+                  isDay
+                    ? "bg-gradient-to-br from-orange-500/20 to-amber-500/20 border-orange-400/50"
+                    : "bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border-purple-400/50"
+                }`}
               >
-                Get started
-              </button>
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  style={{
+                    animation: "mcpScan 3s ease-in-out infinite",
+                  }}
+                />
+                <Lock className="w-8 h-8 mb-4" />
+                <h3 className="text-xl font-bold mb-2">MCP Validation</h3>
+                <p className="text-sm text-white/70 mb-4">
+                  Protocol-based checks • Policy enforcement
+                </p>
+                <div className="space-y-2">
+                  {["Schema ✓", "Governance ✓", "Compliance ⏳"].map(
+                    (check) => (
+                      <div
+                        key={check}
+                        className="px-4 py-2 rounded-lg bg-white/10 text-sm font-semibold"
+                      >
+                        {check}
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Internal - Trusted */}
+              <div className="relative p-8 rounded-2xl bg-green-500/10 border-2 border-green-500/30">
+                <CheckCircle2 className="w-8 h-8 text-green-400 mb-4" />
+                <h3 className="text-xl font-bold mb-2">Internal Layer</h3>
+                <p className="text-sm text-white/70 mb-4">
+                  Validated • Governed • Audit-ready
+                </p>
+                <div className="space-y-2">
+                  {["Metadata Studio", "AI Agents", "GenAI Tasks"].map(
+                    (item) => (
+                      <div
+                        key={item}
+                        className="px-4 py-2 rounded-lg bg-green-500/20 text-green-300 text-sm font-semibold"
+                      >
+                        ✓ {item}
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SOCIAL PROOF */}
-      <section className="py-20 px-4 bg-background-subtle">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-1 mb-6">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-6 h-6 fill-warning text-warning" />
-            ))}
-          </div>
-          <h2 className="text-4xl font-bold mb-6">
-            Validated by production standards
-          </h2>
-          <p className="text-xl text-text-muted mb-12">
-            100% grade on technical correctness, V4 compliance, and production
-            readiness
-          </p>
+      {/* 24-HOUR ORCHESTRATION CYCLE */}
+      <section className="relative px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl p-12">
+            <div className="flex items-center gap-3 mb-10">
+              <Clock className="w-10 h-10" />
+              <h2 className="text-4xl font-bold">24-Hour AI Orchestration</h2>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { metric: "100%", label: "World-class design" },
-              { metric: "44%", label: "Code reduction" },
-              { metric: "0ms", label: "Runtime overhead" },
-            ].map((item) => (
-              <div
-                key={item.label}
-                className="p-8 rounded-2xl border border-border bg-background shadow-raised
-                           transition-all duration-normal hover:border-primary hover:shadow-floating hover:scale-105"
-              >
-                <div className="text-5xl font-bold text-primary mb-2">
-                  {item.metric}
+            {/* Timeline Visual */}
+            <div className="relative w-full h-32 mb-12">
+              <div className="absolute inset-0 rounded-full bg-white/10 overflow-hidden">
+                {/* Active Phase (Day) */}
+                <div
+                  className="absolute h-full bg-gradient-to-r from-amber-500 to-orange-500 opacity-80"
+                  style={{ width: "50%", left: "25%" }}
+                />
+                {/* Autonomous Phase (Night) */}
+                <div
+                  className="absolute h-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-80"
+                  style={{ width: "25%", left: "0" }}
+                />
+                <div
+                  className="absolute h-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-80 rounded-r-full"
+                  style={{ width: "25%", left: "75%" }}
+                />
+
+                {/* Current time indicator */}
+                <div
+                  className="absolute top-0 bottom-0 w-1 bg-white shadow-2xl shadow-white/50 transition-all duration-1000"
+                  style={{ left: `${(time / 24) * 100}%` }}
+                >
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-white text-slate-900 text-sm font-bold shadow-2xl whitespace-nowrap">
+                    {time.toString().padStart(2, "0")}:00
+                  </div>
                 </div>
-                <div className="text-text-muted text-sm">{item.label}</div>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 mt-1" />
+                <div>
+                  <div className="font-bold">Active Mode (6:00 - 18:00)</div>
+                  <div className="text-sm text-white/60">
+                    Human-in-loop • Agentic AI • Real-time coordination
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 mt-1" />
+                <div>
+                  <div className="font-bold">
+                    Autonomous Mode (18:00 - 6:00)
+                  </div>
+                  <div className="text-sm text-white/60">
+                    Self-governance • Background tasks • Batch processing
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl font-black mb-6 leading-tight">
-            Ready to transform your{" "}
-            <span className="text-gradient-metadata">metadata</span>?
+      <section className="relative px-6 lg:px-8 py-32">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2
+            className={`text-6xl sm:text-7xl font-black mb-8 ${
+              isDay
+                ? "bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400"
+                : "bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"
+            } bg-clip-text text-transparent`}
+          >
+            Build with AI Orchestration
           </h2>
-          <p className="text-2xl text-text-muted mb-12">
-            Join the future of data governance
+          <p className="text-2xl text-white/80 mb-12">
+            Agentic AI + Generative Workflows + MCP Governance = Metadata Studio
           </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/metadata/glossary"
-              className="group inline-flex items-center gap-2 px-10 py-5 rounded-xl
-                         bg-primary text-white font-bold text-lg
-                         shadow-overlay transition-all duration-fast ease-standard
-                         hocus:bg-primary-600 hocus:shadow-high hocus:scale-[1.02]"
-            >
-              <span>Get started now</span>
-              <ArrowRight className="w-6 h-6 transition-transform duration-fast group-hover:translate-x-1" />
-            </Link>
-
-            <Link
-              href="/metadata/sdk"
-              className="inline-flex items-center gap-2 px-10 py-5 rounded-xl
-                         bg-background-muted text-text font-bold text-lg border border-border
-                         shadow-raised transition-all duration-fast ease-standard
-                         hocus:bg-background-subtle hocus:border-primary hocus:shadow-floating"
-            >
-              <span>View documentation</span>
-            </Link>
-          </div>
+          <Link
+            href="/metadata/glossary"
+            className={`inline-flex items-center gap-3 px-12 py-6 rounded-2xl font-bold text-2xl shadow-2xl transition-all hover:scale-105 ${
+              isDay
+                ? "bg-gradient-to-r from-orange-500 to-amber-500"
+                : "bg-gradient-to-r from-purple-600 to-indigo-600"
+            }`}
+          >
+            <Brain className="w-8 h-8" />
+            <span>Start Orchestrating</span>
+            <ArrowRight className="w-8 h-8" />
+          </Link>
         </div>
       </section>
 
-      {/* FOOTER - High Density & Polish */}
-      <footer className="border-t border-border/50 bg-background-subtle px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-6 mb-8 text-sm">
-            <div>
-              <div className="text-xl font-bold mb-3">AIBOS</div>
-              <p className="text-text-muted text-xs leading-relaxed">
-                Lightweight metadata management for business operations
-              </p>
-            </div>
-            <div>
-              <div className="font-semibold mb-2 text-xs uppercase tracking-wider text-text-subtle">
-                Product
-              </div>
-              <ul className="space-y-2">
-                {["Glossary", "SDK", "Documentation"].map((item) => (
-                  <li key={item}>
-                    <Link
-                      href="#"
-                      className="text-text-muted transition-colors duration-fast hover:text-primary"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="font-semibold mb-2 text-xs uppercase tracking-wider text-text-subtle">
-                Company
-              </div>
-              <ul className="space-y-2">
-                {["About", "Blog", "Careers"].map((item) => (
-                  <li key={item}>
-                    <Link
-                      href="#"
-                      className="text-text-muted transition-colors duration-fast hover:text-primary"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <div className="font-semibold mb-2 text-xs uppercase tracking-wider text-text-subtle">
-                Resources
-              </div>
-              <ul className="space-y-2">
-                {["Guides", "API Reference", "Status"].map((item) => (
-                  <li key={item}>
-                    <Link
-                      href="#"
-                      className="text-text-muted transition-colors duration-fast hover:text-primary"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-border/30 text-center text-xs text-text-muted">
-            <p>© 2025 AIBOS Metadata Studio. Built with Tailwind CSS v4.</p>
-          </div>
+      {/* Footer */}
+      <footer className="relative px-6 lg:px-8 py-12 border-t border-white/10">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-sm text-white/50">
+            © 2025 AI Orchestration Studio • Agentic AI • Generative Workflows •
+            MCP Governance
+          </p>
         </div>
       </footer>
+
+      {/* CSS ANIMATIONS */}
+      <style jsx>{`
+        @keyframes agentFloat {
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-30px) translateX(20px);
+          }
+        }
+
+        @keyframes ripple {
+          0% {
+            transform: scale(0.8);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+
+        @keyframes agentPulse {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.02);
+          }
+        }
+
+        @keyframes activityPulse {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
+
+        @keyframes warnPulse {
+          0%,
+          100% {
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 0.6;
+          }
+        }
+
+        @keyframes mcpScan {
+          0%,
+          100% {
+            transform: translateX(-100%);
+          }
+          50% {
+            transform: translateX(100%);
+          }
+        }
+      `}</style>
     </div>
   );
 }

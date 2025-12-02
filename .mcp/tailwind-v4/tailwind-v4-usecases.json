@@ -1,0 +1,266 @@
+{
+  "metadata": {
+    "builtAt": "2025-12-01T18:42:46.840Z",
+    "version": "4.1",
+    "description": "Real-world use cases and patterns for building amazing sites"
+  },
+  "referenceSites": [
+    {
+      "name": "Aceternity UI Template",
+      "url": "https://ai-saas-template-aceternity.vercel.app/",
+      "description": "Modern SaaS landing page with beautiful animations",
+      "category": "landing-page",
+      "features": [
+        "hero-section",
+        "feature-showcase",
+        "testimonials",
+        "pricing"
+      ]
+    },
+    {
+      "name": "Graphite",
+      "url": "https://graphite.com/",
+      "description": "Professional, clean design with pure CSS",
+      "category": "landing-page",
+      "features": [
+        "minimal-design",
+        "css-first",
+        "professional"
+      ]
+    }
+  ],
+  "patterns": {
+    "hero": {
+      "keywords": [
+        "hero",
+        "headline",
+        "cta",
+        "main",
+        "above-fold"
+      ],
+      "patterns": [
+        "Large headline with gradient text",
+        "Primary CTA button",
+        "Secondary CTA or link",
+        "Hero image or illustration",
+        "Trust indicators (logos, stats)"
+      ]
+    },
+    "features": {
+      "keywords": [
+        "features",
+        "capabilities",
+        "what-you-get",
+        "benefits"
+      ],
+      "patterns": [
+        "Feature grid layout",
+        "Icon + title + description",
+        "Alternating left/right layout",
+        "Feature cards with hover effects"
+      ]
+    },
+    "testimonials": {
+      "keywords": [
+        "testimonials",
+        "reviews",
+        "social-proof",
+        "customers"
+      ],
+      "patterns": [
+        "Customer quote cards",
+        "Avatar + name + company",
+        "Star ratings",
+        "Logo grid"
+      ]
+    },
+    "pricing": {
+      "keywords": [
+        "pricing",
+        "plans",
+        "subscription",
+        "tiers"
+      ],
+      "patterns": [
+        "Pricing cards",
+        "Feature comparison",
+        "CTA buttons",
+        "Popular badge"
+      ]
+    },
+    "navigation": {
+      "keywords": [
+        "nav",
+        "header",
+        "menu",
+        "navigation"
+      ],
+      "patterns": [
+        "Sticky header",
+        "Logo + menu items",
+        "CTA button",
+        "Mobile menu"
+      ]
+    },
+    "footer": {
+      "keywords": [
+        "footer",
+        "links",
+        "social",
+        "legal"
+      ],
+      "patterns": [
+        "Link columns",
+        "Social media icons",
+        "Copyright",
+        "Legal links"
+      ]
+    }
+  },
+  "examples": {
+    "hero": {
+      "name": "Hero Section",
+      "description": "Eye-catching hero section with headline, CTA, and visual",
+      "example": {
+        "structure": "Large headline + subheadline + CTA buttons + hero image",
+        "tailwindClasses": [
+          "text-5xl md:text-6xl lg:text-7xl font-extrabold",
+          "bg-gradient-to-r from-primary to-primary-600",
+          "px-8 py-4 rounded-xl shadow-floating",
+          "hover:scale-[1.03] transition-all duration-normal"
+        ],
+        "codeExample": "<section className=\"relative py-24 md:py-32 overflow-hidden\">\n  <div className=\"max-w-7xl mx-auto px-4 text-center\">\n    <h1 className=\"text-5xl md:text-6xl lg:text-7xl font-extrabold \n                   tracking-tight leading-[1.1] mb-6\">\n      <span className=\"text-gradient-primary\">\n        Your Amazing Headline\n      </span>\n    </h1>\n    <p className=\"text-xl md:text-2xl text-text-secondary mb-8 max-w-3xl mx-auto\">\n      Compelling subheadline that explains your value proposition\n    </p>\n    <div className=\"flex flex-col sm:flex-row gap-4 justify-center\">\n      <button className=\"px-8 py-4 bg-primary text-white rounded-xl \n                        font-semibold shadow-floating \n                        hover:scale-[1.03] transition-all duration-normal\">\n        Get Started\n      </button>\n      <button className=\"px-8 py-4 bg-transparent border-2 border-primary \n                        text-primary rounded-xl font-semibold\n                        hover:bg-primary hover:text-white transition-all\">\n        Learn More\n      </button>\n    </div>\n  </div>\n</section>"
+      },
+      "patterns": [
+        "Large, bold typography",
+        "Gradient text effects",
+        "Centered layout",
+        "Responsive text sizing",
+        "Multiple CTA options"
+      ]
+    },
+    "featureGrid": {
+      "name": "Feature Grid",
+      "description": "Showcase features in a responsive grid",
+      "example": {
+        "structure": "Grid of feature cards with icons, titles, and descriptions",
+        "tailwindClasses": [
+          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+          "p-6 rounded-xl border border-border hover:shadow-floating",
+          "transition-all duration-normal"
+        ],
+        "codeExample": "<section className=\"py-24\">\n  <div className=\"max-w-7xl mx-auto px-4\">\n    <h2 className=\"text-4xl font-bold text-center mb-12\">\n      Amazing Features\n    </h2>\n    <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8\">\n      <div className=\"p-6 rounded-xl border border-border \n                     hover:shadow-floating hover:scale-[1.02]\n                     transition-all duration-normal\">\n        <div className=\"w-12 h-12 bg-primary/10 rounded-lg mb-4 \n                       flex items-center justify-center\">\n          <span className=\"text-2xl\">🎨</span>\n        </div>\n        <h3 className=\"text-xl font-semibold mb-2\">Feature Title</h3>\n        <p className=\"text-text-secondary\">\n          Feature description goes here\n        </p>\n      </div>\n    </div>\n  </div>\n</section>"
+      },
+      "patterns": [
+        "Responsive grid layout",
+        "Hover effects on cards",
+        "Icon + content structure",
+        "Consistent spacing"
+      ]
+    },
+    "testimonials": {
+      "name": "Testimonials Section",
+      "description": "Social proof with customer testimonials",
+      "example": {
+        "structure": "Testimonial cards with quotes, avatars, and names",
+        "tailwindClasses": [
+          "bg-background-secondary p-8 rounded-xl",
+          "flex items-center gap-4",
+          "w-12 h-12 rounded-full"
+        ],
+        "codeExample": "<section className=\"py-24 bg-background-secondary\">\n  <div className=\"max-w-7xl mx-auto px-4\">\n    <h2 className=\"text-4xl font-bold text-center mb-12\">\n      Loved by customers\n    </h2>\n    <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8\">\n      <div className=\"bg-background p-8 rounded-xl shadow-floating\">\n        <p className=\"text-text-secondary mb-6\">\n          \"This product changed everything for us!\"\n        </p>\n        <div className=\"flex items-center gap-4\">\n          <div className=\"w-12 h-12 bg-primary/10 rounded-full \n                         flex items-center justify-center\">\n            <span>JD</span>\n          </div>\n          <div>\n            <p className=\"font-semibold\">John Doe</p>\n            <p className=\"text-sm text-text-secondary\">CEO, Company</p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>"
+      },
+      "patterns": [
+        "Quote cards",
+        "Avatar + name structure",
+        "Background color variation",
+        "Grid layout"
+      ]
+    },
+    "pricing": {
+      "name": "Pricing Section",
+      "description": "Pricing tiers with feature comparison",
+      "example": {
+        "structure": "Pricing cards with features, prices, and CTAs",
+        "tailwindClasses": [
+          "border-2 border-primary rounded-xl p-8",
+          "bg-background-secondary",
+          "hover:shadow-overlay transition-all"
+        ],
+        "codeExample": "<section className=\"py-24\">\n  <div className=\"max-w-7xl mx-auto px-4\">\n    <h2 className=\"text-4xl font-bold text-center mb-12\">\n      Simple, transparent pricing\n    </h2>\n    <div className=\"grid grid-cols-1 md:grid-cols-3 gap-8\">\n      <div className=\"border-2 border-primary rounded-xl p-8 \n                     shadow-floating scale-[1.02] transition-all duration-normal\">\n        <span className=\"inline-block px-3 py-1 bg-primary/10 \n                        text-primary text-sm font-semibold rounded-full mb-4\">\n          Most Popular\n        </span>\n        <h3 className=\"text-2xl font-bold mb-2\">Pro</h3>\n        <div className=\"mb-6\">\n          <span className=\"text-4xl font-extrabold\">$29</span>\n          <span className=\"text-text-secondary\">/month</span>\n        </div>\n        <ul className=\"space-y-3 mb-8\">\n          <li className=\"flex items-center gap-2\">\n            <span className=\"text-primary\">✓</span>\n            <span>Feature 1</span>\n          </li>\n          <li className=\"flex items-center gap-2\">\n            <span className=\"text-primary\">✓</span>\n            <span>Feature 2</span>\n          </li>\n        </ul>\n        <button className=\"w-full py-3 bg-primary text-white \n                          rounded-xl font-semibold hover:bg-primary-600 \n                          transition-all\">\n          Get Started\n        </button>\n      </div>\n    </div>\n  </div>\n</section>"
+      },
+      "patterns": [
+        "Card-based layout",
+        "Popular badge",
+        "Feature lists",
+        "CTA buttons"
+      ]
+    }
+  },
+  "bestPractices": {
+    "hero": [
+      "Use large, bold typography (text-5xl to text-7xl)",
+      "Include clear value proposition",
+      "Primary CTA should be prominent",
+      "Use gradient text for visual interest",
+      "Keep hero content above the fold"
+    ],
+    "features": [
+      "Use responsive grid (grid-cols-1 md:grid-cols-2 lg:grid-cols-3)",
+      "Add subtle hover effects (hover:shadow-floating)",
+      "Consistent spacing (gap-8, p-6)",
+      "Icon + title + description structure",
+      "Use design tokens for colors"
+    ],
+    "animations": [
+      "Use transition-all duration-normal for smooth effects",
+      "Subtle scale on hover (hover:scale-[1.02])",
+      "Shadow transitions (hover:shadow-floating)",
+      "NO JavaScript animation libraries",
+      "Respect prefers-reduced-motion"
+    ],
+    "colors": [
+      "Use OKLCH colors in @theme",
+      "Use semantic color names (primary, secondary)",
+      "Support dark mode with CSS variables",
+      "Use opacity modifiers (/50, /75)"
+    ],
+    "typography": [
+      "Use responsive text sizing",
+      "Maintain clear hierarchy",
+      "Use font-extrabold for headlines",
+      "Proper line-height for readability"
+    ]
+  },
+  "componentPatterns": {
+    "buttons": {
+      "primary": "bg-primary text-white px-8 py-4 rounded-xl font-semibold shadow-floating hover:scale-[1.03] transition-all duration-normal",
+      "secondary": "bg-transparent border-2 border-primary text-primary px-8 py-4 rounded-xl font-semibold hover:bg-primary hover:text-white transition-all",
+      "ghost": "text-primary hover:bg-primary/10 px-4 py-2 rounded-lg transition-all"
+    },
+    "cards": {
+      "basic": "p-6 rounded-xl border border-border bg-background",
+      "hover": "p-6 rounded-xl border border-border bg-background hover:shadow-floating hover:scale-[1.02] transition-all duration-normal",
+      "elevated": "p-6 rounded-xl shadow-floating bg-background"
+    },
+    "sections": {
+      "default": "py-24",
+      "withBackground": "py-24 bg-background-secondary",
+      "narrow": "py-24 max-w-4xl mx-auto px-4",
+      "wide": "py-24 max-w-7xl mx-auto px-4"
+    }
+  },
+  "layoutPatterns": {
+    "container": "max-w-7xl mx-auto px-4",
+    "grid": {
+      "two": "grid grid-cols-1 md:grid-cols-2 gap-8",
+      "three": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8",
+      "four": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+    },
+    "flex": {
+      "center": "flex items-center justify-center",
+      "between": "flex items-center justify-between",
+      "column": "flex flex-col gap-4"
+    }
+  }
+}

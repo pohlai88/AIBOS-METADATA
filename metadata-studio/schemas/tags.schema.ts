@@ -1,46 +1,47 @@
-/**
- * Tags Schema
- * Tag management and assignment
- */
-
+// metadata-studio/schemas/tags.schema.ts
 import { z } from 'zod';
 
-export const TagSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  displayName: z.string().optional(),
+export const TagStatusEnum = z.enum(['active', 'inactive']);
+
+export const MdmTagSchema = z.object({
+  id: z.string().uuid().optional(),
+  tenantId: z.string().uuid(),
+
+  key: z.string().min(1),
+  label: z.string().min(1),
   description: z.string().optional(),
-  category: z.string().optional(),
-  color: z.string().optional(),
-  icon: z.string().optional(),
-  
-  // Tag type
-  type: z.enum(['system', 'user', 'automated']).default('user'),
-  
-  // Metadata
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
-  createdBy: z.string(),
+
+  category: z.string().min(1),
+  standardPackId: z.string().optional(),
+
+  status: TagStatusEnum.default('active'),
+  isSystem: z.boolean().default(false),
+
+  createdAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
+  createdBy: z.string().min(1).optional(),
+  updatedBy: z.string().min(1).optional(),
 });
 
-export const TagAssignmentSchema = z.object({
-  id: z.string().uuid(),
+export type MdmTag = z.infer<typeof MdmTagSchema>;
+
+export const TagAssignmentTargetTypeEnum = z.enum([
+  'GLOBAL_METADATA',
+  'GLOSSARY',
+  'KPI', // planned; safe to include
+]);
+
+export const MdmTagAssignmentSchema = z.object({
+  id: z.string().uuid().optional(),
+  tenantId: z.string().uuid(),
   tagId: z.string().uuid(),
-  entityId: z.string().uuid(),
-  entityType: z.string(),
-  assignedBy: z.string(),
-  assignedAt: z.date().or(z.string()),
-  source: z.enum(['manual', 'automated', 'inherited']).default('manual'),
+
+  targetType: TagAssignmentTargetTypeEnum,
+  targetCanonicalKey: z.string().min(1),
+
+  createdAt: z.string().datetime().optional(),
+  createdBy: z.string().min(1).optional(),
 });
 
-export const TagCategorySchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  description: z.string().optional(),
-  tagCount: z.number().default(0),
-});
-
-export type Tag = z.infer<typeof TagSchema>;
-export type TagAssignment = z.infer<typeof TagAssignmentSchema>;
-export type TagCategory = z.infer<typeof TagCategorySchema>;
+export type MdmTagAssignment = z.infer<typeof MdmTagAssignmentSchema>;
 

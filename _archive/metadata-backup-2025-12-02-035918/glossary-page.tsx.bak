@@ -1,0 +1,573 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { 
+  Sun, Moon, Shield, Activity, Database, Server, 
+  GitBranch, Zap, Layers, Cpu, Clock, Search, 
+  AlertCircle, CheckCircle, Lock, Terminal, Globe,
+  ArrowRight, BarChart3, RefreshCw
+} from 'lucide-react';
+
+/**
+ * Metadata Orchestration Platform
+ * A futuristic landing page with simulated real-time orchestration behavior.
+ */
+
+// --- Constants & Mock Data ---
+
+const AGENTS = [
+  { id: 1, name: 'Ingest Scout', role: 'Discovery', type: 'scanner' },
+  { id: 2, name: 'Policy Sentinel', role: 'Governance', type: 'guard' },
+  { id: 3, name: 'Schema Architect', role: 'Transformation', type: 'builder' },
+  { id: 4, name: 'Deep Archive', role: 'Storage', type: 'vault' },
+];
+
+const METADATA_STATES = ['Idle', 'Analyzing', 'Executing', 'Confirming'];
+
+// --- Helper Components ---
+
+const Badge = ({ children, color = 'blue' }) => {
+  const colors = {
+    blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    green: 'bg-green-500/10 text-green-400 border-green-500/20',
+    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    red: 'bg-red-500/10 text-red-400 border-red-500/20',
+    orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  };
+  return (
+    <span className={`px-2 py-0.5 text-xs font-mono rounded border ${colors[color] || colors.blue}`}>
+      {children}
+    </span>
+  );
+};
+
+const Card = ({ children, className = '', glow = false }) => (
+  <div className={`
+    relative overflow-hidden rounded-xl border border-white/10 bg-black/40 backdrop-blur-md p-6 
+    transition-all duration-300 hover:border-white/20
+    ${glow ? 'shadow-[0_0_20px_rgba(56,189,248,0.1)]' : ''}
+    ${className}
+  `}>
+    {children}
+  </div>
+);
+
+// --- Visualizations ---
+
+const PolicyWallVisualization = ({ mode }) => {
+  // Simulate particles flowing from External (Left) to Internal (Right)
+  // Rejection at the wall (Center)
+  
+  const [particles, setParticles] = useState([]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const id = Math.random().toString(36).substr(2, 9);
+      const isCompliant = Math.random() > 0.3; // 70% chance of compliance
+      
+      setParticles(prev => [
+        ...prev, 
+        { id, isCompliant, progress: 0, status: 'traveling' }
+      ].slice(-20)); // Keep max 20 particles to avoid lag
+    }, 800);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const moveInterval = setInterval(() => {
+      setParticles(prev => prev.map(p => {
+        let newProgress = p.progress + 2;
+        let newStatus = p.status;
+
+        // Hit the wall at 50%
+        if (p.progress >= 48 && p.progress <= 52) {
+          if (!p.isCompliant) {
+            newStatus = 'rejected';
+            newProgress = 50; // Stop at wall
+          } else {
+            newStatus = 'accepted';
+          }
+        }
+        
+        // Remove after completion or rejection fade
+        if (newProgress > 100) newStatus = 'finished';
+        
+        return { ...p, progress: newProgress, status: newStatus };
+      }).filter(p => p.status !== 'finished' && !(p.status === 'rejected' && Math.random() > 0.95))); 
+    }, 50);
+    return () => clearInterval(moveInterval);
+  }, []);
+
+  return (
+    <div className="relative h-64 w-full bg-slate-900/50 rounded-xl border border-white/5 overflow-hidden flex items-center">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+      
+      {/* Zones */}
+      <div className="absolute inset-y-0 left-0 w-1/2 flex items-start justify-center pt-4">
+        <span className="text-xs font-mono text-slate-500 tracking-widest uppercase">External Domain</span>
+      </div>
+      <div className="absolute inset-y-0 right-0 w-1/2 flex items-start justify-center pt-4">
+        <span className={`text-xs font-mono tracking-widest uppercase ${mode === 'day' ? 'text-emerald-500/50' : 'text-blue-500/50'}`}>Internal Core</span>
+      </div>
+
+      {/* The Wall */}
+      <div className="absolute left-1/2 top-0 bottom-0 w-1 -ml-0.5 z-10">
+        <div className="h-full w-full bg-gradient-to-b from-transparent via-rose-500/50 to-transparent shadow-[0_0_15px_rgba(244,63,94,0.4)]"></div>
+        <div className="absolute top-1/2 -translate-y-1/2 -left-3 bg-rose-950/80 border border-rose-500/30 text-rose-400 p-1 rounded-full">
+          <Lock size={12} />
+        </div>
+      </div>
+
+      {/* Particles */}
+      {particles.map(p => (
+        <div 
+          key={p.id}
+          className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full transition-all duration-75 shadow-sm
+            ${p.status === 'rejected' ? 'bg-red-500 scale-150 animate-ping opacity-0' : ''}
+            ${p.status === 'accepted' ? (mode === 'day' ? 'bg-emerald-400 shadow-[0_0_10px_#34d399]' : 'bg-blue-400 shadow-[0_0_10px_#60a5fa]') : ''}
+            ${p.status === 'traveling' ? 'bg-slate-400' : ''}
+          `}
+          style={{ 
+            left: `${p.progress}%`,
+            marginTop: `${(parseInt(p.id, 36) % 100) - 50}px` // Random vertical scatter
+          }}
+        >
+          {p.status === 'traveling' && <div className="absolute right-full mr-1 top-1/2 -translate-y-1/2 w-8 h-[1px] bg-gradient-to-r from-transparent to-slate-400/50"></div>}
+        </div>
+      ))}
+      
+      {/* Labels */}
+      <div className="absolute bottom-4 left-4 text-[10px] text-slate-500 flex gap-4">
+        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div> Raw Data</div>
+        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-red-500"></div> Rejected</div>
+        <div className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-emerald-400"></div> Validated</div>
+      </div>
+    </div>
+  );
+};
+
+const TimelineCycle = ({ hour, mode, setHour }) => {
+  // Visual representation of the 24 hour cycle
+  const rotation = (hour / 24) * 360;
+  
+  return (
+    <div className="relative w-full max-w-md mx-auto aspect-[2/1] overflow-hidden flex items-end justify-center mb-8">
+      {/* Arc */}
+      <div className="w-[300px] h-[300px] rounded-full border border-white/10 absolute top-0 flex items-center justify-center">
+        {/* Day/Night Gradient Background inside the arc */}
+        <div className={`absolute inset-0 rounded-full opacity-20 blur-3xl transition-colors duration-1000
+          ${mode === 'day' ? 'bg-orange-500/30' : 'bg-indigo-500/30'}
+        `}></div>
+      </div>
+
+      {/* Sun/Moon Indicator */}
+      <div 
+        className="absolute w-[300px] h-[300px] top-0 transition-transform duration-1000 ease-linear"
+        style={{ transform: `rotate(${rotation - 90}deg)` }}
+      >
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4">
+           {mode === 'day' ? (
+             <div className="bg-orange-400 p-2 rounded-full shadow-[0_0_30px_rgba(251,146,60,0.6)]">
+               <Sun size={24} className="text-white" />
+             </div>
+           ) : (
+             <div className="bg-indigo-400 p-2 rounded-full shadow-[0_0_30px_rgba(129,140,248,0.6)]">
+               <Moon size={24} className="text-white" />
+             </div>
+           )}
+        </div>
+      </div>
+      
+      {/* Clock Readout */}
+      <div className="relative z-10 text-center mb-2">
+        <div className="text-4xl font-bold font-mono tracking-tighter text-white">
+          {Math.floor(hour).toString().padStart(2, '0')}:00
+        </div>
+        <div className={`text-sm font-medium tracking-widest uppercase transition-colors duration-500 ${mode === 'day' ? 'text-orange-400' : 'text-indigo-400'}`}>
+          {mode === 'day' ? 'Active Operations' : 'Autonomous Maintenance'}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- Main Application ---
+
+const App = () => {
+  // State
+  const [hour, setHour] = useState(10); // Start at 10 AM
+  const [metrics, setMetrics] = useState({
+    processing: 1240,
+    validated: 85402,
+    indexed: 120593,
+    rejected: 432
+  });
+  
+  // Derived State
+  const mode = hour >= 6 && hour < 18 ? 'day' : 'night';
+  
+  // Simulation Loop for Time & Metrics
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHour(h => {
+        const next = h + 0.1; // Fast forward time
+        return next >= 24 ? 0 : next;
+      });
+    }, 200); // Speed of day cycle
+
+    const metricTimer = setInterval(() => {
+      setMetrics(m => ({
+        processing: m.processing + Math.floor(Math.random() * 10) - 5,
+        validated: m.validated + Math.floor(Math.random() * 5),
+        indexed: m.indexed + Math.floor(Math.random() * 8),
+        rejected: m.rejected + (Math.random() > 0.8 ? 1 : 0),
+      }));
+    }, 500);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(metricTimer);
+    };
+  }, []);
+
+  // Theme Styles based on mode
+  const theme = useMemo(() => {
+    return mode === 'day' 
+      ? {
+          bg: 'bg-slate-950', // Slightly lighter dark for day
+          accent: 'text-orange-400',
+          accentBg: 'bg-orange-500',
+          nav: 'border-orange-500/20',
+          glow: 'shadow-orange-500/20',
+          gradient: 'from-slate-900 to-slate-950'
+        }
+      : {
+          bg: 'bg-black',
+          accent: 'text-indigo-400',
+          accentBg: 'bg-indigo-500',
+          nav: 'border-indigo-500/20',
+          glow: 'shadow-indigo-500/20',
+          gradient: 'from-gray-950 to-black'
+        };
+  }, [mode]);
+
+  return (
+    <div className={`min-h-screen ${theme.bg} text-slate-200 transition-colors duration-1000 font-sans selection:bg-white/20`}>
+      
+      {/* Background Ambience */}
+      <div className={`fixed inset-0 z-0 bg-gradient-to-b ${theme.gradient} transition-colors duration-1000`} />
+      <div className="fixed inset-0 z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+      
+      {/* --- Navigation --- */}
+      <nav className={`fixed top-0 w-full z-50 backdrop-blur-lg border-b border-white/5 transition-all duration-500`}>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded bg-white/5 border border-white/10 ${theme.accent}`}>
+              <Layers size={20} />
+            </div>
+            <span className="font-bold text-lg tracking-tight text-white">Meta<span className={theme.accent}>Orchestrator</span></span>
+          </div>
+          
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+            <a href="#" className="hover:text-white transition-colors">Dashboard</a>
+            <a href="#" className="hover:text-white transition-colors">Lineage</a>
+            <a href="#" className="hover:text-white transition-colors">Governance</a>
+            <a href="#" className="hover:text-white transition-colors">Agents</a>
+          </div>
+
+          <div className="flex items-center gap-4">
+             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono">
+                <span className={`w-2 h-2 rounded-full ${mode === 'day' ? 'bg-green-400 animate-pulse' : 'bg-indigo-400 animate-pulse'}`}></span>
+                SYSTEM ONLINE
+             </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* --- Hero Section --- */}
+      <main className="relative z-10 pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column: Text & Value Prop */}
+          <div className="lg:col-span-7 space-y-8">
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-sm ${theme.accent}`}>
+              <Zap size={14} />
+              <span>Version 2.4 Live • All Systems Operational</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight">
+              Orchestrate Data <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">
+                Across Time & Space
+              </span>
+            </h1>
+            
+            <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
+              The first autonomous metadata platform that adapts to your 24-hour enterprise cycle. 
+              Seamlessly bridge external chaos with internal order through AI-driven governance barriers.
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <button className={`px-8 py-4 rounded-lg font-bold text-white transition-all transform hover:scale-105 ${theme.accentBg} hover:opacity-90`}>
+                Start Orchestration
+              </button>
+              <button className="px-8 py-4 rounded-lg font-bold text-white border border-white/20 hover:bg-white/5 transition-all flex items-center gap-2">
+                <Terminal size={18} />
+                View Documentation
+              </button>
+            </div>
+
+            {/* Simulated Console Log */}
+            <div className="mt-8 p-4 rounded-lg bg-black/60 border border-white/10 font-mono text-xs text-slate-400 h-32 overflow-hidden flex flex-col justify-end">
+              <div className="space-y-1">
+                <div className="opacity-40">[{Math.floor(hour).toString().padStart(2,'0')}:12:04] Initializing handshake with source_db_04...</div>
+                <div className="opacity-60">[{Math.floor(hour).toString().padStart(2,'0')}:12:05] Schema validation passed (latency: 12ms)</div>
+                <div className={theme.accent}>[{Math.floor(hour).toString().padStart(2,'0')}:12:06] Agent "Sentinel" flagged 3 records for review</div>
+                <div className="text-white">[{Math.floor(hour).toString().padStart(2,'0')}:12:07] Batch process #9921 started...</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: The Time Cycle Visualizer */}
+          <div className="lg:col-span-5 relative">
+            <TimelineCycle hour={hour} mode={mode} setHour={setHour} />
+            
+            {/* Real-time Dashboard Snippet */}
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="flex flex-col gap-2">
+                 <div className="text-slate-500 text-xs font-mono uppercase tracking-wider">Ingestion Rate</div>
+                 <div className="text-2xl font-bold text-white flex items-end gap-2">
+                   {mode === 'day' ? '4.2 TB/h' : '1.8 TB/h'}
+                   <Activity size={16} className={mode === 'day' ? 'text-green-400 mb-1' : 'text-slate-500 mb-1'} />
+                 </div>
+                 <div className="text-xs text-slate-500">
+                   {mode === 'day' ? '↑ 12% vs avg' : '↓ Maintenance Mode'}
+                 </div>
+              </Card>
+              <Card className="flex flex-col gap-2">
+                 <div className="text-slate-500 text-xs font-mono uppercase tracking-wider">Active Policies</div>
+                 <div className="text-2xl font-bold text-white flex items-end gap-2">
+                   1,024
+                   <Shield size={16} className="text-emerald-400 mb-1" />
+                 </div>
+                 <div className="text-xs text-slate-500">100% Coverage</div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* --- The Policy Wall --- */}
+      <section className="py-20 border-t border-white/5 bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-3xl font-bold text-white mb-2">The Policy Wall</h2>
+              <p className="text-slate-400">Visualizing the boundary between external chaos and internal order.</p>
+            </div>
+            <div className="flex gap-2">
+              <Badge color={mode === 'day' ? 'orange' : 'purple'}>
+                Live Filtering
+              </Badge>
+            </div>
+          </div>
+
+          <PolicyWallVisualization mode={mode} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            {[
+              { icon: Globe, title: 'External Sources', desc: 'Raw data streams from APIs, scrapers, and third-party vendors entering the system.' },
+              { icon: Lock, title: 'Compliance Gate', desc: 'Real-time validation against GDPR, PII, and custom schema policies.', active: true },
+              { icon: Database, title: 'Internal Lake', desc: 'Clean, cataloged, and governable data ready for enterprise consumption.' }
+            ].map((item, idx) => (
+              <div key={idx} className={`p-6 rounded-xl border border-white/5 bg-white/[0.02] flex gap-4 ${item.active ? 'border-rose-500/20 bg-rose-500/5' : ''}`}>
+                <div className={`p-3 rounded-lg h-fit ${item.active ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-400'}`}>
+                  <item.icon size={20} />
+                </div>
+                <div>
+                  <h4 className="text-white font-medium mb-1">{item.title}</h4>
+                  <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- Agent Orchestration --- */}
+      <section className="py-20 max-w-7xl mx-auto px-6">
+         <div className="flex items-center justify-between mb-10">
+           <h2 className="text-3xl font-bold text-white">Active Agents</h2>
+           <div className="flex items-center gap-2 text-sm text-slate-400">
+             <RefreshCw size={14} className="animate-spin" />
+             Updating every 500ms
+           </div>
+         </div>
+
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {AGENTS.map((agent) => {
+              // Simulate random state changes
+              const stateIndex = Math.floor((Math.random() * 4)); 
+              const state = METADATA_STATES[stateIndex];
+              const isIdle = state === 'Idle';
+              
+              return (
+                <Card key={agent.id} className="group hover:-translate-y-1">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className={`p-2 rounded-lg ${mode === 'day' ? 'bg-orange-500/10 text-orange-400' : 'bg-indigo-500/10 text-indigo-400'}`}>
+                       {agent.type === 'scanner' && <Search size={20} />}
+                       {agent.type === 'guard' && <Shield size={20} />}
+                       {agent.type === 'builder' && <Cpu size={20} />}
+                       {agent.type === 'vault' && <Server size={20} />}
+                    </div>
+                    <div className={`w-2 h-2 rounded-full ${isIdle ? 'bg-slate-600' : 'bg-green-400 animate-pulse'}`}></div>
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-white mb-1">{agent.name}</h3>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider mb-6">{agent.role}</p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Status</span>
+                      <span className={isIdle ? 'text-slate-500' : theme.accent}>{state}</span>
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-500 ${isIdle ? 'w-0' : `w-[${Math.random() * 100}%] bg-gradient-to-r from-transparent ${mode === 'day' ? 'to-orange-500' : 'to-indigo-500'}`}`}
+                        style={{ width: isIdle ? '0%' : `${40 + Math.random() * 60}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="pt-4 mt-4 border-t border-white/5 flex justify-between items-center text-xs text-slate-500 font-mono">
+                      <span>PID: {2000 + agent.id * 153}</span>
+                      <span>v2.1.0</span>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+         </div>
+      </section>
+
+      {/* --- Real-Time Metrics & Lineage --- */}
+      <section className="py-20 border-t border-white/5 bg-black/20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Metrics Panel */}
+          <div className="lg:col-span-1 space-y-6">
+            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <BarChart3 size={20} className={theme.accent} />
+              System Metrics
+            </h3>
+            
+            <div className="space-y-4">
+               {[
+                 { label: 'Processing', value: metrics.processing, color: 'text-blue-400' },
+                 { label: 'Validated', value: metrics.validated, color: 'text-emerald-400' },
+                 { label: 'Indexed', value: metrics.indexed, color: 'text-purple-400' },
+                 { label: 'Rejected', value: metrics.rejected, color: 'text-rose-400' },
+               ].map((m, i) => (
+                 <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/5">
+                   <span className="text-slate-400">{m.label}</span>
+                   <span className={`font-mono font-bold text-lg ${m.color}`}>
+                     {m.value.toLocaleString()}
+                   </span>
+                 </div>
+               ))}
+            </div>
+
+            <div className="p-4 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-sm text-indigo-300">
+               <div className="flex items-start gap-3">
+                 <AlertCircle size={18} className="mt-0.5 shrink-0" />
+                 <p>
+                   Night mode scheduled for 18:00. Large scale archival jobs will auto-trigger. 
+                   <span className="block mt-2 opacity-70 text-xs">Estimated volume: 45TB</span>
+                 </p>
+               </div>
+            </div>
+          </div>
+
+          {/* Lineage Visualization */}
+          <div className="lg:col-span-2">
+             <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <GitBranch size={20} className={theme.accent} />
+                  Live Lineage Trail
+                </h3>
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                </div>
+             </div>
+
+             <div className="relative h-[400px] bg-slate-900 rounded-xl border border-white/10 overflow-hidden p-6">
+                {/* SVG Connecting Lines */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+                   <path d="M 50 200 C 150 200, 150 100, 250 100" fill="none" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
+                   <path d="M 250 100 C 350 100, 350 200, 450 200" fill="none" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
+                   <path d="M 50 200 C 150 200, 150 300, 250 300" fill="none" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
+                   <path d="M 250 300 C 350 300, 350 200, 450 200" fill="none" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
+                   <circle cx="450" cy="200" r="100" fill="url(#glow)" opacity="0.1" />
+                   <defs>
+                     <radialGradient id="glow">
+                       <stop offset="0%" stopColor={mode === 'day' ? 'orange' : 'indigo'} />
+                       <stop offset="100%" stopColor="transparent" />
+                     </radialGradient>
+                   </defs>
+                </svg>
+
+                {/* Nodes */}
+                <div className="relative z-10 h-full flex justify-between items-center">
+                   
+                   {/* Source */}
+                   <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-lg bg-blue-500/20 border border-blue-500 flex items-center justify-center text-blue-400">
+                         <Globe size={24} />
+                      </div>
+                      <span className="text-xs text-slate-400">External API</span>
+                   </div>
+
+                   {/* Transformation Layer */}
+                   <div className="flex flex-col gap-12">
+                      <div className="animate-bounce duration-[2000ms]">
+                         <div className="px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500 text-purple-300 text-xs">
+                           Transform: JSON → Parquet
+                         </div>
+                      </div>
+                      <div className="animate-bounce duration-[2500ms]">
+                         <div className="px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500 text-purple-300 text-xs">
+                           Transform: PII Masking
+                         </div>
+                      </div>
+                   </div>
+
+                   {/* Destination */}
+                   <div className="flex flex-col items-center gap-2">
+                      <div className={`w-16 h-16 rounded-full border-4 flex items-center justify-center text-white transition-colors duration-500 ${mode === 'day' ? 'border-orange-500 bg-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.3)]' : 'border-indigo-500 bg-indigo-500/20 shadow-[0_0_30px_rgba(99,102,241,0.3)]'}`}>
+                         <Database size={28} />
+                      </div>
+                      <span className="text-xs text-slate-400">Enterprise Warehouse</span>
+                   </div>
+                </div>
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- Footer --- */}
+      <footer className="py-12 border-t border-white/10 text-center relative z-10 bg-black">
+        <div className="flex items-center justify-center gap-2 mb-4 opacity-50">
+           <Layers size={16} />
+           <span className="font-bold">MetaOrchestrator</span>
+        </div>
+        <p className="text-slate-600 text-sm">
+          &copy; 2024 Metadata Orchestration Systems. All processing local. No data leaves the perimeter.
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

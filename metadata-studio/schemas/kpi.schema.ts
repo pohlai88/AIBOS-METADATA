@@ -1,58 +1,87 @@
-/**
- * KPI Schema
- * Key Performance Indicators and metrics
- */
-
+// metadata-studio/schemas/kpi.schema.ts
 import { z } from 'zod';
+import { GovernanceTierEnum } from './business-rule.schema';
 
-export const KPISchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  displayName: z.string(),
-  description: z.string(),
-  
-  // KPI definition
-  formula: z.string(),
-  unit: z.string().optional(),
-  aggregationType: z.enum(['sum', 'avg', 'count', 'min', 'max', 'distinct']),
-  
-  // Data source
-  sourceEntities: z.array(z.string().uuid()),
-  calculationSQL: z.string().optional(),
-  
-  // Targets & thresholds
-  target: z.number().optional(),
-  thresholds: z.object({
-    critical: z.number().optional(),
-    warning: z.number().optional(),
-    good: z.number().optional(),
-    excellent: z.number().optional(),
-  }).optional(),
-  
-  // Time dimension
-  timeGrain: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly']).optional(),
-  
-  // Ownership & governance
-  owner: z.string().optional(),
-  domain: z.string().optional(),
-  tier: z.enum(['tier1', 'tier2', 'tier3']).optional(),
-  
-  // Metadata
-  tags: z.array(z.string()).default([]),
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
-  createdBy: z.string(),
+export const KpiStatusEnum = z.enum([
+  'active',
+  'deprecated',
+  'draft',
+]);
+
+export const KpiRoleEnum = z.enum([
+  'MEASURE',
+  'DIMENSION',
+  'FILTER',
+  'DRIVER',
+  'THRESHOLD',
+  'OTHER',
+]);
+
+/**
+ * KPI definition (API-level view).
+ * We use primaryMetadataCanonicalKey instead of id;
+ * service resolves it to primaryMetadataId for DB.
+ */
+export const MdmKpiDefinitionSchema = z.object({
+  id: z.string().uuid().optional(),
+
+  tenantId: z.string().uuid(),
+
+  canonicalKey: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().optional(),
+
+  domain: z.string().min(1),
+  category: z.string().min(1),
+
+  standardPackId: z.string().optional(),
+
+  tier: GovernanceTierEnum,
+  status: KpiStatusEnum.default('active'),
+
+  expression: z.string().min(1),
+  expressionLanguage: z.string().min(1).default('METADATA_DSL'),
+
+  primaryMetadataCanonicalKey: z.string().min(1),
+  aggregationLevel: z.string().optional(),
+
+  ownerId: z.string().min(1),
+  stewardId: z.string().min(1),
+
+  createdAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
+  createdBy: z.string().min(1).optional(),
+  updatedBy: z.string().min(1).optional(),
 });
 
-export const KPIValueSchema = z.object({
-  kpiId: z.string().uuid(),
-  value: z.number(),
-  timestamp: z.date().or(z.string()),
-  period: z.string(),
-  dimensions: z.record(z.string()).optional(),
-  metadata: z.record(z.any()).optional(),
+export type MdmKpiDefinition = z.infer<typeof MdmKpiDefinitionSchema>;
+
+/**
+ * Component input uses metadata canonical keys (not ids).
+ */
+export const MdmKpiComponentInputSchema = z.object({
+  role: KpiRoleEnum,
+  metadataCanonicalKey: z.string().min(1),
+  componentExpression: z.string().optional(),
+  sequence: z.number().int().min(0).default(0),
+  isRequired: z.boolean().default(true),
 });
 
-export type KPI = z.infer<typeof KPISchema>;
-export type KPIValue = z.infer<typeof KPIValueSchema>;
+export type MdmKpiComponentInput = z.infer<
+  typeof MdmKpiComponentInputSchema
+>;
+
+/**
+ * KPI payload used in API + approvals:
+ * - one definition
+ * - zero or more components
+ */
+export const MdmKpiDefinitionWithComponentsSchema = z.object({
+  definition: MdmKpiDefinitionSchema,
+  components: z.array(MdmKpiComponentInputSchema).default([]),
+});
+
+export type MdmKpiDefinitionWithComponents = z.infer<
+  typeof MdmKpiDefinitionWithComponentsSchema
+>;
 

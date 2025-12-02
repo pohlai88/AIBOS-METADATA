@@ -1,35 +1,81 @@
-/**
- * Lineage Routes
- * Handles /lineage/* endpoints
- */
-
+// metadata-studio/api/lineage.routes.ts
 import { Hono } from 'hono';
-import { lineageService } from '../services/lineage.service';
+import type { AuthContext } from '../middleware/auth.middleware';
+import {
+  declareFieldLineage,
+  getFieldLineageGraph,
+  getTier1LineageCoverage,
+  type LineageDirection,
+} from '../services/lineage.service';
 
-const lineage = new Hono();
+export const lineageRouter = new Hono();
 
-// GET /lineage/:entityId/upstream
-lineage.get('/:entityId/upstream', async (c) => {
-  const entityId = c.req.param('entityId');
-  const depth = c.req.query('depth') ? parseInt(c.req.query('depth')!) : 5;
-  const result = await lineageService.getUpstream(entityId, depth);
-  return c.json(result);
-});
-
-// GET /lineage/:entityId/downstream
-lineage.get('/:entityId/downstream', async (c) => {
-  const entityId = c.req.param('entityId');
-  const depth = c.req.query('depth') ? parseInt(c.req.query('depth')!) : 5;
-  const result = await lineageService.getDownstream(entityId, depth);
-  return c.json(result);
-});
-
-// POST /lineage
-lineage.post('/', async (c) => {
+/**
+ * POST /lineage/field
+ *
+ * Declare or update a field-level lineage edge:
+ *   sourceCanonicalKey → targetCanonicalKey
+ */
+lineageRouter.post('/field', async (c) => {
+  const auth = c.get('auth') as AuthContext;
   const body = await c.req.json();
-  const result = await lineageService.createLineage(body);
-  return c.json(result, 201);
+
+  const result = await declareFieldLineage({
+    actorRole: auth.role,
+    actorId: auth.userId,
+    tenantId: auth.tenantId,
+    body: {
+      ...body,
+      tenantId: body.tenantId ?? auth.tenantId,
+      createdBy: body.createdBy ?? auth.userId,
+      updatedBy: body.updatedBy ?? auth.userId,
+    },
+  });
+
+  return c.json(result, 200);
 });
 
-export default lineage;
+/**
+ * GET /lineage/field?canonicalKey=...&direction=upstream|downstream|both
+ *
+ * Fetch upstream/downstream graph for a given field.
+ */
+lineageRouter.get('/field', async (c) => {
+  const auth = c.get('auth') as AuthContext;
+  const canonicalKey = c.req.query('canonicalKey');
+  const direction = (c.req.query('direction') ??
+    'upstream') as LineageDirection;
+
+  if (!canonicalKey) {
+    return c.json(
+      { error: 'Missing query parameter: canonicalKey' },
+      400,
+    );
+  }
+
+  const graph = await getFieldLineageGraph(
+    auth.tenantId,
+    canonicalKey,
+    direction,
+  );
+
+  return c.json(graph);
+});
+
+/**
+ * GET /lineage/tier1-coverage
+ *
+ * Summary of Tier 1 lineage coverage:
+ * - total Tier1 fields
+ * - count covered
+ * - count uncovered
+ * - list of uncovered canonical keys
+ */
+lineageRouter.get('/tier1-coverage', async (c) => {
+  const auth = c.get('auth') as AuthContext;
+
+  const coverage = await getTier1LineageCoverage(auth.tenantId);
+
+  return c.json(coverage);
+});
 

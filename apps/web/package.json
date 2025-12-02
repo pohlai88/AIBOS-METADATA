@@ -2,9 +2,9 @@
   "name": "@aibos/web",
   "version": "0.1.0",
   "dependencies": {
-    "@aibos/metadata-studio": "0.1.0",
-    "@aibos/types": "0.1.0",
-    "@aibos/ui": "0.1.0",
+    "@aibos/metadata-studio": "workspace:*",
+    "@aibos/types": "workspace:*",
+    "@aibos/ui": "workspace:*",
     "@headlessui/react": "^2.2.9",
     "@neondatabase/serverless": "^1.0.2",
     "@tailwindcss/postcss": "^4.1.17",

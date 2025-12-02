@@ -1,67 +1,49 @@
-/**
- * MDM Global Metadata Schema
- * Single Source of Truth for metadata entities
- */
-
+// metadata-studio/schemas/mdm-global-metadata.schema.ts
 import { z } from 'zod';
+import { GovernanceTierEnum } from './business-rule.schema';
 
-export const MetadataEntitySchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  displayName: z.string().optional(),
-  description: z.string().optional(),
-  type: z.enum([
-    'table',
-    'view',
-    'column',
-    'dataset',
-    'dashboard',
-    'report',
-    'metric',
-    'kpi'
-  ]),
-  sourceSystem: z.string(),
-  fullyQualifiedName: z.string(),
-  aliases: z.array(z.string()).default([]),
-  owner: z.string().optional(),
-  steward: z.string().optional(),
-  domain: z.string().optional(),
-  classification: z.enum(['public', 'internal', 'confidential', 'restricted']).default('internal'),
-  tags: z.array(z.string()).default([]),
-  customProperties: z.record(z.any()).optional(),
-  createdAt: z.date().or(z.string()),
-  updatedAt: z.date().or(z.string()),
-  createdBy: z.string().optional(),
-  updatedBy: z.string().optional(),
-});
+export const MetadataStatusEnum = z.enum(['active', 'deprecated', 'draft']);
 
-export const ColumnMetadataSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  dataType: z.string(),
-  nullable: z.boolean().default(true),
-  isPrimaryKey: z.boolean().default(false),
-  isForeignKey: z.boolean().default(false),
+/**
+ * Canonical field/column-level metadata definition.
+ * Mirrors mdm_global_metadata table.
+ */
+export const MdmGlobalMetadataSchema = z.object({
+  id: z.string().uuid().optional(),
+
+  tenantId: z.string().uuid(),
+
+  // canonical_key: unique per tenant
+  canonicalKey: z.string().min(1),
+
+  label: z.string().min(1),
   description: z.string().optional(),
-  businessDefinition: z.string().optional(),
+
+  domain: z.string().min(1),
+  module: z.string().min(1),
+  entityUrn: z.string().min(1),
+
+  tier: GovernanceTierEnum,
+
+  // required for Tier1/2 in service logic
+  standardPackId: z.string().min(1).optional(),
+
+  dataType: z.string().min(1),
   format: z.string().optional(),
-  defaultValue: z.any().optional(),
-  constraints: z.array(z.string()).default([]),
-  tags: z.array(z.string()).default([]),
+
+  aliasesRaw: z.string().optional(),
+
+  ownerId: z.string().min(1),
+  stewardId: z.string().min(1),
+
+  status: MetadataStatusEnum.default('active'),
+  isDraft: z.boolean().default(false),
+
+  createdAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
+  createdBy: z.string().min(1).optional(),
+  updatedBy: z.string().min(1).optional(),
 });
 
-export const TableMetadataSchema = MetadataEntitySchema.extend({
-  type: z.literal('table'),
-  schema: z.string(),
-  database: z.string(),
-  columns: z.array(ColumnMetadataSchema),
-  rowCount: z.number().optional(),
-  sizeBytes: z.number().optional(),
-  partitionedBy: z.array(z.string()).optional(),
-  clusteredBy: z.array(z.string()).optional(),
-});
-
-export type MetadataEntity = z.infer<typeof MetadataEntitySchema>;
-export type ColumnMetadata = z.infer<typeof ColumnMetadataSchema>;
-export type TableMetadata = z.infer<typeof TableMetadataSchema>;
+export type MdmGlobalMetadata = z.infer<typeof MdmGlobalMetadataSchema>;
 

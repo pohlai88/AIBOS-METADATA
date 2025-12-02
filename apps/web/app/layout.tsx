@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@aibos/ui";
 import { FloatingThemeToggle } from "@/components/FloatingThemeToggle";
-import { initializeSDK } from "../lib/sdk-guard";
+// import { initializeSDK } from "../lib/sdk-guard";
 import "@aibos/ui/design/globals.css";
 
 // Initialize Controlled Vocabulary SDK on app startup
 // This checks version compatibility and prevents deployment mismatches
-initializeSDK();
+// Temporarily disabled for landing page showcase
+// initializeSDK();
 
 export const metadata: Metadata = {
   title: "AIBOS Metadata Studio",

@@ -1,41 +1,80 @@
-/**
- * Metadata Routes
- * Handles /metadata/* endpoints
- */
-
+// metadata-studio/api/metadata.routes.ts
 import { Hono } from 'hono';
-import { metadataService } from '../services/metadata.service';
+import { and, eq } from 'drizzle-orm';
+import { db } from '../db/client';
+import { mdmGlobalMetadata } from '../db/schema/metadata.tables';
+import type { AuthContext } from '../middleware/auth.middleware';
+import {
+  applyMetadataChange,
+} from '../services/metadata.service';
 
-const metadata = new Hono();
+export const metadataRouter = new Hono();
 
-// GET /metadata/:id
-metadata.get('/:id', async (c) => {
-  const id = c.req.param('id');
-  const result = await metadataService.getById(id);
-  return c.json(result);
-});
-
-// POST /metadata
-metadata.post('/', async (c) => {
+/**
+ * POST /metadata
+ *
+ * Create or update global metadata definition.
+ * Uses applyMetadataChange to decide:
+ * - immediate upsert vs
+ * - pending approval
+ */
+metadataRouter.post('/', async (c) => {
+  const auth = c.get('auth') as AuthContext;
   const body = await c.req.json();
-  const result = await metadataService.create(body);
-  return c.json(result, 201);
+
+  const mergedBody = {
+    ...body,
+    tenantId: body.tenantId ?? auth.tenantId,
+    createdBy: body.createdBy ?? auth.userId,
+    updatedBy: body.updatedBy ?? auth.userId,
+  };
+
+  const result = await applyMetadataChange({
+    actorRole: auth.role,
+    actorId: auth.userId,
+    body: mergedBody,
+  });
+
+  const statusCode =
+    (result as any).status === 'pending_approval' ? 202 : 200;
+
+  return c.json(result, statusCode);
 });
 
-// PUT /metadata/:id
-metadata.put('/:id', async (c) => {
-  const id = c.req.param('id');
-  const body = await c.req.json();
-  const result = await metadataService.update(id, body);
-  return c.json(result);
-});
+/**
+ * GET /metadata
+ *
+ * List metadata for the current tenant.
+ * Optional filters:
+ * - canonicalKey
+ * - domain
+ * - module
+ */
+metadataRouter.get('/', async (c) => {
+  const auth = c.get('auth') as AuthContext;
+  const canonicalKey = c.req.query('canonicalKey');
+  const domain = c.req.query('domain');
+  const module = c.req.query('module');
 
-// DELETE /metadata/:id
-metadata.delete('/:id', async (c) => {
-  const id = c.req.param('id');
-  await metadataService.delete(id);
-  return c.json({ success: true });
-});
+  let where = eq(mdmGlobalMetadata.tenantId, auth.tenantId);
 
-export default metadata;
+  if (canonicalKey) {
+    where = and(where, eq(mdmGlobalMetadata.canonicalKey, canonicalKey));
+  }
+
+  if (domain) {
+    where = and(where, eq(mdmGlobalMetadata.domain, domain));
+  }
+
+  if (module) {
+    where = and(where, eq(mdmGlobalMetadata.module, module));
+  }
+
+  const rows = await db
+    .select()
+    .from(mdmGlobalMetadata)
+    .where(where);
+
+  return c.json(rows);
+});
 

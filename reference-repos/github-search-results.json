@@ -1,0 +1,192 @@
+﻿[
+    {
+        "Name":  "nim",
+        "FullName":  "ibelick/nim",
+        "Description":  "Nim is a free and open-source personal website template built with Next.js 15, React 19, Tailwind CSS v4, and Motion-Primitives.",
+        "Stars":  647,
+        "URL":  "https://github.com/ibelick/nim",
+        "Language":  "TypeScript",
+        "Updated":  "2025-12-01T16:44:41Z",
+        "Topics":  "blog, nextjs, personal-website, portfolio-website, react, react-portfolio-template, resume-website, simple-portfolio"
+    },
+    {
+        "Name":  "nextjs-nextra-starter",
+        "FullName":  "pdsuwwz/nextjs-nextra-starter",
+        "Description":  "⚡️  一个 Next.js (v15) 快速启动模板, 集成 Tailwind CSS (v4) + React (v19) + Nextra (v4) + TypeScript + Shadcn UI + Radix UI + Aceternity UI + ESLint(v9) + Sass, 支持 Iconify 图标集, i18n 多语言国际化 - 响应式、暗黑模式落地页、适合开发个人博客 Blog Starter Template, 含示例代码, Deployed on Netlify and Vercel.",
+        "Stars":  260,
+        "URL":  "https://github.com/pdsuwwz/nextjs-nextra-starter",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-30T17:54:16Z",
+        "Topics":  "aceternity, app-router, blog, i18n, iconify, mdx, multilingual, nextjs-starter, nextra, open-source, radix, react, responsive, shadcn, ssr, starter, tailwindcss, template, ui, vercel"
+    },
+    {
+        "Name":  "next16-conferences",
+        "FullName":  "aurorascharff/next16-conferences",
+        "Description":  "An animated conference explorer app built with Next.js 16, React 19 features, React View Transitions, Ariakit, Tailwind CSS v4 and Prisma.",
+        "Stars":  142,
+        "URL":  "https://github.com/aurorascharff/next16-conferences",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-26T21:57:20Z",
+        "Topics":  "app-router, ariakit, nextjs, nuqs, prisma, react19, rsc, server-functions, tailwindcss, tailwindcss-v4, view-transitions"
+    },
+    {
+        "Name":  "chatgpt",
+        "FullName":  "shivanshubisht/chatgpt",
+        "Description":  "ChatGPT built with Next.js 13 app directory and Tailwind CSS using OpenAI\u0027s API sdk v4 and GPT-4 and SSR streaming for data with edge functions.",
+        "Stars":  119,
+        "URL":  "https://github.com/shivanshubisht/chatgpt",
+        "Language":  "TypeScript",
+        "Updated":  "2025-08-28T14:50:57Z",
+        "Topics":  "chatgpt, gpt-4, nextjs, nextjs13, openai, react, tailwindcss, typescript"
+    },
+    {
+        "Name":  "Instagram-Clone",
+        "FullName":  "SashenJayathilaka/Instagram-Clone",
+        "Description":  "Instagram 2.0 with REACT.JS! (Next.js, TypeScript, NextAuth.js v4.17.0, Tailwind CSS, Firebase v9, Framer Motion, Image Uploading, Google Authentication,, Instagram Profile)",
+        "Stars":  118,
+        "URL":  "https://github.com/SashenJayathilaka/Instagram-Clone",
+        "Language":  "TypeScript",
+        "Updated":  "2025-10-26T16:18:42Z",
+        "Topics":  "environment-variables, faker, firebase-storage, firebasev9, forms, framermotion, google-authentication, google-cloud-console, learn, moment-js, mui-material, next-js-app, nextauthjs, react-js, student-vscode, tailwind-css, tailwind-scrollbar, tailwind-scrollbar-hide, typescipt, vercel-deployment"
+    },
+    {
+        "Name":  "Discord-Clone",
+        "FullName":  "SashenJayathilaka/Discord-Clone",
+        "Description":  "Discord 2.0 with REACT.JS! (Next.js, NextAuth.js v4.17.0, Tailwind CSS, Typescript, Server create, Firebase v9, Image Uploading, Google Authentication, 1-1 Messaging, Real Time Messenger )",
+        "Stars":  103,
+        "URL":  "https://github.com/SashenJayathilaka/Discord-Clone",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-25T10:00:05Z",
+        "Topics":  "discord-clone, faker-js, firebase-version9, framer-motion, google-authentication, learn, lodashjs, moments, next-auth, next-js-app, react-dom-, react-hot-toast, react-icon, react-js, react-spinner-loader, real-time-message, tailwind-css, tailwind-scrollbar-hide, typescipt, vercel"
+    },
+    {
+        "Name":  "turborepo-shadcn-ui-tailwind-4",
+        "FullName":  "linkb15/turborepo-shadcn-ui-tailwind-4",
+        "Description":  "This template is for creating a monorepo with Turborepo, shadcn/ui, tailwindcss v4, and react v19.",
+        "Stars":  101,
+        "URL":  "https://github.com/linkb15/turborepo-shadcn-ui-tailwind-4",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-22T17:24:04Z",
+        "Topics":  "eslint, nextjs, nextjs-template, nextjs15, react, react19, react19-starter, reactjs, shadcn-ui, tailwindcss, tailwindcss-v4, turbopack, turborepo, typescript"
+    },
+    {
+        "Name":  "turbo-with-tailwind-v4",
+        "FullName":  "philipptpunkt/turbo-with-tailwind-v4",
+        "Description":  "Example repository of a Turbo Monorepo with Tailwind CSS",
+        "Stars":  49,
+        "URL":  "https://github.com/philipptpunkt/turbo-with-tailwind-v4",
+        "Language":  "TypeScript",
+        "Updated":  "2025-10-15T05:48:33Z",
+        "Topics":  "javascript, nextjs, tailwind, tailwindcss, turbo, turborepo, typescript"
+    },
+    {
+        "Name":  "velokit",
+        "FullName":  "zhyd1997/velokit",
+        "Description":  "A modern fullstack starter kit powered by Next.js 15, Tailwind CSS v4, shadcn/ui, Prisma, and Supabase — perfect for building fast, scalable web apps.",
+        "Stars":  44,
+        "URL":  "https://github.com/zhyd1997/velokit",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-21T12:01:23Z",
+        "Topics":  "hacktoberfest, nextjs, prisma, react, shadcn-ui, starter-kit, supabase, tailwindcss, turborepo"
+    },
+    {
+        "Name":  "insta-v4",
+        "FullName":  "sahandghavidel/insta-v4",
+        "Description":  "Instageram clone using Next js and Tailwind CSS",
+        "Stars":  40,
+        "URL":  "https://github.com/sahandghavidel/insta-v4",
+        "Language":  "JavaScript",
+        "Updated":  "2025-08-10T17:59:39Z",
+        "Topics":  "instageramclone, nextjs, react, tailwind, tailwindcss"
+    },
+    {
+        "Name":  "nextra-docs-starter",
+        "FullName":  "phucbm/nextra-docs-starter",
+        "Description":  "Nextra docs template with Next.js 16, React 19, Tailwind v4 and improved search UI.",
+        "Stars":  38,
+        "URL":  "https://github.com/phucbm/nextra-docs-starter",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-30T00:29:07Z",
+        "Topics":  "nextjs15, nextra, nextra-docs, pagefind, typescript, vercel"
+    },
+    {
+        "Name":  "next16-account-selector",
+        "FullName":  "aurorascharff/next16-account-selector",
+        "Description":  "An interactive, accessible, responsive, account selector built with Next.js 16, React 19 features, Ariakit, Sonner, Tailwind CSS v4 and Prisma.",
+        "Stars":  9,
+        "URL":  "https://github.com/aurorascharff/next16-account-selector",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-30T20:39:41Z",
+        "Topics":  "accessibility, app-router, ariakit, nextjs, prisma, react19, rsc, sonner, tailwindcss, tailwindcss-v4"
+    },
+    {
+        "Name":  "twurbun",
+        "FullName":  "shutock/twurbun",
+        "Description":  "A Turborepo template with a shared Tailwind v4 config, Biome for linting \u0026 formatting, and Bun for blazing-fast package management.",
+        "Stars":  3,
+        "URL":  "https://github.com/shutock/twurbun",
+        "Language":  "TypeScript",
+        "Updated":  "2025-12-01T12:12:58Z",
+        "Topics":  "biome, biomejs, bun, monorepo, tailwind, tailwindcss, turbo, turborepo"
+    },
+    {
+        "Name":  "template-turborepo-tailwindv4-shadcn-prisma",
+        "FullName":  "KitsuneKode/template-turborepo-tailwindv4-shadcn-prisma",
+        "Description":  "Template Monorepo with Tailwind CSS v4, Shadcn, and Prisma",
+        "Stars":  2,
+        "URL":  "https://github.com/KitsuneKode/template-turborepo-tailwindv4-shadcn-prisma",
+        "Language":  "TypeScript",
+        "Updated":  "2025-09-17T22:15:43Z",
+        "Topics":  ""
+    },
+    {
+        "Name":  "tailwind-v4.0.0-alpha.28-plugins",
+        "FullName":  "ajayvignesh01/tailwind-v4.0.0-alpha.28-plugins",
+        "Description":  "Reproduction - tailwindcss-animate plugin not working in 4.0.0-alpha.28",
+        "Stars":  0,
+        "URL":  "https://github.com/ajayvignesh01/tailwind-v4.0.0-alpha.28-plugins",
+        "Language":  "CSS",
+        "Updated":  "2024-10-20T19:41:16Z",
+        "Topics":  ""
+    },
+    {
+        "Name":  "turborepo-starter",
+        "FullName":  "theeaashish/turborepo-starter",
+        "Description":  "A modern, full-stack monorepo starter kit featuring Turborepo, Next.js, and a shared Shadcn UI design system powered by the latest CSS-first configuration of Tailwind CSS v4 and data tooling with Prisma 7.",
+        "Stars":  0,
+        "URL":  "https://github.com/theeaashish/turborepo-starter",
+        "Language":  "TypeScript",
+        "Updated":  "2025-11-30T15:50:25Z",
+        "Topics":  "boilerplate, monorepo, nextjs, prisma-7, react, shadcn-ui, starter-kit, tailwindcss-v4, turborepo, typescript"
+    },
+    {
+        "Name":  "next-nest-tailwind-turborepo",
+        "FullName":  "Lavelliane/next-nest-tailwind-turborepo",
+        "Description":  "An initial setup for a monorepo with a Next.js frontend, Nest.js backend, Tailwind v4, and Turborepo",
+        "Stars":  0,
+        "URL":  "https://github.com/Lavelliane/next-nest-tailwind-turborepo",
+        "Language":  "TypeScript",
+        "Updated":  "2025-07-07T19:06:24Z",
+        "Topics":  ""
+    },
+    {
+        "Name":  "TailwindCSS-v4.0_Crash_Course",
+        "FullName":  "Jitendriya-Meher/TailwindCSS-v4.0_Crash_Course",
+        "Description":  null,
+        "Stars":  0,
+        "URL":  "https://github.com/Jitendriya-Meher/TailwindCSS-v4.0_Crash_Course",
+        "Language":  "JavaScript",
+        "Updated":  "2025-04-01T14:51:04Z",
+        "Topics":  ""
+    },
+    {
+        "Name":  "TailwindCSS-v4.0",
+        "FullName":  "DorKatzir/TailwindCSS-v4.0",
+        "Description":  null,
+        "Stars":  0,
+        "URL":  "https://github.com/DorKatzir/TailwindCSS-v4.0",
+        "Language":  "JavaScript",
+        "Updated":  "2025-02-09T23:35:18Z",
+        "Topics":  ""
+    }
+]

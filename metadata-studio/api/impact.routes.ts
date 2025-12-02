@@ -1,26 +1,37 @@
-/**
- * Impact Analysis Routes
- * Handles /impact/* endpoints
- */
-
+// metadata-studio/api/impact.routes.ts
 import { Hono } from 'hono';
-import { impactAnalysisService } from '../services/impact-analysis.service';
+import type { AuthContext } from '../middleware/auth.middleware';
+import {
+  getFullKpiImpactForMetadata,
+} from '../services/impact.service';
 
-const impact = new Hono();
+export const impactRouter = new Hono();
 
-// GET /impact/:entityId
-impact.get('/:entityId', async (c) => {
-  const entityId = c.req.param('entityId');
-  const result = await impactAnalysisService.analyze(entityId);
-  return c.json(result);
+/**
+ * GET /impact/metadata-kpi?canonicalKey=...
+ *
+ * Returns:
+ * - metadata
+ * - directKpis
+ * - indirectKpis (via lineage)
+ * - indirectImpactedFields
+ */
+impactRouter.get('/metadata-kpi', async (c) => {
+  const auth = c.get('auth') as AuthContext;
+  const canonicalKey = c.req.query('canonicalKey');
+
+  if (!canonicalKey) {
+    return c.json(
+      { error: 'Missing canonicalKey query parameter' },
+      400,
+    );
+  }
+
+  const impact = await getFullKpiImpactForMetadata(
+    auth.tenantId,
+    canonicalKey,
+  );
+
+  return c.json(impact);
 });
-
-// POST /impact/simulate
-impact.post('/simulate', async (c) => {
-  const body = await c.req.json();
-  const result = await impactAnalysisService.simulate(body);
-  return c.json(result);
-});
-
-export default impact;
 
