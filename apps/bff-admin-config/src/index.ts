@@ -14,6 +14,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { adminConfigRoutes } from "./routes/admin-config/index";
+import { openApiSpec } from "./openapi/spec";
 
 const app = new Hono();
 
@@ -35,6 +36,34 @@ app.get("/health", (c) => {
     timestamp: new Date().toISOString(),
     service: "bff-admin-config",
   });
+});
+
+// OpenAPI spec endpoint
+app.get("/openapi.json", (c) => {
+  return c.json(openApiSpec);
+});
+
+// Swagger UI redirect
+app.get("/docs", (c) => {
+  return c.html(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>BFF Admin Config - API Docs</title>
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css">
+      </head>
+      <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js"></script>
+        <script>
+          SwaggerUIBundle({
+            url: '/openapi.json',
+            dom_id: '#swagger-ui',
+          });
+        </script>
+      </body>
+    </html>
+  `);
 });
 
 // Mount all admin-config routes at root
