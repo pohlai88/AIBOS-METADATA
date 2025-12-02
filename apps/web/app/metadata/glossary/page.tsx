@@ -24,7 +24,9 @@ import {
   AISuggestionsEmptyState,
   ComplianceEmptyState,
 } from "@/components/workbench/EmptyState";
-import { QualityScoreBadge } from "@/components/ui/quality-badge";
+import { LineageMiniGraph } from "@/components/metadata/LineageMiniGraph";
+import { AISuggestionsList } from "@/components/metadata/AISuggestionCard";
+import { QualityScoreBadge, QualityScoreIndicator } from "@/components/ui/quality-badge";
 import { TierBadge } from "@/components/ui/metadata-badges";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -46,8 +48,11 @@ import {
   Plus,
   Search,
   Database,
+  AlertCircle,
 } from "lucide-react";
 import { SAMPLE_METADATA_FIELDS, getSampleDataStats, type MetadataField } from "@/lib/sample-data";
+import { getLineageForField, hasLineage } from "@/lib/sample-lineage";
+import { getAISuggestionsForField, getAISuggestionCount } from "@/lib/sample-ai-proposals";
 
 export default function MetadataGlossaryPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,8 +113,20 @@ export default function MetadataGlossaryPage() {
       id: "qualityScore",
       label: "Quality",
       sortable: true,
-      width: "w-[120px]",
-      render: (value) => <QualityScoreBadge score={value} showProgress />,
+      width: "w-[140px]",
+      render: (value, row) => (
+        <div className="flex items-center gap-2">
+          <QualityScoreBadge score={value} showProgress />
+          {getAISuggestionCount(row.fieldName) > 0 && (
+            <div className="relative" title={`${getAISuggestionCount(row.fieldName)} AI suggestions`}>
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-white">
+                {getAISuggestionCount(row.fieldName)}
+              </span>
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       id: "owner",
@@ -186,7 +203,7 @@ export default function MetadataGlossaryPage() {
       label: "Quality",
       icon: <BarChart3 className="h-3 w-3" />,
       content: selectedField ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div>
             <span className="text-xs font-medium text-text-muted">Quality Score</span>
             <div className="mt-2">
@@ -197,6 +214,19 @@ export default function MetadataGlossaryPage() {
             <span className="text-xs font-medium text-text-muted">Last Profiled</span>
             <p className="mt-1 text-sm text-text-base">2025-12-02 15:30:00 UTC</p>
           </div>
+          <div>
+            <span className="text-xs font-medium text-text-muted">Thresholds</span>
+            <p className="mt-1 text-xs text-text-muted">
+              Target: 80% • Current: {selectedField.qualityScore}%
+            </p>
+          </div>
+          {selectedField.qualityScore < 90 && (
+            <div className="rounded-lg border border-warning/20 bg-warning/5 px-3 py-2">
+              <p className="text-xs text-warning">
+                ⚠️ Consider running quality profiler to identify specific issues
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-sm text-text-muted">Select a field to view quality metrics</p>
@@ -206,14 +236,33 @@ export default function MetadataGlossaryPage() {
       id: "lineage",
       label: "Lineage",
       icon: <GitBranch className="h-3 w-3" />,
-      content: <LineageEmptyState fieldName={selectedField?.fieldName} />,
+      badge: selectedField && hasLineage(selectedField.fieldName) ? undefined : 0,
+      content: selectedField && hasLineage(selectedField.fieldName) ? (
+        <LineageMiniGraph
+          {...getLineageForField(selectedField.fieldName)}
+          currentNodeId="current"
+          onViewFull={() => console.log("View full lineage graph")}
+        />
+      ) : (
+        <LineageEmptyState fieldName={selectedField?.fieldName} />
+      ),
     },
     {
       id: "ai",
       label: "AI",
       icon: <Sparkles className="h-3 w-3" />,
-      badge: 0,
-      content: <AISuggestionsEmptyState />,
+      badge: selectedField ? getAISuggestionCount(selectedField.fieldName) : 0,
+      content: selectedField ? (
+        <AISuggestionsList
+          suggestions={getAISuggestionsForField(selectedField.fieldName)}
+          onAccept={(id) => console.log("Accept suggestion:", id)}
+          onReject={(id) => console.log("Reject suggestion:", id)}
+          onViewDetails={(id) => console.log("View details:", id)}
+          emptyMessage="All clear! No suggestions for this field."
+        />
+      ) : (
+        <AISuggestionsEmptyState />
+      ),
     },
     {
       id: "compliance",
