@@ -26,6 +26,13 @@ import {
 } from "@/components/workbench/EmptyState";
 import { LineageMiniGraph } from "@/components/metadata/LineageMiniGraph";
 import { AISuggestionsList } from "@/components/metadata/AISuggestionCard";
+import {
+  ComplianceStatusCard,
+  getSampleComplianceRequirements,
+} from "@/components/governance/ComplianceStatusCard";
+import { MicroActionDrawer, useMicroActionDrawer } from "@/components/governance/MicroActionDrawer";
+import { ChangeRequestForm } from "@/components/governance/ChangeRequestForm";
+import type { ChangeRequest } from "@/components/governance/ChangeRequestForm";
 import { QualityScoreBadge, QualityScoreIndicator } from "@/components/ui/quality-badge";
 import { TierBadge } from "@/components/ui/metadata-badges";
 import { Input } from "@/components/ui/input";
@@ -49,6 +56,7 @@ import {
   Search,
   Database,
   AlertCircle,
+  FileText,
 } from "lucide-react";
 import { SAMPLE_METADATA_FIELDS, getSampleDataStats, type MetadataField } from "@/lib/sample-data";
 import { getLineageForField, hasLineage } from "@/lib/sample-lineage";
