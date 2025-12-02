@@ -58,15 +58,15 @@ aibos-metadata/
 
 ### Tech Stack
 
-| Layer      | Technology                                   |
-| ---------- | -------------------------------------------- |
-| Frontend   | Next.js 16, React 19, Tailwind CSS           |
-| Backend    | Hono (TypeScript), Drizzle ORM               |
-| Database   | PostgreSQL (Supabase or local)               |
-| Validation | Zod schemas (single source of truth)         |
-| Events     | Redis-based event bus                        |
-| Metrics    | Prometheus (prom-client)                     |
-| Monorepo   | pnpm workspaces + Turborepo                  |
+| Layer      | Technology                           |
+| ---------- | ------------------------------------ |
+| Frontend   | Next.js 16, React 19, Tailwind CSS   |
+| Backend    | Hono (TypeScript), Drizzle ORM       |
+| Database   | PostgreSQL (Supabase or local)       |
+| Validation | Zod schemas (single source of truth) |
+| Events     | Redis-based event bus                |
+| Metrics    | Prometheus (prom-client)             |
+| Monorepo   | pnpm workspaces + Turborepo          |
 
 ---
 
@@ -192,25 +192,25 @@ enforcement_level TEXT -- 'strict' | 'advisory' | 'none'
 
 All routes mounted at `http://localhost:3100`:
 
-| Route              | Purpose                         |
-| ------------------ | ------------------------------- |
-| `/metadata`        | Global metadata CRUD            |
-| `/lineage`         | Lineage graph queries           |
-| `/mapping`         | Field mapping lookup/suggest    |
-| `/glossary`        | Business glossary               |
-| `/tags`            | Tag management                  |
-| `/kpi`             | KPI definitions & dashboard     |
-| `/impact`          | Impact analysis                 |
-| `/quality`         | Data quality metrics            |
-| `/naming`          | Name resolution                 |
-| `/naming-policy`   | Naming policy CRUD              |
-| `/policy`          | Access control checks           |
-| `/rules`           | Business rules                  |
-| `/approvals`       | Approval workflow               |
-| `/agent-proposals` | AI agent proposals              |
-| `/auto-apply`      | Guarded auto-apply              |
-| `/metrics`         | Prometheus metrics              |
-| `/healthz`         | Health check                    |
+| Route              | Purpose                      |
+| ------------------ | ---------------------------- |
+| `/metadata`        | Global metadata CRUD         |
+| `/lineage`         | Lineage graph queries        |
+| `/mapping`         | Field mapping lookup/suggest |
+| `/glossary`        | Business glossary            |
+| `/tags`            | Tag management               |
+| `/kpi`             | KPI definitions & dashboard  |
+| `/impact`          | Impact analysis              |
+| `/quality`         | Data quality metrics         |
+| `/naming`          | Name resolution              |
+| `/naming-policy`   | Naming policy CRUD           |
+| `/policy`          | Access control checks        |
+| `/rules`           | Business rules               |
+| `/approvals`       | Approval workflow            |
+| `/agent-proposals` | AI agent proposals           |
+| `/auto-apply`      | Guarded auto-apply           |
+| `/metrics`         | Prometheus metrics           |
+| `/healthz`         | Health check                 |
 
 ### Services
 
@@ -264,11 +264,11 @@ GET /policy/controls?standard=SOX
 
 The platform implements GRCD's 4-tier autonomy model:
 
-| Tier | Name       | Description                         | Implementation                         |
-| ---- | ---------- | ----------------------------------- | -------------------------------------- |
-| 0    | Read-Only  | Observe, analyse, report            | All services support read operations   |
-| 1    | Suggest    | Make recommendations; humans decide | `DataQualitySentinel` agent            |
-| 2    | Propose    | Generate changes; humans approve    | `agent-proposal.service.ts`            |
+| Tier | Name       | Description                          | Implementation                          |
+| ---- | ---------- | ------------------------------------ | --------------------------------------- |
+| 0    | Read-Only  | Observe, analyse, report             | All services support read operations    |
+| 1    | Suggest    | Make recommendations; humans decide  | `DataQualitySentinel` agent             |
+| 2    | Propose    | Generate changes; humans approve     | `agent-proposal.service.ts`             |
 | 3    | Auto-Apply | Apply low-risk changes automatically | `auto-apply.service.ts` with guardrails |
 
 **Guardrails for Tier 3:**
@@ -293,14 +293,14 @@ Located in `apps/web/`, the Next.js 16 frontend provides:
 
 ### Key Pages
 
-| Route                | Purpose                    |
-| -------------------- | -------------------------- |
-| `/`                  | Landing page               |
-| `/metadata`          | Metadata browser           |
-| `/metadata/glossary` | Business glossary          |
-| `/metadata/lineage`  | Lineage visualization      |
-| `/metadata/sdk`      | SDK documentation          |
-| `/metadata/proposals`| Agent proposal review      |
+| Route                 | Purpose               |
+| --------------------- | --------------------- |
+| `/`                   | Landing page          |
+| `/metadata`           | Metadata browser      |
+| `/metadata/glossary`  | Business glossary     |
+| `/metadata/lineage`   | Lineage visualization |
+| `/metadata/sdk`       | SDK documentation     |
+| `/metadata/proposals` | Agent proposal review |
 
 ---
 
