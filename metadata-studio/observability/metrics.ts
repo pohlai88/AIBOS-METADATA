@@ -191,3 +191,88 @@ export const dbQueryDurationSeconds = new Histogram({
   registers: [registry],
 });
 
+// ═══════════════════════════════════════════════════════════════════
+// MAPPING SERVICE METRICS (GRCD Phase 1)
+// ═══════════════════════════════════════════════════════════════════
+
+export const mappingLookupRequestsTotal = new Counter({
+  name: 'metadata_mapping_lookup_requests_total',
+  help: 'Total number of mapping lookup requests',
+  labelNames: ['tenant_id', 'context_domain', 'match_type'],
+  registers: [registry],
+});
+
+export const mappingLookupDurationSeconds = new Histogram({
+  name: 'metadata_mapping_lookup_duration_seconds',
+  help: 'Mapping lookup duration in seconds',
+  buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25],
+  labelNames: ['tenant_id', 'context_domain'],
+  registers: [registry],
+});
+
+export const mappingSuggestRequestsTotal = new Counter({
+  name: 'metadata_mapping_suggest_requests_total',
+  help: 'Total number of mapping suggest requests',
+  labelNames: ['tenant_id', 'context_domain'],
+  registers: [registry],
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// POLICY SERVICE METRICS (GRCD Phase 1)
+// ═══════════════════════════════════════════════════════════════════
+
+export const policyAccessCheckRequestsTotal = new Counter({
+  name: 'metadata_policy_access_check_requests_total',
+  help: 'Total number of policy access check requests',
+  labelNames: ['tenant_id', 'resource_type', 'intent', 'allowed'],
+  registers: [registry],
+});
+
+export const policyAccessCheckDurationSeconds = new Histogram({
+  name: 'metadata_policy_access_check_duration_seconds',
+  help: 'Policy access check duration in seconds',
+  buckets: [0.001, 0.005, 0.01, 0.025, 0.05],
+  labelNames: ['tenant_id', 'resource_type'],
+  registers: [registry],
+});
+
+export const policyApprovalRequiredTotal = new Counter({
+  name: 'metadata_policy_approval_required_total',
+  help: 'Total number of operations requiring approval',
+  labelNames: ['tenant_id', 'tier', 'intent', 'required_role'],
+  registers: [registry],
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// SCHEMA DRIFT KPI METRICS (GRCD Section 5)
+// ═══════════════════════════════════════════════════════════════════
+
+export const schemaDriftIncidentsTotal = new Counter({
+  name: 'metadata_schema_drift_incidents_total',
+  help: 'Total number of schema drift incidents detected',
+  labelNames: ['tenant_id', 'domain', 'severity'],
+  registers: [registry],
+});
+
+export const schemaDriftResolutionDurationSeconds = new Histogram({
+  name: 'metadata_schema_drift_resolution_duration_seconds',
+  help: 'Time to resolve schema drift incidents in seconds',
+  buckets: [60, 300, 900, 3600, 7200, 14400, 86400, 172800], // 1m to 2d
+  labelNames: ['tenant_id', 'domain'],
+  registers: [registry],
+});
+
+export const tier1LineageCoverageGauge = new Counter({
+  name: 'metadata_tier1_lineage_coverage_total',
+  help: 'Number of Tier1 fields with lineage coverage',
+  labelNames: ['tenant_id', 'status'], // covered | uncovered
+  registers: [registry],
+});
+
+export const metadataChangesWithAiReviewTotal = new Counter({
+  name: 'metadata_changes_with_ai_review_total',
+  help: 'Total number of metadata changes with AI review',
+  labelNames: ['tenant_id', 'tier', 'ai_reviewed'],
+  registers: [registry],
+});
+

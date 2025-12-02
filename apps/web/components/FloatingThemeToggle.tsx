@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTheme } from "@aibos/ui";
 import { Sun, Moon, Monitor } from "lucide-react";
 
@@ -9,21 +8,12 @@ import { Sun, Moon, Monitor } from "lucide-react";
  *
  * A fixed-position toggle button that cycles through light/dark/system themes.
  * Always visible in the bottom-right corner.
+ * 
+ * Note: suppressHydrationWarning used on dynamic content to handle
+ * server/client theme state differences safely.
  */
 export function FloatingThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Wait for component to mount before rendering
-  // This prevents hydration mismatches
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Don't render on server or before hydration
-  if (!mounted) {
-    return null;
-  }
 
   const cycleTheme = () => {
     const themes: Array<"light" | "dark" | "system"> = [

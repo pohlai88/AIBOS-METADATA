@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Shield,
@@ -347,13 +347,14 @@ export default function AIOrchestration() {
                 color: isDay ? "amber" : "indigo",
                 type: "Studio",
               },
-            ].map((agent) => (
+            ].map((agent, index) => (
               <div
                 key={agent.label}
                 className="relative group"
                 style={{
                   animation: `agentPulse 3s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`,
+                  // Use deterministic delays based on index instead of Math.random()
+                  animationDelay: `${(index * 0.5) % 2}s`,
                 }}
               >
                 <div
@@ -379,7 +380,8 @@ export default function AIOrchestration() {
                     <div
                       className={`h-full bg-gradient-to-r from-${agent.color}-500 to-${agent.color}-400 rounded-full transition-all duration-1000`}
                       style={{
-                        width: `${50 + Math.random() * 50}%`,
+                        // Use deterministic width based on index
+                        width: `${60 + (index * 10) % 40}%`,
                         animation: "activityPulse 2s ease-in-out infinite",
                       }}
                     />

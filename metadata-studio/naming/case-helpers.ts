@@ -87,3 +87,40 @@ export function toSnakeCase(value: string): string {
     .replace(/^_+|_+$/g, '');
 }
 
+/**
+ * Convert camelCase to snake_case
+ * 
+ * @example
+ * camelToSnake("receiptOutstandingAmount") // "receipt_outstanding_amount"
+ * camelToSnake("userId") // "user_id"
+ */
+export function camelToSnake(camel: string): string {
+  return camel
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .toLowerCase();
+}
+
+/**
+ * Convert PascalCase to snake_case
+ * 
+ * @example
+ * pascalToSnake("ReceiptOutstandingAmount") // "receipt_outstanding_amount"
+ * pascalToSnake("UserId") // "user_id"
+ */
+export function pascalToSnake(pascal: string): string {
+  return pascal
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .toLowerCase();
+}
+
+/**
+ * Convert kebab-case to snake_case
+ * 
+ * @example
+ * kebabToSnake("receipt-outstanding-amount") // "receipt_outstanding_amount"
+ * kebabToSnake("user-id") // "user_id"
+ */
+export function kebabToSnake(kebab: string): string {
+  return kebab.replace(/-/g, '_');
+}
+

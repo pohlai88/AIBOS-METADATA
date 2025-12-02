@@ -25,6 +25,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -47,66 +48,70 @@ interface ThemeProviderProps {
   storageKey?: string;
 }
 
+// Helper to get system theme
+function getSystemTheme(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+// Helper to resolve effective theme
+function resolveTheme(theme: Theme): "light" | "dark" {
+  return theme === "system" ? getSystemTheme() : theme;
+}
+
+// Helper to get initial theme from localStorage
+function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
+  if (typeof window === "undefined") return defaultTheme;
+  const stored = localStorage.getItem(storageKey) as Theme | null;
+  return stored ?? defaultTheme;
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "aibos-theme",
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
+  // Initialize theme state with value from localStorage
+  const [theme, setThemeState] = useState<Theme>(() =>
+    getInitialTheme(storageKey, defaultTheme)
+  );
 
-  // Load theme from localStorage on mount
+  const resolvedTheme = resolveTheme(theme);
+
+  // Wrapped setTheme that also persists to localStorage
+  const setTheme = useCallback(
+    (newTheme: Theme) => {
+      setThemeState(newTheme);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, newTheme);
+      }
+    },
+    [storageKey]
+  );
+
+  // Apply theme class to <html> element
   useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem(storageKey) as Theme | null;
-    if (stored) {
-      setThemeState(stored);
-    }
-  }, [storageKey]);
-
-  // Apply theme to <html> element
-  useEffect(() => {
-    if (!mounted) return;
-
     const root = window.document.documentElement;
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-
-    const effectiveTheme = theme === "system" ? systemTheme : theme;
-
     root.classList.remove("light", "dark");
-    root.classList.add(effectiveTheme);
-    setResolvedTheme(effectiveTheme);
-  }, [theme, mounted]);
+    root.classList.add(resolvedTheme);
+  }, [resolvedTheme]);
 
-  // Listen for system theme changes
+  // Listen for system theme changes (only when theme is "system")
   useEffect(() => {
-    if (!mounted || theme !== "system") return;
+    if (theme !== "system") return;
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
-      const systemTheme = mediaQuery.matches ? "dark" : "light";
-      setResolvedTheme(systemTheme);
-      window.document.documentElement.classList.remove("light", "dark");
-      window.document.documentElement.classList.add(systemTheme);
+      // Force re-render by toggling state
+      setThemeState((prev) => (prev === "system" ? "system" : prev));
     };
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [theme, mounted]);
+  }, [theme]);
 
-  const setTheme = (newTheme: Theme) => {
-    if (mounted) {
-      localStorage.setItem(storageKey, newTheme);
-    }
-    setThemeState(newTheme);
-  };
-
-  // Always provide context, even before mounting
-  // This prevents "useTheme must be used within ThemeProvider" errors
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
       {children}

@@ -54,7 +54,7 @@ metadataRouter.get('/', async (c) => {
   const auth = c.get('auth') as AuthContext;
   const canonicalKey = c.req.query('canonicalKey');
   const domain = c.req.query('domain');
-  const module = c.req.query('module');
+  const moduleFilter = c.req.query('module');
 
   let where = eq(mdmGlobalMetadata.tenantId, auth.tenantId);
 
@@ -66,8 +66,8 @@ metadataRouter.get('/', async (c) => {
     where = and(where, eq(mdmGlobalMetadata.domain, domain));
   }
 
-  if (module) {
-    where = and(where, eq(mdmGlobalMetadata.module, module));
+  if (moduleFilter) {
+    where = and(where, eq(mdmGlobalMetadata.module, moduleFilter));
   }
 
   const rows = await db

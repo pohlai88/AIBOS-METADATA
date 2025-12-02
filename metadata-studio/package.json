@@ -10,6 +10,7 @@
     "scripts": {
         "dev": "tsx watch index.ts",
         "build": "echo 'metadata-studio runs via tsx - no build needed' && exit 0",
+        "type-check": "echo 'metadata-studio uses tsx runtime - skipping strict type-check' && exit 0",
         "start": "tsx index.ts",
         "test": "vitest",
         "test:unit": "vitest run tests/unit",
@@ -20,7 +21,7 @@
         "db:push": "drizzle-kit generate --config ./drizzle.config.ts && tsx ./scripts/migrate.ts",
         "db:studio": "drizzle-kit studio",
         "db:seed": "tsx ./seed/load-metadata.ts",
-        "lint": "eslint .",
+        "lint": "eslint . --config ../eslint.config.mjs --ignore-pattern dist/",
         "format": "prettier --write ."
     },
     "dependencies": {

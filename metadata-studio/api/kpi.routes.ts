@@ -1,6 +1,14 @@
 // metadata-studio/api/kpi.routes.ts
 import { Hono } from 'hono';
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
 import type { AuthContext } from '../middleware/auth.middleware';
+import {
+  getKPIDashboard,
+  getTier1LineageCoverage,
+  getSchemaDriftKPI,
+  getAIReviewKPI,
+} from '../services/kpi-metrics.service';
 import { and, eq } from 'drizzle-orm';
 import { db } from '../db/client';
 import {
@@ -124,4 +132,138 @@ kpiRouter.get('/components', async (c) => {
 
   return c.json(components);
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// GRCD KPI DASHBOARD ENDPOINTS (Section 5 - Orchestra KPIs)
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * GET /kpi/dashboard
+ * 
+ * Get the overall KPI dashboard for governance health monitoring.
+ * 
+ * Query Parameters:
+ * - periodDays: Number of days to look back (default: 90)
+ * 
+ * Response:
+ * {
+ *   "tenantId": "...",
+ *   "periodStart": "...",
+ *   "periodEnd": "...",
+ *   "schemaDrift": { ... },
+ *   "lineageCoverage": { ... },
+ *   "aiReview": { ... },
+ *   "healthScore": 85,
+ *   "recommendations": [...]
+ * }
+ */
+kpiRouter.get(
+  '/dashboard',
+  zValidator(
+    'query',
+    z.object({
+      periodDays: z.string().transform(Number).pipe(z.number().min(1).max(365)).optional(),
+    }),
+  ),
+  async (c) => {
+    const auth = c.get('auth') as AuthContext;
+    const { periodDays = 90 } = c.req.valid('query');
+
+    const periodEnd = new Date();
+    const periodStart = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
+
+    const dashboard = await getKPIDashboard(auth.tenantId, periodStart, periodEnd);
+
+    return c.json(dashboard);
+  },
+);
+
+/**
+ * GET /kpi/lineage-coverage
+ * 
+ * Get Tier 1 lineage coverage metrics.
+ * 
+ * GRCD KPI: Tier 1 lineage coverage should be 100%
+ */
+kpiRouter.get('/lineage-coverage', async (c) => {
+  const auth = c.get('auth') as AuthContext;
+
+  const coverage = await getTier1LineageCoverage(auth.tenantId);
+
+  return c.json({
+    metric: 'tier1_lineage_coverage',
+    target: 100,
+    current: coverage.coveragePercent,
+    status: coverage.coveragePercent >= 100 ? 'compliant' : 'non_compliant',
+    details: coverage,
+  });
+});
+
+/**
+ * GET /kpi/schema-drift
+ * 
+ * Get schema drift incidents metrics.
+ * 
+ * GRCD KPI: Schema drift incidents should decrease quarter over quarter
+ */
+kpiRouter.get(
+  '/schema-drift',
+  zValidator(
+    'query',
+    z.object({
+      periodDays: z.string().transform(Number).pipe(z.number().min(1).max(365)).optional(),
+    }),
+  ),
+  async (c) => {
+    const auth = c.get('auth') as AuthContext;
+    const { periodDays = 90 } = c.req.valid('query');
+
+    const periodEnd = new Date();
+    const periodStart = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
+
+    const drift = await getSchemaDriftKPI(auth.tenantId, periodStart, periodEnd);
+
+    return c.json({
+      metric: 'schema_drift_incidents',
+      target: 0,
+      current: drift.incidentsTotal,
+      status: drift.incidentsTotal <= 5 ? 'compliant' : 'non_compliant',
+      details: drift,
+    });
+  },
+);
+
+/**
+ * GET /kpi/ai-review
+ * 
+ * Get AI review coverage metrics.
+ * 
+ * GRCD KPI: % of schema changes with AI review should be > 90%
+ */
+kpiRouter.get(
+  '/ai-review',
+  zValidator(
+    'query',
+    z.object({
+      periodDays: z.string().transform(Number).pipe(z.number().min(1).max(365)).optional(),
+    }),
+  ),
+  async (c) => {
+    const auth = c.get('auth') as AuthContext;
+    const { periodDays = 90 } = c.req.valid('query');
+
+    const periodEnd = new Date();
+    const periodStart = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
+
+    const review = await getAIReviewKPI(auth.tenantId, periodStart, periodEnd);
+
+    return c.json({
+      metric: 'ai_review_coverage',
+      target: 90,
+      current: review.reviewPercent,
+      status: review.reviewPercent >= 90 ? 'compliant' : 'non_compliant',
+      details: review,
+    });
+  },
+);
 

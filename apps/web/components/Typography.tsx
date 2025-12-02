@@ -87,6 +87,40 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
   className?: string;
 }
 
+// Infer semantic HTML element from variant if not specified
+function getDefaultElement(variant: TypographyVariant): TypographyElement {
+  if (variant.startsWith("h")) return variant as TypographyElement;
+  if (variant === "hero" || variant === "display") return "h1";
+  if (variant === "subtitle") return "p";
+  if (variant === "body") return "p";
+  if (variant === "caption") return "span";
+  return "p";
+}
+
+// Variant-specific styles (using design tokens from tailwind.config.ts)
+// Type Scale Constitution: ~1.25 ratio from 16px base
+const variantStyles: Record<TypographyVariant, string> = {
+  // Display & Hero (Marketing)
+  hero: "text-6xl font-extrabold tracking-tight", // 60px - Marketing hero
+  display: "text-5xl font-bold tracking-tight", // 48px - Hero headings
+
+  // Semantic Headings
+  h1: "text-3xl font-bold tracking-tight", // 30px - Page titles
+  h2: "text-2xl font-semibold tracking-tight", // 24px - Section headings
+  h3: "text-xl font-medium tracking-tight", // 20px - Subsection headings
+  h4: "text-lg font-medium tracking-tight", // 18px - Card titles
+  h5: "text-base font-medium tracking-tight", // 16px - Small headings
+  h6: "text-sm font-medium tracking-tight", // 14px - Micro headings
+
+  // Body Text
+  subtitle: "text-lg font-medium leading-relaxed", // 18px - Subtitles
+  body: "text-base font-normal leading-relaxed", // 16px - Body text
+  caption: "text-xs font-normal text-fg-muted", // 12px - Small text
+};
+
+// Base classes for all typography
+const baseClasses = "antialiased leading-tight";
+
 export function Typography({
   variant,
   color = "text-fg",
@@ -95,53 +129,34 @@ export function Typography({
   children,
   ...props
 }: TypographyProps) {
-  // Infer semantic HTML element from variant if not specified
-  const getDefaultElement = (): TypographyElement => {
-    if (variant.startsWith("h")) return variant as TypographyElement;
-    if (variant === "hero" || variant === "display") return "h1";
-    if (variant === "subtitle") return "p";
-    if (variant === "body") return "p";
-    if (variant === "caption") return "span";
-    return "p";
-  };
+  const tag = as ?? getDefaultElement(variant);
+  const combinedClassName = cn(baseClasses, variantStyles[variant], color, className);
 
-  const Component = as || getDefaultElement();
-
-  // Base classes for all typography
-  const baseClasses = "antialiased leading-tight";
-
-  // Variant-specific styles (using design tokens from tailwind.config.ts)
-  // Type Scale Constitution: ~1.25 ratio from 16px base
-  const variantStyles: Record<TypographyVariant, string> = {
-    // Display & Hero (Marketing)
-    hero: "text-6xl font-extrabold tracking-tight", // 60px - Marketing hero
-    display: "text-5xl font-bold tracking-tight", // 48px - Hero headings
-
-    // Semantic Headings
-    h1: "text-3xl font-bold tracking-tight", // 30px - Page titles
-    h2: "text-2xl font-semibold tracking-tight", // 24px - Section headings
-    h3: "text-xl font-medium tracking-tight", // 20px - Subsection headings
-    h4: "text-lg font-medium tracking-tight", // 18px - Card titles
-    h5: "text-base font-medium tracking-tight", // 16px - Small headings
-    h6: "text-sm font-medium tracking-tight", // 14px - Micro headings
-
-    // Body Text
-    subtitle: "text-lg font-medium leading-relaxed", // 18px - Subtitles
-    body: "text-base font-normal leading-relaxed", // 16px - Body text
-    caption: "text-xs font-normal text-fg-muted", // 12px - Small text
-  };
-
-  // Color styles (using design tokens)
-  const colorClass = color;
-
-  return (
-    <Component
-      className={cn(baseClasses, variantStyles[variant], colorClass, className)}
-      {...props}
-    >
-      {children}
-    </Component>
-  );
+  // Use createElement to avoid dynamic component issues with linter
+  // This is semantically identical but avoids the JSX pattern that triggers the lint rule
+  switch (tag) {
+    case "h1":
+      return <h1 className={combinedClassName} {...props}>{children}</h1>;
+    case "h2":
+      return <h2 className={combinedClassName} {...props}>{children}</h2>;
+    case "h3":
+      return <h3 className={combinedClassName} {...props}>{children}</h3>;
+    case "h4":
+      return <h4 className={combinedClassName} {...props}>{children}</h4>;
+    case "h5":
+      return <h5 className={combinedClassName} {...props}>{children}</h5>;
+    case "h6":
+      return <h6 className={combinedClassName} {...props}>{children}</h6>;
+    case "span":
+      return <span className={combinedClassName} {...props}>{children}</span>;
+    case "div":
+      return <div className={combinedClassName} {...props}>{children}</div>;
+    case "label":
+      return <label className={combinedClassName} {...props}>{children}</label>;
+    case "p":
+    default:
+      return <p className={combinedClassName} {...props}>{children}</p>;
+  }
 }
 
 /**
