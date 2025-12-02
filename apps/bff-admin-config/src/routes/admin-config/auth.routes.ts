@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { container } from "../../config/container";
+import { supabaseLogin } from "../../services/supabase-auth.service";
 
 /**
  * Auth Routes
@@ -43,7 +44,8 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
   const { email, password, tenantSlug } = c.req.valid("json");
 
   try {
-    const result = await container.executeLogin({
+    // Use Supabase client for login (bypasses pooler auth issues)
+    const result = await supabaseLogin({
       email,
       password,
       tenantSlug,

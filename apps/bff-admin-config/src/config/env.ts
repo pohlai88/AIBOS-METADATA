@@ -22,7 +22,21 @@ dotenvConfig();
 
 const envSchema = z.object({
   // ─────────────────────────────────────────
-  // DATABASE (Local to this service)
+  // SUPABASE (Primary database connection)
+  // ─────────────────────────────────────────
+  SUPABASE_URL: z
+    .string()
+    .url()
+    .optional()
+    .describe("Supabase project URL"),
+
+  SUPABASE_ANON_KEY: z
+    .string()
+    .optional()
+    .describe("Supabase anonymous API key"),
+
+  // ─────────────────────────────────────────
+  // DATABASE (Drizzle connection - fallback)
   // ─────────────────────────────────────────
   DATABASE_URL: z
     .string()
@@ -238,6 +252,14 @@ export function getConfig() {
       paymentCycleUrl: env.BFF_PAYMENT_CYCLE_URL,
       metadataUrl: env.BFF_METADATA_URL,
     },
+
+    // Supabase
+    supabase: env.SUPABASE_URL
+      ? {
+          url: env.SUPABASE_URL,
+          anonKey: env.SUPABASE_ANON_KEY!,
+        }
+      : null,
 
     // Helpers
     isDevelopment: env.NODE_ENV === "development",

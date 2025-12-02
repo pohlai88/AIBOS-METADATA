@@ -17,3 +17,4 @@ export {
   closeDatabase,
   checkDatabaseHealth,
 } from "./database";
+export { getSupabase, checkSupabaseHealth } from "./supabase";

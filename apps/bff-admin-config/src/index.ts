@@ -19,6 +19,7 @@ import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { loadEnv, getConfig } from "./config/env";
 import { checkDatabaseHealth, closeDatabase } from "./config/database";
+import { checkSupabaseHealth } from "./config/supabase";
 import { adminConfigRoutes } from "./routes/admin-config/index";
 import { openApiSpec } from "./openapi/spec";
 
@@ -52,10 +53,15 @@ app.use(
 // ===========================================
 
 app.get("/health", async (c) => {
-  const dbHealth = await checkDatabaseHealth();
+  // Try Supabase client first (more reliable via API)
+  const supabaseHealth = await checkSupabaseHealth();
+  // Also try Drizzle/postgres connection
+  const drizzleHealth = await checkDatabaseHealth();
 
-  const status = dbHealth.healthy ? "healthy" : "degraded";
-  const httpStatus = dbHealth.healthy ? 200 : 503;
+  // Use Supabase as primary health indicator
+  const primaryHealth = supabaseHealth.healthy || drizzleHealth.healthy;
+  const status = primaryHealth ? "healthy" : "degraded";
+  const httpStatus = primaryHealth ? 200 : 503;
 
   return c.json(
     {
@@ -65,10 +71,15 @@ app.get("/health", async (c) => {
       version: config.service.version,
       environment: config.service.environment,
       checks: {
-        database: {
-          healthy: dbHealth.healthy,
-          latency: dbHealth.latency,
-          error: dbHealth.error,
+        supabase: {
+          healthy: supabaseHealth.healthy,
+          latency: supabaseHealth.latency,
+          error: supabaseHealth.error,
+        },
+        drizzle: {
+          healthy: drizzleHealth.healthy,
+          latency: drizzleHealth.latency,
+          error: drizzleHealth.error,
         },
       },
     },

@@ -4,17 +4,11 @@ import * as schema from "../db/schema";
 import { getConfig } from "./env";
 
 /**
- * Database Connection
+ * Database Connection for Supabase
  *
- * Configuration is LOCAL to this service (bff-admin-config).
- * - Connection string from environment variables
- * - Pool settings from environment variables
- * - No shared config pillar dependency
- *
- * Pattern: Centralized Management, Local Access
- * - Secrets stored in secure vault (Vault, AWS Secrets, K8s Secrets)
- * - Injected as env vars at deployment time
- * - Accessed locally via getConfig()
+ * Key settings for Supabase connection pooler:
+ * - prepare: false (required for Transaction pool mode)
+ * - ssl: "require" (required for Supabase)
  */
 
 let connectionInstance: ReturnType<typeof postgres> | null = null;
@@ -22,7 +16,6 @@ let dbInstance: ReturnType<typeof drizzle> | null = null;
 
 /**
  * Get or create database connection
- * Lazy initialization - only connects when first used
  */
 export function getDatabase() {
   if (dbInstance) {
@@ -31,36 +24,34 @@ export function getDatabase() {
 
   const config = getConfig();
 
-  // Create postgres connection with pool settings from config
+  // Create postgres connection optimized for Supabase
+  // prepare: false is REQUIRED for Supabase Transaction pooler
   connectionInstance = postgres(config.database.url, {
     max: config.database.poolSize,
     idle_timeout: config.database.idleTimeout,
     connect_timeout: config.database.connectTimeout,
-    // Disable prepared statements for Supavisor compatibility
-    prepare: false,
-    // SSL for Supabase
-    ssl: "require",
+    prepare: false, // REQUIRED for Supabase pooler
+    ssl: "require", // Required for Supabase
   });
 
-  // Create Drizzle instance with schema
+  // Create Drizzle instance
   dbInstance = drizzle(connectionInstance, { schema });
 
   return dbInstance;
 }
 
 /**
- * Get raw postgres connection (for transactions)
+ * Get raw postgres connection
  */
 export function getConnection() {
   if (!connectionInstance) {
-    getDatabase(); // Initialize if not yet done
+    getDatabase();
   }
   return connectionInstance!;
 }
 
 /**
  * Close database connection
- * Call this on graceful shutdown
  */
 export async function closeDatabase() {
   if (connectionInstance) {
@@ -71,7 +62,7 @@ export async function closeDatabase() {
 }
 
 /**
- * Health check for database connection
+ * Health check for database
  */
 export async function checkDatabaseHealth(): Promise<{
   healthy: boolean;
@@ -81,9 +72,8 @@ export async function checkDatabaseHealth(): Promise<{
   try {
     const start = Date.now();
     const conn = getConnection();
-    await conn`SELECT 1`;
+    await conn`SELECT 1 as ok`;
     const latency = Date.now() - start;
-
     return { healthy: true, latency };
   } catch (error) {
     return {
@@ -92,17 +82,3 @@ export async function checkDatabaseHealth(): Promise<{
     };
   }
 }
-
-// Legacy exports for backward compatibility
-// TODO: Migrate all usages to getDatabase()
-export const db = {
-  get instance() {
-    return getDatabase();
-  },
-};
-
-export const connection = {
-  get instance() {
-    return getConnection();
-  },
-};
