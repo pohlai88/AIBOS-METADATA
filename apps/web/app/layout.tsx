@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ThemeProvider } from "@aibos/ui";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { FloatingThemeToggle } from "@/components/FloatingThemeToggle";
 import { QueryProvider } from "@/providers/QueryProvider";
 // import { initializeSDK } from "../lib/sdk-guard";

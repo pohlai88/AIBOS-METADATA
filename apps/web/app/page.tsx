@@ -77,7 +77,7 @@ export default function AIOrchestration() {
   const isDay = mode === "day";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative">
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative">
       {/* AI MESH NETWORK - Background */}
       <div className="fixed inset-0 opacity-20 pointer-events-none">
         <div
@@ -126,13 +126,13 @@ export default function AIOrchestration() {
       {/* CONTROL CENTER - Header */}
       <header className="relative z-50 px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="backdrop-blur-2xl bg-gradient-to-r from-white/5 to-white/10 border border-white/20 rounded-3xl px-8 py-6 shadow-2xl">
+          <div className="backdrop-blur-2xl bg-linear-to-r from-white/5 to-white/10 border border-white/20 rounded-3xl px-8 py-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-6">
                 {/* AI Orchestrator Icon */}
                 <div className="relative">
                   <div
-                    className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${
+                    className={`absolute inset-0 rounded-2xl bg-linear-to-br ${
                       isDay
                         ? "from-orange-500 to-amber-500"
                         : "from-purple-600 to-indigo-600"
@@ -143,7 +143,7 @@ export default function AIOrchestration() {
                     }`}
                   />
                   <div
-                    className={`relative p-3 rounded-2xl bg-gradient-to-br ${
+                    className={`relative p-3 rounded-2xl bg-linear-to-br ${
                       isDay
                         ? "from-orange-500 to-amber-500"
                         : "from-purple-600 to-indigo-600"
@@ -184,7 +184,7 @@ export default function AIOrchestration() {
 
                 {/* Clock */}
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/10 to-white/5 blur-md" />
+                  <div className="absolute inset-0 rounded-full bg-linear-to-r from-white/10 to-white/5 blur-md" />
                   <div className="relative px-5 py-3 rounded-full bg-white/10 backdrop-blur font-mono font-bold flex items-center gap-2 border border-white/20">
                     {isDay ? (
                       <Sun className="w-5 h-5 text-amber-400" />
@@ -201,8 +201,8 @@ export default function AIOrchestration() {
                 <div
                   className={`px-6 py-3 rounded-full font-bold shadow-2xl transition-all duration-700 ${
                     isDay
-                      ? "bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500"
-                      : "bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600"
+                      ? "bg-linear-to-r from-orange-500 via-amber-500 to-yellow-500"
+                      : "bg-linear-to-r from-purple-600 via-pink-600 to-indigo-600"
                   }`}
                 >
                   {isDay ? "Active Mode" : "Autonomous Mode"}
@@ -236,7 +236,7 @@ export default function AIOrchestration() {
               {/* AI Orchestrator Core */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div
-                  className={`w-24 h-24 rounded-full bg-gradient-to-br ${
+                  className={`w-24 h-24 rounded-full bg-linear-to-br ${
                     isDay
                       ? "from-orange-500 to-amber-500"
                       : "from-purple-600 to-indigo-600"
@@ -263,8 +263,8 @@ export default function AIOrchestration() {
               <h1
                 className={`text-7xl sm:text-8xl lg:text-9xl font-black mb-10 leading-none transition-all duration-700 ${
                   isDay
-                    ? "bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400"
-                    : "bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"
+                    ? "bg-linear-to-r from-orange-400 via-amber-300 to-yellow-400"
+                    : "bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400"
                 } bg-clip-text text-transparent`}
                 style={{
                   textShadow: isDay
@@ -293,8 +293,8 @@ export default function AIOrchestration() {
                 href="/metadata/glossary"
                 className={`inline-flex items-center gap-3 px-10 py-5 rounded-2xl font-bold text-xl shadow-2xl transition-all hover:scale-105 ${
                   isDay
-                    ? "bg-gradient-to-r from-orange-500 to-amber-500 hover:shadow-orange-500/50"
-                    : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:shadow-purple-500/50"
+                    ? "bg-linear-to-r from-orange-500 to-amber-500 hover:shadow-orange-500/50"
+                    : "bg-linear-to-r from-purple-600 to-indigo-600 hover:shadow-purple-500/50"
                 }`}
               >
                 <span>Enter Orchestration Studio</span>
@@ -386,7 +386,7 @@ export default function AIOrchestration() {
                 }}
               >
                 <div
-                  className={`absolute inset-0 rounded-3xl bg-gradient-to-br from-${agent.color}-500/20 to-${agent.color}-600/20 blur-2xl transition-all duration-500 group-hover:scale-110`}
+                  className={`absolute inset-0 rounded-3xl bg-linear-to-br from-${agent.color}-500/20 to-${agent.color}-600/20 blur-2xl transition-all duration-500 group-hover:scale-110`}
                 />
 
                 <div className="relative backdrop-blur-xl bg-white/5 border-2 border-white/10 rounded-3xl p-8 hover:border-white/30 transition-all shadow-2xl">
@@ -406,7 +406,7 @@ export default function AIOrchestration() {
                   {/* Activity Indicator */}
                   <div className="mt-4 h-1 bg-white/10 rounded-full overflow-hidden">
                     <div
-                      className={`h-full bg-gradient-to-r from-${agent.color}-500 to-${agent.color}-400 rounded-full transition-all duration-1000`}
+                      className={`h-full bg-linear-to-r from-${agent.color}-500 to-${agent.color}-400 rounded-full transition-all duration-1000`}
                       style={{
                         // Use deterministic width based on index
                         width: `${60 + ((index * 10) % 40)}%`,
@@ -469,7 +469,7 @@ export default function AIOrchestration() {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <div
-                    className={`p-3 rounded-2xl bg-gradient-to-br from-${workflow.color}-500/20 to-${workflow.color}-600/20`}
+                    className={`p-3 rounded-2xl bg-linear-to-br from-${workflow.color}-500/20 to-${workflow.color}-600/20`}
                   >
                     <workflow.icon className="w-8 h-8" />
                   </div>
@@ -539,12 +539,12 @@ export default function AIOrchestration() {
               <div
                 className={`relative p-8 rounded-2xl border-2 transition-all ${
                   isDay
-                    ? "bg-gradient-to-br from-orange-500/20 to-amber-500/20 border-orange-400/50"
-                    : "bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border-purple-400/50"
+                    ? "bg-linear-to-br from-orange-500/20 to-amber-500/20 border-orange-400/50"
+                    : "bg-linear-to-br from-purple-500/20 to-indigo-500/20 border-purple-400/50"
                 }`}
               >
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent"
                   style={{
                     animation: "mcpScan 3s ease-in-out infinite",
                   }}
@@ -607,16 +607,16 @@ export default function AIOrchestration() {
               <div className="absolute inset-0 rounded-full bg-white/10 overflow-hidden">
                 {/* Active Phase (Day) */}
                 <div
-                  className="absolute h-full bg-gradient-to-r from-amber-500 to-orange-500 opacity-80"
+                  className="absolute h-full bg-linear-to-r from-amber-500 to-orange-500 opacity-80"
                   style={{ width: "50%", left: "25%" }}
                 />
                 {/* Autonomous Phase (Night) */}
                 <div
-                  className="absolute h-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-80"
+                  className="absolute h-full bg-linear-to-r from-indigo-600 to-purple-600 opacity-80"
                   style={{ width: "25%", left: "0" }}
                 />
                 <div
-                  className="absolute h-full bg-gradient-to-r from-indigo-600 to-purple-600 opacity-80 rounded-r-full"
+                  className="absolute h-full bg-linear-to-r from-indigo-600 to-purple-600 opacity-80 rounded-r-full"
                   style={{ width: "25%", left: "75%" }}
                 />
 
@@ -634,7 +634,7 @@ export default function AIOrchestration() {
 
             <div className="grid grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
-                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 mt-1" />
+                <div className="w-4 h-4 rounded-full bg-linear-to-r from-amber-500 to-orange-500 mt-1" />
                 <div>
                   <div className="font-bold">Active Mode (6:00 - 18:00)</div>
                   <div className="text-sm text-white/60">
@@ -643,7 +643,7 @@ export default function AIOrchestration() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="w-4 h-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 mt-1" />
+                <div className="w-4 h-4 rounded-full bg-linear-to-r from-indigo-600 to-purple-600 mt-1" />
                 <div>
                   <div className="font-bold">
                     Autonomous Mode (18:00 - 6:00)
@@ -664,8 +664,8 @@ export default function AIOrchestration() {
           <h2
             className={`text-6xl sm:text-7xl font-black mb-8 ${
               isDay
-                ? "bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400"
-                : "bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400"
+                ? "bg-linear-to-r from-orange-400 via-amber-300 to-yellow-400"
+                : "bg-linear-to-r from-purple-400 via-pink-400 to-indigo-400"
             } bg-clip-text text-transparent`}
           >
             Build with AI Orchestration
@@ -677,8 +677,8 @@ export default function AIOrchestration() {
             href="/metadata/glossary"
             className={`inline-flex items-center gap-3 px-12 py-6 rounded-2xl font-bold text-2xl shadow-2xl transition-all hover:scale-105 ${
               isDay
-                ? "bg-gradient-to-r from-orange-500 to-amber-500"
-                : "bg-gradient-to-r from-purple-600 to-indigo-600"
+                ? "bg-linear-to-r from-orange-500 to-amber-500"
+                : "bg-linear-to-r from-purple-600 to-indigo-600"
             }`}
           >
             <Brain className="w-8 h-8" />

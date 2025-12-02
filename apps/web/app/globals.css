@@ -1,0 +1,8 @@
+/**
+ * AIBOS Web App - Global Styles
+ * 
+ * Imports design tokens from @aibos/ui package
+ */
+
+@import "@aibos/ui/design/globals.css";
+

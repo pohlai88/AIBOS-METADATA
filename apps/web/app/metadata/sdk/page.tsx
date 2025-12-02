@@ -62,7 +62,7 @@ export default function SDKPage() {
         </div>
 
         {/* Statistics */}
-        <GridLayout cols={3} gap={6}>
+        <GridLayout cols={3}>
           <div className="rounded-lg bg-white dark:bg-slate-800 shadow-md p-6 transition-all hover:shadow-lg hover:scale-[1.02]">
             <div className="text-3xl font-bold text-indigo-600">15+</div>
             <Caption>Core Concepts</Caption>

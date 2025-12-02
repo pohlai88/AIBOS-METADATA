@@ -11,6 +11,13 @@
         "METADATA_BASE_URL": "http://localhost:8787",
         "METADATA_DEFAULT_TENANT_ID": "550e8400-e29b-41d4-a716-446655440000"
       }
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": [
+        "shadcn@latest",
+        "mcp"
+      ]
     }
   }
 }
