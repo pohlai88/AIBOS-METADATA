@@ -82,7 +82,7 @@ export function MetadataBadge({
  * Governance Tier Badge
  */
 interface TierBadgeProps extends VariantProps<typeof badgeVariants> {
-  tier: 1 | 2 | 3 | 4;
+  tier: 1 | 2 | 3 | 4 | 'tier1' | 'tier2' | 'tier3' | 'tier4';
   label?: string;
   className?: string;
 }
@@ -93,6 +93,9 @@ export function TierBadge({
   variant = 'outline',
   className 
 }: TierBadgeProps) {
+  // Normalize tier to number
+  const tierNum = (typeof tier === 'string' ? parseInt(tier.replace('tier', '')) : tier) as 1 | 2 | 3 | 4;
+  
   const tierLabels = {
     1: 'Tier 1 - Critical',
     2: 'Tier 2 - Important',
@@ -111,11 +114,11 @@ export function TierBadge({
     <span 
       className={cn(
         badgeVariants({ variant }),
-        tierStyles[tier],
+        tierStyles[tierNum],
         className
       )}
     >
-      {label || tierLabels[tier]}
+      {label || tierLabels[tierNum]}
     </span>
   );
 }

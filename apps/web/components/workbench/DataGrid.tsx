@@ -115,7 +115,8 @@ export function DataGrid<T extends Record<string, any>>({
                 key={column.id}
                 className={cn(
                   column.width,
-                  column.sortable && "cursor-pointer select-none hover:bg-bg-muted",
+                  column.sortable &&
+                    "cursor-pointer select-none hover:bg-bg-muted",
                   "font-semibold text-text-base"
                 )}
                 onClick={() => column.sortable && handleSort(column.id)}
@@ -202,4 +203,3 @@ export function MetadataFieldCell({
     </div>
   );
 }
-
