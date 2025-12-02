@@ -1,0 +1,35 @@
+[33mcommit 5a6e51d5a6371fb8830c679dc093bf5cc4f13793[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: pohlai88 <jackwee@ai-bos.io>
+Date:   Tue Dec 2 15:28:49 2025 +0700
+
+    refactor(ui): hexagonal architecture - separate pillars from components
+    
+    PILLARS (Shared, Low-Risk):
+    - packages/ui/design/globals.css   Design tokens (CSS variables)
+    - packages/ui/lib/utils.ts          Pure utility (cn function)
+    
+    COMPONENTS (Isolated, High-Control):
+    - apps/web/components/ui/           All 13 shadcn components
+    - apps/web/components/ThemeProvider.tsx  Moved from packages/ui
+    
+    Changes:
+    1. Moved ThemeProvider from packages/ui/components/  apps/web/components/
+    2. Moved cn utility to packages/ui/lib/utils.ts
+    3. Deleted packages/ui/components/ and packages/ui/utils/ folders
+    4. Updated all imports in apps/web (layout.tsx, FloatingThemeToggle.tsx)
+    5. Updated packages/ui/index.ts to export only pillars
+    6. Updated packages/ui/package.json exports
+    
+    Hexagonal Benefits:
+     Isolation: App crashes don't affect UI package
+     Reusability: Design tokens shared across all apps
+     Single Source of Truth: CSS tokens in one place
+     Proper dependency direction: Apps depend on pillars, not components
+
+ apps/web/app/layout.tsx                             |  2 [32m+[m[31m-[m
+ apps/web/components/FloatingThemeToggle.tsx         |  2 [32m+[m[31m-[m
+ .../ui => apps/web}/components/ThemeProvider.tsx    |  3 [32m++[m[31m-[m
+ packages/ui/index.ts                                | 21 [32m+++++[m[31m----------------[m
+ packages/ui/{utils/cn.ts => lib/utils.ts}           |  2 [32m+[m[31m-[m
+ packages/ui/package.json                            |  3 [32m+[m[31m--[m
+ 6 files changed, 11 insertions(+), 22 deletions(-)
