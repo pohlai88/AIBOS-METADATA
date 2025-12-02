@@ -4,16 +4,10 @@ import { z } from "zod";
  * Organization Schemas - Zod definitions for OpenAPI auto-generation
  */
 
-// ============================================
 // ENUMS
-// ============================================
-
 export const TenantStatusEnum = z.enum(["active", "suspended", "trial"]);
 
-// ============================================
 // REQUEST SCHEMAS
-// ============================================
-
 export const UpdateOrganizationRequestSchema = z.object({
   name: z.string().min(2).optional().describe("Organization name"),
   slug: z.string().regex(/^[a-z0-9-]+$/).optional().describe("URL-safe identifier"),
@@ -23,10 +17,7 @@ export const UpdateOrganizationRequestSchema = z.object({
   logoUrl: z.string().nullable().optional().describe("Logo URL"),
 });
 
-// ============================================
 // RESPONSE SCHEMAS
-// ============================================
-
 export const OrganizationResponseSchema = z.object({
   id: z.string().describe("Tenant UUID"),
   name: z.string().describe("Organization name"),
@@ -49,10 +40,7 @@ export const UpdateOrganizationResponseSchema = z.object({
   updatedFields: z.array(z.string()).describe("Fields that were updated"),
 });
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
-
 export type Organization = z.infer<typeof OrganizationResponseSchema>;
 export type UpdateOrganizationRequest = z.infer<typeof UpdateOrganizationRequestSchema>;
 

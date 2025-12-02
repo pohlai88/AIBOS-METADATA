@@ -2,17 +2,9 @@ import { z } from "zod";
 
 /**
  * Auth Schemas - Zod definitions for OpenAPI auto-generation
- * 
- * Pattern: Each schema is exported for:
- * 1. Runtime validation (zValidator)
- * 2. TypeScript types (z.infer)
- * 3. OpenAPI spec generation
  */
 
-// ============================================
 // REQUEST SCHEMAS
-// ============================================
-
 export const LoginRequestSchema = z.object({
   email: z.string().email().describe("User email address"),
   password: z.string().min(1).describe("User password"),
@@ -34,10 +26,7 @@ export const ResetPasswordRequestSchema = z.object({
     .describe("New password"),
 });
 
-// ============================================
 // RESPONSE SCHEMAS
-// ============================================
-
 export const UserResponseSchema = z.object({
   id: z.string().describe("User UUID"),
   email: z.string().email().describe("User email"),
@@ -72,14 +61,7 @@ export const ResetPasswordResponseSchema = z.object({
   message: z.string().describe("Success message"),
 });
 
-export const ErrorResponseSchema = z.object({
-  error: z.string().describe("Error message"),
-});
-
-// ============================================
 // TYPE EXPORTS
-// ============================================
-
 export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 export type ForgotPasswordRequest = z.infer<typeof ForgotPasswordRequestSchema>;

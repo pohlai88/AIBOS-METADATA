@@ -1,4 +1,5 @@
 import { z } from "zod";
+// Import from shared schemas package
 import {
   // Auth schemas
   LoginRequestSchema,
@@ -31,9 +32,8 @@ import {
   // Audit schemas
   AuditQuerySchema,
   AuditListResponseSchema,
-  // Common
-  ErrorResponseSchema,
-} from "../schemas";
+} from "@aibos/schemas/admin-config";
+import { ErrorResponseSchema } from "@aibos/schemas/common";
 
 /**
  * OpenAPI Specification Generator

@@ -4,17 +4,11 @@ import { z } from "zod";
  * Users Schemas - Zod definitions for OpenAPI auto-generation
  */
 
-// ============================================
 // ENUMS
-// ============================================
-
 export const UserRoleEnum = z.enum(["platform_admin", "org_admin", "member", "viewer"]);
 export const UserStatusEnum = z.enum(["active", "inactive", "invited", "locked"]);
 
-// ============================================
 // REQUEST SCHEMAS
-// ============================================
-
 export const InviteUserRequestSchema = z.object({
   email: z.string().email().describe("Email address to invite"),
   role: z.enum(["org_admin", "member", "viewer"]).describe("Role to assign"),
@@ -38,10 +32,7 @@ export const ListUsersQuerySchema = z.object({
   offset: z.coerce.number().default(0).describe("Offset"),
 });
 
-// ============================================
 // RESPONSE SCHEMAS
-// ============================================
-
 export const UserSchema = z.object({
   id: z.string().describe("User UUID"),
   email: z.string().email().describe("User email"),
@@ -78,10 +69,7 @@ export const DeactivateUserResponseSchema = z.object({
   message: z.string().describe("Success message"),
 });
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
-
 export type UserRole = z.infer<typeof UserRoleEnum>;
 export type UserStatus = z.infer<typeof UserStatusEnum>;
 export type User = z.infer<typeof UserSchema>;

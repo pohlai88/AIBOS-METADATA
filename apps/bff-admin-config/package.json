@@ -15,6 +15,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@aibos/schemas": "workspace:*",
     "@hono/node-server": "^1.13.0",
     "@hono/zod-validator": "^0.2.1",
     "bcryptjs": "^2.4.3",

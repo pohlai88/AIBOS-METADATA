@@ -4,10 +4,7 @@ import { z } from "zod";
  * Me (Current User) Schemas - Zod definitions for OpenAPI auto-generation
  */
 
-// ============================================
 // REQUEST SCHEMAS
-// ============================================
-
 export const UpdateProfileRequestSchema = z.object({
   displayName: z.string().min(2).optional().describe("Display name"),
   avatarUrl: z.string().nullable().optional().describe("Avatar URL"),
@@ -26,10 +23,7 @@ export const ChangePasswordRequestSchema = z.object({
     .describe("New password"),
 });
 
-// ============================================
 // RESPONSE SCHEMAS
-// ============================================
-
 export const MembershipSchema = z.object({
   tenantId: z.string().describe("Tenant UUID"),
   tenantName: z.string().describe("Tenant name"),
@@ -58,10 +52,7 @@ export const ChangePasswordResponseSchema = z.object({
   message: z.string().describe("Success message"),
 });
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
-
 export type CurrentUser = z.infer<typeof CurrentUserResponseSchema>;
 export type UpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
 export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequestSchema>;

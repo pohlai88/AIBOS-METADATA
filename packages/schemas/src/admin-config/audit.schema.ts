@@ -4,10 +4,7 @@ import { z } from "zod";
  * Audit Schemas - Zod definitions for OpenAPI auto-generation
  */
 
-// ============================================
-// REQUEST SCHEMAS (Query Params)
-// ============================================
-
+// REQUEST SCHEMAS
 export const AuditQuerySchema = z.object({
   limit: z.coerce.number().default(100).describe("Page size"),
   offset: z.coerce.number().default(0).describe("Offset"),
@@ -18,10 +15,7 @@ export const AuditQuerySchema = z.object({
   endDate: z.string().datetime().optional().describe("Filter to date"),
 });
 
-// ============================================
 // RESPONSE SCHEMAS
-// ============================================
-
 export const AuditEventSchema = z.object({
   id: z.string().describe("Event UUID"),
   traceId: z.string().describe("Trace ID for correlation"),
@@ -42,10 +36,7 @@ export const AuditListResponseSchema = z.object({
   offset: z.number().describe("Current offset"),
 });
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
-
 export type AuditEvent = z.infer<typeof AuditEventSchema>;
 export type AuditQuery = z.infer<typeof AuditQuerySchema>;
 
