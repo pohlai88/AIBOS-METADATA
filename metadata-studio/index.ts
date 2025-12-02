@@ -12,6 +12,7 @@ import { tagsRouter } from './api/tags.routes';
 import { kpiRouter } from './api/kpi.routes';
 import { impactRouter } from './api/impact.routes';
 import { qualityRouter } from './api/quality.routes';
+import { namingRouter } from './api/naming.routes';
 import { registerMetricsRoutes } from './api/metrics.routes';
 import { initializeEventSystem } from './events';
 
@@ -29,7 +30,7 @@ export function createApp() {
   // Prometheus metrics endpoint
   registerMetricsRoutes(app);
 
-  // Business rules + approvals + metadata + lineage + glossary + tags + kpi + impact + quality
+  // Business rules + approvals + metadata + lineage + glossary + tags + kpi + impact + quality + naming
   app.route('/rules', rulesRouter);
   app.route('/approvals', approvalsRouter);
   app.route('/metadata', metadataRouter);
@@ -39,6 +40,7 @@ export function createApp() {
   app.route('/kpi', kpiRouter);
   app.route('/impact', impactRouter);
   app.route('/quality', qualityRouter);
+  app.route('/naming', namingRouter);
 
   return app;
 }

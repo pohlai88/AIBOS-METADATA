@@ -1,0 +1,33 @@
+{
+  "name": "@aibos/mcp-metadata-ssot",
+  "version": "1.0.0",
+  "description": "MCP server for AI-BOS Metadata SSOT - Guardian of concepts, aliases, and naming",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "dev": "node --loader tsx server.mts",
+    "start": "node server.mjs",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@aibos/metadata-sdk": "workspace:*",
+    "@aibos/contracts": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.10.0"
+  },
+  "keywords": [
+    "mcp",
+    "metadata",
+    "ssot",
+    "governance",
+    "ai"
+  ],
+  "author": "AIBOS Team",
+  "license": "PROPRIETARY"
+}
+

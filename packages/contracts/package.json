@@ -1,0 +1,38 @@
+{
+  "name": "@aibos/contracts",
+  "version": "1.0.0",
+  "description": "Shared Zod contracts for AI-BOS services - Single Source of Truth for types",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./metadata": "./src/metadata.ts",
+    "./events": "./src/events.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "@asteasolutions/zod-to-openapi": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.5.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1"
+  },
+  "keywords": [
+    "contracts",
+    "zod",
+    "schemas",
+    "types",
+    "ssot"
+  ],
+  "author": "AIBOS Team",
+  "license": "PROPRIETARY"
+}
+

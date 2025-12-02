@@ -8,4 +8,6 @@ export * from './glossary.tables';
 export * from './tags.tables';
 export * from './kpi.tables';
 export * from './observability.tables';
+export * from './naming-variant.tables';
+export * from './alias.tables';
 
