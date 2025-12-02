@@ -10,7 +10,11 @@ export const TenantStatusEnum = z.enum(["active", "suspended", "trial"]);
 // REQUEST SCHEMAS
 export const UpdateOrganizationRequestSchema = z.object({
   name: z.string().min(2).optional().describe("Organization name"),
-  slug: z.string().regex(/^[a-z0-9-]+$/).optional().describe("URL-safe identifier"),
+  slug: z
+    .string()
+    .regex(/^[a-z0-9-]+$/)
+    .optional()
+    .describe("URL-safe identifier"),
   contactEmail: z.string().email().optional().describe("Contact email"),
   website: z.string().url().optional().describe("Website URL"),
   address: z.string().optional().describe("Physical address"),
@@ -29,10 +33,12 @@ export const OrganizationResponseSchema = z.object({
   status: TenantStatusEnum.describe("Tenant status"),
   createdAt: z.string().datetime().describe("Created timestamp"),
   updatedAt: z.string().datetime().describe("Updated timestamp"),
-  updatedBy: z.object({
-    name: z.string(),
-    email: z.string().email(),
-  }).describe("Last updated by"),
+  updatedBy: z
+    .object({
+      name: z.string(),
+      email: z.string().email(),
+    })
+    .describe("Last updated by"),
 });
 
 export const UpdateOrganizationResponseSchema = z.object({
@@ -42,5 +48,6 @@ export const UpdateOrganizationResponseSchema = z.object({
 
 // TYPE EXPORTS
 export type Organization = z.infer<typeof OrganizationResponseSchema>;
-export type UpdateOrganizationRequest = z.infer<typeof UpdateOrganizationRequestSchema>;
-
+export type UpdateOrganizationRequest = z.infer<
+  typeof UpdateOrganizationRequestSchema
+>;

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Common Schemas - Shared across all business engines
- * 
+ *
  * @package @aibos/schemas/common
  */
 
@@ -27,7 +27,9 @@ export const PaginationQuerySchema = z.object({
   offset: z.coerce.number().min(0).default(0).describe("Offset"),
 });
 
-export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
+  itemSchema: T
+) =>
   z.object({
     items: z.array(itemSchema).describe("List of items"),
     total: z.number().describe("Total count"),
@@ -58,4 +60,3 @@ export const ActorSchema = z.object({
 });
 
 export type Actor = z.infer<typeof ActorSchema>;
-

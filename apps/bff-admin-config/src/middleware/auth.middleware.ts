@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 /**
  * Auth Middleware
@@ -28,7 +28,7 @@ export async function authMiddleware(c: Context, next: Next) {
   const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
 
   try {
-    const payload = verify(token, jwtSecret) as AuthContext;
+    const payload = jwt.verify(token, jwtSecret) as AuthContext;
 
     // Inject auth context into request
     c.set("auth", payload);
@@ -57,7 +57,7 @@ export async function optionalAuthMiddleware(c: Context, next: Next) {
     const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
 
     try {
-      const payload = verify(token, jwtSecret) as AuthContext;
+      const payload = jwt.verify(token, jwtSecret) as AuthContext;
       c.set("auth", payload);
       c.set("userId", payload.userId);
       c.set("tenantId", payload.tenantId);

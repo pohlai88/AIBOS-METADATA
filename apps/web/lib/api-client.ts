@@ -5,8 +5,14 @@
  * Uses fetch with automatic token injection
  */
 
+/**
+ * API Base URL
+ * 
+ * In production: Routes through API Gateway (e.g., /admin-config/...)
+ * In development: Direct to BFF service
+ */
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api/admin";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 /**
  * Auth token management

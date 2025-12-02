@@ -2,7 +2,11 @@
  * BFF Admin Config
  *
  * Backend-for-Frontend service for Admin Config & User Management
- * Port: 3001
+ *
+ * Configuration Principle: LOCAL to this service
+ * - Database credentials from environment variables
+ * - Secrets injected at deployment time (Vault, K8s Secrets)
+ * - No shared config pillar for runtime values
  *
  * External Route: /admin-config/* (via API Gateway)
  * Internal Routes: /* (Gateway strips prefix)
@@ -13,8 +17,22 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { loadEnv, getConfig } from "./config/env";
+import { checkDatabaseHealth, closeDatabase } from "./config/database";
 import { adminConfigRoutes } from "./routes/admin-config/index";
 import { openApiSpec } from "./openapi/spec";
+
+// ===========================================
+// STARTUP: Load & Validate Environment
+// ===========================================
+
+// Load environment first - fails fast if invalid
+loadEnv();
+const config = getConfig();
+
+// ===========================================
+// APP SETUP
+// ===========================================
 
 const app = new Hono();
 
@@ -24,32 +42,70 @@ app.use("*", prettyJSON());
 app.use(
   "*",
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: config.cors.origins,
     credentials: true,
   })
 );
 
-// Health check
-app.get("/health", (c) => {
-  return c.json({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "bff-admin-config",
-  });
+// ===========================================
+// HEALTH CHECK
+// ===========================================
+
+app.get("/health", async (c) => {
+  const dbHealth = await checkDatabaseHealth();
+
+  const status = dbHealth.healthy ? "healthy" : "degraded";
+  const httpStatus = dbHealth.healthy ? 200 : 503;
+
+  return c.json(
+    {
+      status,
+      timestamp: new Date().toISOString(),
+      service: config.service.name,
+      version: config.service.version,
+      environment: config.service.environment,
+      checks: {
+        database: {
+          healthy: dbHealth.healthy,
+          latency: dbHealth.latency,
+          error: dbHealth.error,
+        },
+      },
+    },
+    httpStatus
+  );
 });
 
-// OpenAPI spec endpoint
+// Liveness probe (simple, no dependencies)
+app.get("/health/live", (c) => {
+  return c.json({ status: "alive" });
+});
+
+// Readiness probe (checks all dependencies)
+app.get("/health/ready", async (c) => {
+  const dbHealth = await checkDatabaseHealth();
+
+  if (!dbHealth.healthy) {
+    return c.json({ status: "not ready", reason: "database" }, 503);
+  }
+
+  return c.json({ status: "ready" });
+});
+
+// ===========================================
+// OPENAPI / SWAGGER
+// ===========================================
+
 app.get("/openapi.json", (c) => {
   return c.json(openApiSpec);
 });
 
-// Swagger UI redirect
 app.get("/docs", (c) => {
   return c.html(`
     <!DOCTYPE html>
     <html>
       <head>
-        <title>BFF Admin Config - API Docs</title>
+        <title>${config.service.name} - API Docs</title>
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist/swagger-ui.css">
       </head>
       <body>
@@ -66,67 +122,105 @@ app.get("/docs", (c) => {
   `);
 });
 
+// ===========================================
+// API ROUTES
+// ===========================================
+
 // Mount all admin-config routes at root
 // Gateway strips /admin-config prefix before forwarding
 // External: /admin-config/auth/login → Internal: /auth/login
 app.route("/", adminConfigRoutes);
 
-// 404 handler
+// ===========================================
+// ERROR HANDLING
+// ===========================================
+
 app.notFound((c) => {
   return c.json(
     {
       error: "Not Found",
       path: c.req.path,
-      service: "bff-admin-config",
+      service: config.service.name,
     },
     404
   );
 });
 
-// Error handler
 app.onError((err, c) => {
-  console.error("Error:", err);
-  return c.json(
-    {
-      error: err.message || "Internal Server Error",
-    },
-    500
-  );
+  console.error(`[${config.service.name}] Error:`, err);
+
+  // Don't expose internal errors in production
+  const message = config.isProduction
+    ? "Internal Server Error"
+    : err.message || "Internal Server Error";
+
+  return c.json({ error: message }, 500);
 });
 
-const port = parseInt(process.env.PORT || "3001");
+// ===========================================
+// GRACEFUL SHUTDOWN
+// ===========================================
+
+async function shutdown(signal: string) {
+  console.log(
+    `\n[${config.service.name}] Received ${signal}, shutting down...`
+  );
+
+  try {
+    await closeDatabase();
+    console.log(`[${config.service.name}] Database closed`);
+  } catch (error) {
+    console.error(`[${config.service.name}] Error closing database:`, error);
+  }
+
+  process.exit(0);
+}
+
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+// ===========================================
+// START SERVER
+// ===========================================
 
 console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 BFF Admin Config
+🚀 ${config.service.name} v${config.service.version}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Port: ${port}
-Environment: ${process.env.NODE_ENV || "development"}
-Frontend: ${process.env.FRONTEND_URL || "http://localhost:3000"}
+Port:        ${config.service.port}
+Environment: ${config.service.environment}
+Log Level:   ${config.service.logLevel}
+CORS:        ${config.cors.origins.join(", ")}
+Email:       ${config.email ? "configured" : "console (dev)"}
 
 Routes (via Gateway /admin-config/*):
-- POST   /auth/login
-- POST   /auth/logout
-- POST   /auth/forgot-password
-- POST   /auth/reset-password
-- GET    /organization
-- PATCH  /organization
-- GET    /users
-- GET    /users/:id
-- POST   /users/invite
-- PATCH  /users/:id
-- POST   /users/:id/deactivate
-- POST   /users/:id/reactivate
-- GET    /me
-- PATCH  /me
-- PATCH  /me/password
-- GET    /audit
+├── POST   /auth/login
+├── POST   /auth/logout
+├── POST   /auth/forgot-password
+├── POST   /auth/reset-password
+├── GET    /organization
+├── PATCH  /organization
+├── GET    /users
+├── GET    /users/:id
+├── POST   /users/invite
+├── PATCH  /users/:id
+├── POST   /users/:id/deactivate
+├── POST   /users/:id/reactivate
+├── GET    /me
+├── PATCH  /me
+├── PATCH  /me/password
+└── GET    /audit
 
-Health: GET /health
+Health:
+├── GET /health        (full check)
+├── GET /health/live   (liveness)
+└── GET /health/ready  (readiness)
+
+Docs: GET /docs
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);
 
 serve({
   fetch: app.fetch,
-  port,
+  port: config.service.port,
 });

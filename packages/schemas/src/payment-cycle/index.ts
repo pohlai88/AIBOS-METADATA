@@ -2,9 +2,9 @@ import { z } from "zod";
 
 /**
  * Payment Cycle Schemas - Placeholder
- * 
+ *
  * @package @aibos/schemas/payment-cycle
- * 
+ *
  * TODO: Implement when building payment-cycle BFF
  */
 
@@ -60,4 +60,3 @@ export type PaymentStatus = z.infer<typeof PaymentStatusEnum>;
 export type PaymentType = z.infer<typeof PaymentTypeEnum>;
 export type PaymentRequest = z.infer<typeof PaymentRequestSchema>;
 export type PaymentResponse = z.infer<typeof PaymentResponseSchema>;
-

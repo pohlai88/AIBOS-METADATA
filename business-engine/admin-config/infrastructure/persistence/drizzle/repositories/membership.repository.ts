@@ -1,161 +1,156 @@
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { IMembershipRepository } from "../../../../application/ports/outbound/membership.repository.port";
-import type { UserTenantMembership } from "../../../../domain/entities/membership.entity";
-import { membershipSchema } from "../schema/membership.schema";
+import { iamUserTenantMembership } from "../schema/membership.schema";
 import * as schema from "../schema";
 
 /**
- * Membership Repository - Drizzle Implementation
- * 
- * Manages user-tenant relationships and roles
+ * Membership Data (Plain object)
  */
-export class MembershipRepository implements IMembershipRepository {
+export interface MembershipData {
+  id: string;
+  userId: string;
+  tenantId: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  updatedBy: string;
+}
+
+/**
+ * Membership Repository - Drizzle Implementation
+ */
+export class MembershipRepository {
   constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
 
-  async create(
-    membership: Omit<UserTenantMembership, "id" | "createdAt" | "updatedAt">
-  ): Promise<UserTenantMembership> {
-    const [created] = await this.db
-      .insert(membershipSchema)
-      .values({
-        userId: membership.userId,
-        tenantId: membership.tenantId,
-        role: membership.role,
-        invitedBy: membership.invitedBy,
-        metadata: membership.metadata || {},
-      })
-      .returning();
+  async save(membership: {
+    id?: string;
+    userId: string;
+    tenantId: string;
+    role: string;
+    createdBy: string;
+  }): Promise<MembershipData> {
+    if (membership.id) {
+      // Update existing
+      const [updated] = await this.db
+        .update(iamUserTenantMembership)
+        .set({
+          role: membership.role as any,
+          updatedAt: new Date(),
+          updatedBy: membership.createdBy,
+        })
+        .where(eq(iamUserTenantMembership.id, membership.id))
+        .returning();
 
-    return this.mapToEntity(created);
+      return this.mapToData(updated);
+    } else {
+      // Create new
+      const [created] = await this.db
+        .insert(iamUserTenantMembership)
+        .values({
+          userId: membership.userId,
+          tenantId: membership.tenantId,
+          role: membership.role as any,
+          createdBy: membership.createdBy,
+          updatedBy: membership.createdBy,
+        })
+        .returning();
+
+      return this.mapToData(created);
+    }
   }
 
   async findByUserAndTenant(
     userId: string,
     tenantId: string
-  ): Promise<UserTenantMembership | null> {
+  ): Promise<MembershipData | null> {
     const [membership] = await this.db
       .select()
-      .from(membershipSchema)
+      .from(iamUserTenantMembership)
       .where(
         and(
-          eq(membershipSchema.userId, userId),
-          eq(membershipSchema.tenantId, tenantId),
-          isNull(membershipSchema.deletedAt)
+          eq(iamUserTenantMembership.userId, userId),
+          eq(iamUserTenantMembership.tenantId, tenantId)
         )
       )
       .limit(1);
 
-    return membership ? this.mapToEntity(membership) : null;
+    return membership ? this.mapToData(membership) : null;
   }
 
-  async findByUser(userId: string): Promise<UserTenantMembership[]> {
+  async findByUser(userId: string): Promise<MembershipData[]> {
     const memberships = await this.db
       .select()
-      .from(membershipSchema)
-      .where(and(eq(membershipSchema.userId, userId), isNull(membershipSchema.deletedAt)));
+      .from(iamUserTenantMembership)
+      .where(eq(iamUserTenantMembership.userId, userId));
 
-    return memberships.map((m) => this.mapToEntity(m));
+    return memberships.map((m) => this.mapToData(m));
   }
 
-  async findByTenant(tenantId: string): Promise<UserTenantMembership[]> {
+  async findByTenant(tenantId: string): Promise<MembershipData[]> {
     const memberships = await this.db
       .select()
-      .from(membershipSchema)
-      .where(and(eq(membershipSchema.tenantId, tenantId), isNull(membershipSchema.deletedAt)))
-      .orderBy(membershipSchema.createdAt);
+      .from(iamUserTenantMembership)
+      .where(eq(iamUserTenantMembership.tenantId, tenantId))
+      .orderBy(iamUserTenantMembership.createdAt);
 
-    return memberships.map((m) => this.mapToEntity(m));
+    return memberships.map((m) => this.mapToData(m));
   }
 
-  async findByTenantWithRole(
-    tenantId: string,
-    role: string
-  ): Promise<UserTenantMembership[]> {
+  async findAdminsByTenant(tenantId: string): Promise<MembershipData[]> {
     const memberships = await this.db
       .select()
-      .from(membershipSchema)
+      .from(iamUserTenantMembership)
       .where(
         and(
-          eq(membershipSchema.tenantId, tenantId),
-          eq(membershipSchema.role, role),
-          isNull(membershipSchema.deletedAt)
+          eq(iamUserTenantMembership.tenantId, tenantId),
+          eq(iamUserTenantMembership.role, "org_admin")
         )
       );
 
-    return memberships.map((m) => this.mapToEntity(m));
+    return memberships.map((m) => this.mapToData(m));
   }
 
-  async update(
+  async updateRole(
     userId: string,
     tenantId: string,
-    data: Partial<UserTenantMembership>
-  ): Promise<UserTenantMembership> {
-    const [updated] = await this.db
-      .update(membershipSchema)
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
+    role: string,
+    updatedBy: string
+  ): Promise<void> {
+    await this.db
+      .update(iamUserTenantMembership)
+      .set({ role: role as any, updatedAt: new Date(), updatedBy })
       .where(
         and(
-          eq(membershipSchema.userId, userId),
-          eq(membershipSchema.tenantId, tenantId),
-          isNull(membershipSchema.deletedAt)
+          eq(iamUserTenantMembership.userId, userId),
+          eq(iamUserTenantMembership.tenantId, tenantId)
         )
-      )
-      .returning();
-
-    if (!updated) {
-      throw new Error(`Membership not found for user ${userId} in tenant ${tenantId}`);
-    }
-
-    return this.mapToEntity(updated);
+      );
   }
 
   async delete(userId: string, tenantId: string): Promise<void> {
-    // Soft delete
     await this.db
-      .update(membershipSchema)
-      .set({ deletedAt: new Date() })
+      .delete(iamUserTenantMembership)
       .where(
         and(
-          eq(membershipSchema.userId, userId),
-          eq(membershipSchema.tenantId, tenantId)
+          eq(iamUserTenantMembership.userId, userId),
+          eq(iamUserTenantMembership.tenantId, tenantId)
         )
       );
   }
 
-  async exists(userId: string, tenantId: string): Promise<boolean> {
-    const [membership] = await this.db
-      .select({ id: membershipSchema.id })
-      .from(membershipSchema)
-      .where(
-        and(
-          eq(membershipSchema.userId, userId),
-          eq(membershipSchema.tenantId, tenantId),
-          isNull(membershipSchema.deletedAt)
-        )
-      )
-      .limit(1);
-
-    return !!membership;
-  }
-
-  private mapToEntity(
-    row: typeof membershipSchema.$inferSelect
-  ): UserTenantMembership {
+  private mapToData(
+    row: typeof iamUserTenantMembership.$inferSelect
+  ): MembershipData {
     return {
       id: row.id,
       userId: row.userId,
       tenantId: row.tenantId,
-      role: row.role as "platform_admin" | "org_admin" | "member" | "viewer",
-      invitedBy: row.invitedBy,
-      metadata: row.metadata as Record<string, unknown>,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      deletedAt: row.deletedAt,
+      role: row.role,
+      createdAt: row.createdAt!,
+      updatedAt: row.updatedAt!,
+      createdBy: row.createdBy,
+      updatedBy: row.updatedBy,
     };
   }
 }
-

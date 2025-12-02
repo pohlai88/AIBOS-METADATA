@@ -1,8 +1,8 @@
-import { hash, compare } from "bcryptjs";
+import { hash, hashSync, compare } from "bcryptjs";
 
 /**
  * Password Service
- * 
+ *
  * Handles password hashing and verification using bcrypt
  * Salt rounds: 12 (balanced security vs performance)
  */
@@ -11,6 +11,14 @@ export class PasswordService {
 
   async hash(password: string): Promise<string> {
     return hash(password, this.saltRounds);
+  }
+
+  /**
+   * Synchronous hash - use sparingly (blocking)
+   * Used for token hashing where async isn't needed
+   */
+  hashSync(value: string): string {
+    return hashSync(value, this.saltRounds);
   }
 
   async verify(password: string, hashedPassword: string): Promise<boolean> {
@@ -50,4 +58,3 @@ export class PasswordService {
     };
   }
 }
-

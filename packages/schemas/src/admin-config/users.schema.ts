@@ -5,8 +5,18 @@ import { z } from "zod";
  */
 
 // ENUMS
-export const UserRoleEnum = z.enum(["platform_admin", "org_admin", "member", "viewer"]);
-export const UserStatusEnum = z.enum(["active", "inactive", "invited", "locked"]);
+export const UserRoleEnum = z.enum([
+  "platform_admin",
+  "org_admin",
+  "member",
+  "viewer",
+]);
+export const UserStatusEnum = z.enum([
+  "active",
+  "inactive",
+  "invited",
+  "locked",
+]);
 
 // REQUEST SCHEMAS
 export const InviteUserRequestSchema = z.object({
@@ -75,4 +85,3 @@ export type UserStatus = z.infer<typeof UserStatusEnum>;
 export type User = z.infer<typeof UserSchema>;
 export type InviteUserRequest = z.infer<typeof InviteUserRequestSchema>;
 export type UpdateUserRequest = z.infer<typeof UpdateUserRequestSchema>;
-

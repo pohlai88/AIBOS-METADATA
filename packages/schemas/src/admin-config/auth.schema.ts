@@ -66,4 +66,3 @@ export type LoginRequest = z.infer<typeof LoginRequestSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 export type ForgotPasswordRequest = z.infer<typeof ForgotPasswordRequestSchema>;
 export type ResetPasswordRequest = z.infer<typeof ResetPasswordRequestSchema>;
-

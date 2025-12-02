@@ -37,7 +37,7 @@ import { ErrorResponseSchema } from "@aibos/schemas/common";
 
 /**
  * OpenAPI Specification Generator
- * 
+ *
  * Auto-generates OpenAPI 3.0 spec from Zod schemas
  */
 
@@ -48,58 +48,58 @@ function zodToJsonSchema(schema: z.ZodType<any>): any {
     const shape = schema.shape;
     const properties: Record<string, any> = {};
     const required: string[] = [];
-    
+
     for (const [key, value] of Object.entries(shape)) {
       const zodField = value as z.ZodType<any>;
       properties[key] = zodToJsonSchema(zodField);
-      
+
       if (!(zodField instanceof z.ZodOptional)) {
         required.push(key);
       }
     }
-    
+
     return {
       type: "object",
       properties,
       required: required.length > 0 ? required : undefined,
     };
   }
-  
+
   if (schema instanceof z.ZodString) {
     return { type: "string" };
   }
-  
+
   if (schema instanceof z.ZodNumber) {
     return { type: "number" };
   }
-  
+
   if (schema instanceof z.ZodBoolean) {
     return { type: "boolean" };
   }
-  
+
   if (schema instanceof z.ZodArray) {
     return {
       type: "array",
       items: zodToJsonSchema(schema.element),
     };
   }
-  
+
   if (schema instanceof z.ZodEnum) {
     return {
       type: "string",
       enum: schema.options,
     };
   }
-  
+
   if (schema instanceof z.ZodOptional) {
     return zodToJsonSchema(schema.unwrap());
   }
-  
+
   if (schema instanceof z.ZodNullable) {
     const inner = zodToJsonSchema(schema.unwrap());
     return { ...inner, nullable: true };
   }
-  
+
   return { type: "object" };
 }
 
@@ -253,9 +253,24 @@ export const openApiSpec = {
         operationId: "listUsers",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "q", in: "query", schema: { type: "string" }, description: "Search query" },
-          { name: "status", in: "query", schema: { type: "string" }, description: "Filter by status" },
-          { name: "role", in: "query", schema: { type: "string" }, description: "Filter by role" },
+          {
+            name: "q",
+            in: "query",
+            schema: { type: "string" },
+            description: "Search query",
+          },
+          {
+            name: "status",
+            in: "query",
+            schema: { type: "string" },
+            description: "Filter by status",
+          },
+          {
+            name: "role",
+            in: "query",
+            schema: { type: "string" },
+            description: "Filter by role",
+          },
         ],
         responses: {
           "200": {
@@ -277,7 +292,12 @@ export const openApiSpec = {
         operationId: "getUser",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
         ],
         responses: {
           "200": {
@@ -305,7 +325,12 @@ export const openApiSpec = {
         operationId: "updateUser",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
         ],
         requestBody: {
           required: true,
@@ -362,7 +387,12 @@ export const openApiSpec = {
         operationId: "deactivateUser",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
         ],
         requestBody: {
           content: {
@@ -391,7 +421,12 @@ export const openApiSpec = {
         operationId: "reactivateUser",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
         ],
         responses: {
           "200": {
@@ -528,13 +563,29 @@ export const openApiSpec = {
         operationId: "getAuditLog",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "limit", in: "query", schema: { type: "integer", default: 100 } },
-          { name: "offset", in: "query", schema: { type: "integer", default: 0 } },
+          {
+            name: "limit",
+            in: "query",
+            schema: { type: "integer", default: 100 },
+          },
+          {
+            name: "offset",
+            in: "query",
+            schema: { type: "integer", default: 0 },
+          },
           { name: "action", in: "query", schema: { type: "string" } },
           { name: "entityType", in: "query", schema: { type: "string" } },
           { name: "userId", in: "query", schema: { type: "string" } },
-          { name: "startDate", in: "query", schema: { type: "string", format: "date-time" } },
-          { name: "endDate", in: "query", schema: { type: "string", format: "date-time" } },
+          {
+            name: "startDate",
+            in: "query",
+            schema: { type: "string", format: "date-time" },
+          },
+          {
+            name: "endDate",
+            in: "query",
+            schema: { type: "string", format: "date-time" },
+          },
         ],
         responses: {
           "200": {
@@ -559,4 +610,3 @@ export const openApiSpec = {
     },
   },
 };
-

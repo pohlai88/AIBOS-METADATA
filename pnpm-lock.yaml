@@ -179,8 +179,11 @@ importers:
         specifier: ^4.3.19
         version: 4.3.19(react@19.2.0)(zod@3.25.76)
 
-  apps/api:
+  apps/bff-admin-config:
     dependencies:
+      '@aibos/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@hono/node-server':
         specifier: ^1.13.0
         version: 1.19.6(hono@4.10.7)
@@ -232,6 +235,34 @@ importers:
         version: 4.20.6
       typescript:
         specifier: ^5.9.3
+        version: 5.9.3
+
+  apps/bff-payment-cycle:
+    dependencies:
+      '@hono/node-server':
+        specifier: ^1.12.0
+        version: 1.19.6(hono@4.10.7)
+      '@hono/zod-validator':
+        specifier: ^0.2.2
+        version: 0.2.2(hono@4.10.7)(zod@3.25.76)
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+      hono:
+        specifier: ^4.5.0
+        version: 4.10.7
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.1
+      tsx:
+        specifier: ^4.16.0
+        version: 4.20.6
+      typescript:
+        specifier: ^5.5.0
         version: 5.9.3
 
   apps/web:
@@ -488,6 +519,16 @@ importers:
         version: 19.2.0
       typescript:
         specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/schemas:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.5.0
         version: 5.9.3
 
   packages/ui:

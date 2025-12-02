@@ -1,117 +1,140 @@
-import { eq, and, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { ITenantRepository } from "../../../../application/ports/outbound/tenant.repository.port";
-import type { Tenant } from "../../../../domain/entities/tenant.entity";
-import { tenantSchema } from "../schema/tenant.schema";
+import { iamTenant } from "../schema/tenant.schema";
 import * as schema from "../schema";
 
 /**
- * Tenant Repository - Drizzle Implementation
- * 
- * Implements ITenantRepository using Drizzle ORM
- * Handles multi-tenant isolation and soft deletes
+ * Tenant Data (Plain object)
  */
-export class TenantRepository implements ITenantRepository {
+export interface TenantData {
+  id: string;
+  traceId: string;
+  name: string;
+  slug: string;
+  status: string;
+  timezone: string;
+  locale: string;
+  logoUrl?: string;
+  domain?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  updatedBy: string;
+}
+
+/**
+ * Tenant Repository - Drizzle Implementation
+ */
+export class TenantRepository {
   constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
 
-  async create(tenant: Omit<Tenant, "id" | "createdAt" | "updatedAt">): Promise<Tenant> {
-    const [created] = await this.db
-      .insert(tenantSchema)
-      .values({
-        name: tenant.name,
-        slug: tenant.slug,
-        status: tenant.status,
-        contactEmail: tenant.contactEmail,
-        website: tenant.website,
-        address: tenant.address,
-        logoUrl: tenant.logoUrl,
-        metadata: tenant.metadata || {},
-      })
-      .returning();
+  async save(tenant: {
+    id?: string;
+    traceId: string;
+    name: string;
+    slug: string;
+    status?: string;
+    timezone?: string;
+    locale?: string;
+    logoUrl?: string;
+    domain?: string;
+    createdBy: string;
+  }): Promise<TenantData> {
+    if (tenant.id) {
+      // Update existing
+      const [updated] = await this.db
+        .update(iamTenant)
+        .set({
+          name: tenant.name,
+          slug: tenant.slug,
+          status: (tenant.status || "active") as any,
+          timezone: tenant.timezone || "UTC",
+          locale: tenant.locale || "en",
+          logoUrl: tenant.logoUrl,
+          domain: tenant.domain,
+          updatedAt: new Date(),
+          updatedBy: tenant.createdBy,
+        })
+        .where(eq(iamTenant.id, tenant.id))
+        .returning();
 
-    return this.mapToEntity(created);
+      return this.mapToData(updated);
+    } else {
+      // Create new
+      const [created] = await this.db
+        .insert(iamTenant)
+        .values({
+          traceId: tenant.traceId,
+          name: tenant.name,
+          slug: tenant.slug,
+          status: (tenant.status || "pending_setup") as any,
+          timezone: tenant.timezone || "UTC",
+          locale: tenant.locale || "en",
+          logoUrl: tenant.logoUrl,
+          domain: tenant.domain,
+          createdBy: tenant.createdBy,
+          updatedBy: tenant.createdBy,
+        })
+        .returning();
+
+      return this.mapToData(created);
+    }
   }
 
-  async findById(id: string): Promise<Tenant | null> {
+  async findById(id: string): Promise<TenantData | null> {
     const [tenant] = await this.db
       .select()
-      .from(tenantSchema)
-      .where(and(eq(tenantSchema.id, id), isNull(tenantSchema.deletedAt)))
+      .from(iamTenant)
+      .where(eq(iamTenant.id, id))
       .limit(1);
 
-    return tenant ? this.mapToEntity(tenant) : null;
+    return tenant ? this.mapToData(tenant) : null;
   }
 
-  async findBySlug(slug: string): Promise<Tenant | null> {
+  async findBySlug(slug: string): Promise<TenantData | null> {
     const [tenant] = await this.db
       .select()
-      .from(tenantSchema)
-      .where(and(eq(tenantSchema.slug, slug), isNull(tenantSchema.deletedAt)))
+      .from(iamTenant)
+      .where(eq(iamTenant.slug, slug))
       .limit(1);
 
-    return tenant ? this.mapToEntity(tenant) : null;
+    return tenant ? this.mapToData(tenant) : null;
   }
 
-  async findAll(): Promise<Tenant[]> {
+  async findAll(): Promise<TenantData[]> {
     const tenants = await this.db
       .select()
-      .from(tenantSchema)
-      .where(isNull(tenantSchema.deletedAt))
-      .orderBy(tenantSchema.createdAt);
+      .from(iamTenant)
+      .orderBy(iamTenant.createdAt);
 
-    return tenants.map((t) => this.mapToEntity(t));
-  }
-
-  async update(id: string, data: Partial<Tenant>): Promise<Tenant> {
-    const [updated] = await this.db
-      .update(tenantSchema)
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
-      .where(and(eq(tenantSchema.id, id), isNull(tenantSchema.deletedAt)))
-      .returning();
-
-    if (!updated) {
-      throw new Error(`Tenant with id ${id} not found`);
-    }
-
-    return this.mapToEntity(updated);
-  }
-
-  async delete(id: string): Promise<void> {
-    // Soft delete
-    await this.db
-      .update(tenantSchema)
-      .set({ deletedAt: new Date() })
-      .where(eq(tenantSchema.id, id));
+    return tenants.map((t) => this.mapToData(t));
   }
 
   async exists(slug: string): Promise<boolean> {
     const [tenant] = await this.db
-      .select({ id: tenantSchema.id })
-      .from(tenantSchema)
-      .where(and(eq(tenantSchema.slug, slug), isNull(tenantSchema.deletedAt)))
+      .select({ id: iamTenant.id })
+      .from(iamTenant)
+      .where(eq(iamTenant.slug, slug))
       .limit(1);
 
     return !!tenant;
   }
 
-  private mapToEntity(row: typeof tenantSchema.$inferSelect): Tenant {
+  private mapToData(row: typeof iamTenant.$inferSelect): TenantData {
     return {
       id: row.id,
+      traceId: row.traceId,
       name: row.name,
       slug: row.slug,
-      status: row.status as "active" | "inactive" | "suspended",
-      contactEmail: row.contactEmail,
-      website: row.website,
-      address: row.address,
-      logoUrl: row.logoUrl,
-      metadata: row.metadata as Record<string, unknown>,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      deletedAt: row.deletedAt,
+      status: row.status,
+      timezone: row.timezone,
+      locale: row.locale,
+      logoUrl: row.logoUrl || undefined,
+      domain: row.domain || undefined,
+      createdAt: row.createdAt!,
+      updatedAt: row.updatedAt!,
+      createdBy: row.createdBy,
+      updatedBy: row.updatedBy,
     };
   }
 }
-

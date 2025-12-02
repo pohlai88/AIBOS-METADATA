@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
 import {
   Button,
   Input,
@@ -18,6 +18,7 @@ import {
   CardContent,
   CardFooter,
 } from "@aibos/ui";
+import { useLogin } from "@/lib/hooks";
 
 /**
  * Login Form Schema
@@ -31,10 +32,12 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const loginMutation = useLogin();
+  
+  // Check for password reset success message
+  const resetSuccess = searchParams.get("reset") === "success";
 
   const {
     register,
@@ -45,29 +48,10 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // TODO: Replace with actual API call
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Invalid credentials");
-      }
-
-      // Redirect to dashboard on success
-      router.push("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation.mutate({
+      email: data.email,
+      password: data.password,
+    });
   };
 
   return (
@@ -81,10 +65,20 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
+          {/* Success Alert */}
+          {resetSuccess && (
+            <div className="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success">
+              <CheckCircle className="h-4 w-4" />
+              Password reset successfully. Please sign in.
+            </div>
+          )}
+
           {/* Error Alert */}
-          {error && (
+          {loginMutation.error && (
             <div className="rounded-lg bg-danger/10 p-3 text-sm text-danger">
-              {error}
+              {loginMutation.error instanceof Error
+                ? loginMutation.error.message
+                : "Login failed. Please check your credentials."}
             </div>
           )}
 
@@ -137,8 +131,14 @@ export default function LoginPage() {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loginMutation.isPending}
+          >
+            {loginMutation.isPending && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
             Sign in
           </Button>
         </CardFooter>
@@ -146,4 +146,3 @@ export default function LoginPage() {
     </Card>
   );
 }
-

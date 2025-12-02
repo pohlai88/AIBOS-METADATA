@@ -36,6 +36,10 @@ server-error.log
 .env.test.local
 .env.production.local
 
+# Keep .env.example files (templates)
+!.env.example
+!**/.env.example
+
 # Vercel
 .vercel
 

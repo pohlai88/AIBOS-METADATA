@@ -2,9 +2,11 @@
  * Repository Implementations - Barrel Export
  */
 
-export { TenantRepository } from "./tenant.repository";
-export { UserRepository } from "./user.repository";
-export { MembershipRepository } from "./membership.repository";
-export { AuditRepository } from "./audit.repository";
+export { TenantRepository, type TenantData } from "./tenant.repository";
+export { UserRepository, type UserData } from "./user.repository";
+export {
+  MembershipRepository,
+  type MembershipData,
+} from "./membership.repository";
+export { AuditRepository, type AuditEventData } from "./audit.repository";
 export { TokenRepository } from "./token.repository";
-

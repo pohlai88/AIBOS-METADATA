@@ -1,165 +1,168 @@
 import { eq, and, desc, gte, lte } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import type { IAuditRepository } from "../../../../application/ports/outbound/audit.repository.port";
-import type { AuditEvent } from "../../../../domain/entities/audit-event.entity";
-import { auditEventSchema } from "../schema/audit-event.schema";
+import { iamAuditEvent } from "../schema/audit-event.schema";
 import * as schema from "../schema";
 
 /**
+ * Audit Event Data (Plain object)
+ */
+export interface AuditEventData {
+  id: string;
+  traceId: string;
+  resourceType: string;
+  resourceId: string;
+  action: string;
+  actorUserId?: string;
+  metadataDiff?: Record<string, unknown>;
+  ipAddress?: string;
+  userAgent?: string;
+  prevHash?: string | null;
+  hash: string;
+  createdAt: Date;
+}
+
+/**
  * Audit Repository - Drizzle Implementation
- * 
+ *
  * Immutable audit log for compliance and traceability
  */
-export class AuditRepository implements IAuditRepository {
+export class AuditRepository {
   constructor(private readonly db: PostgresJsDatabase<typeof schema>) {}
 
-  async create(
-    event: Omit<AuditEvent, "id" | "createdAt">
-  ): Promise<AuditEvent> {
+  async save(event: {
+    traceId: string;
+    resourceType: string;
+    resourceId: string;
+    action: string;
+    actorUserId?: string;
+    metadataDiff?: Record<string, unknown>;
+    ipAddress?: string;
+    userAgent?: string;
+    prevHash?: string | null;
+    hash: string;
+  }): Promise<AuditEventData> {
     const [created] = await this.db
-      .insert(auditEventSchema)
+      .insert(iamAuditEvent)
       .values({
         traceId: event.traceId,
-        tenantId: event.tenantId,
-        userId: event.userId,
-        action: event.action,
-        entityType: event.entityType,
-        entityId: event.entityId,
-        changes: event.changes || {},
-        metadata: event.metadata || {},
+        resourceType: event.resourceType as any,
+        resourceId: event.resourceId,
+        action: event.action as any,
+        actorUserId: event.actorUserId,
+        metadataDiff: event.metadataDiff || {},
         ipAddress: event.ipAddress,
         userAgent: event.userAgent,
+        prevHash: event.prevHash,
+        hash: event.hash,
       })
       .returning();
 
-    return this.mapToEntity(created);
+    return this.mapToData(created);
+  }
+
+  async getLatestByTraceId(traceId: string): Promise<AuditEventData | null> {
+    const [event] = await this.db
+      .select()
+      .from(iamAuditEvent)
+      .where(eq(iamAuditEvent.traceId, traceId))
+      .orderBy(desc(iamAuditEvent.createdAt))
+      .limit(1);
+
+    return event ? this.mapToData(event) : null;
+  }
+
+  async findByResource(
+    resourceType: string,
+    resourceId: string,
+    options?: { limit?: number }
+  ): Promise<AuditEventData[]> {
+    const events = await this.db
+      .select()
+      .from(iamAuditEvent)
+      .where(
+        and(
+          eq(iamAuditEvent.resourceType, resourceType as any),
+          eq(iamAuditEvent.resourceId, resourceId)
+        )
+      )
+      .orderBy(desc(iamAuditEvent.createdAt))
+      .limit(options?.limit || 100);
+
+    return events.map((e) => this.mapToData(e));
   }
 
   async findByTenant(
-    tenantId: string,
-    limit: number = 100,
-    offset: number = 0
-  ): Promise<AuditEvent[]> {
+    _tenantId: string,
+    options?: {
+      resourceType?: string;
+      action?: string;
+      userId?: string;
+      limit?: number;
+      offset?: number;
+    }
+  ): Promise<AuditEventData[]> {
     const events = await this.db
       .select()
-      .from(auditEventSchema)
-      .where(eq(auditEventSchema.tenantId, tenantId))
-      .orderBy(desc(auditEventSchema.createdAt))
-      .limit(limit)
-      .offset(offset);
+      .from(iamAuditEvent)
+      .orderBy(desc(iamAuditEvent.createdAt))
+      .limit(options?.limit || 100)
+      .offset(options?.offset || 0);
 
-    return events.map((e) => this.mapToEntity(e));
+    return events.map((e) => this.mapToData(e));
   }
 
-  async findByUser(
-    userId: string,
-    limit: number = 100,
-    offset: number = 0
-  ): Promise<AuditEvent[]> {
+  async findByTraceId(traceId: string): Promise<AuditEventData[]> {
     const events = await this.db
       .select()
-      .from(auditEventSchema)
-      .where(eq(auditEventSchema.userId, userId))
-      .orderBy(desc(auditEventSchema.createdAt))
-      .limit(limit)
-      .offset(offset);
+      .from(iamAuditEvent)
+      .where(eq(iamAuditEvent.traceId, traceId))
+      .orderBy(iamAuditEvent.createdAt);
 
-    return events.map((e) => this.mapToEntity(e));
+    return events.map((e) => this.mapToData(e));
   }
 
-  async findByTraceId(traceId: string): Promise<AuditEvent[]> {
+  async findByActor(
+    actorUserId: string,
+    limit: number = 100
+  ): Promise<AuditEventData[]> {
     const events = await this.db
       .select()
-      .from(auditEventSchema)
-      .where(eq(auditEventSchema.traceId, traceId))
-      .orderBy(auditEventSchema.createdAt);
+      .from(iamAuditEvent)
+      .where(eq(iamAuditEvent.actorUserId, actorUserId))
+      .orderBy(desc(iamAuditEvent.createdAt))
+      .limit(limit);
 
-    return events.map((e) => this.mapToEntity(e));
-  }
-
-  async findByEntity(
-    entityType: string,
-    entityId: string
-  ): Promise<AuditEvent[]> {
-    const events = await this.db
-      .select()
-      .from(auditEventSchema)
-      .where(
-        and(
-          eq(auditEventSchema.entityType, entityType),
-          eq(auditEventSchema.entityId, entityId)
-        )
-      )
-      .orderBy(auditEventSchema.createdAt);
-
-    return events.map((e) => this.mapToEntity(e));
+    return events.map((e) => this.mapToData(e));
   }
 
   async findByAction(
     action: string,
     limit: number = 100
-  ): Promise<AuditEvent[]> {
+  ): Promise<AuditEventData[]> {
     const events = await this.db
       .select()
-      .from(auditEventSchema)
-      .where(eq(auditEventSchema.action, action))
-      .orderBy(desc(auditEventSchema.createdAt))
+      .from(iamAuditEvent)
+      .where(eq(iamAuditEvent.action, action as any))
+      .orderBy(desc(iamAuditEvent.createdAt))
       .limit(limit);
 
-    return events.map((e) => this.mapToEntity(e));
+    return events.map((e) => this.mapToData(e));
   }
 
-  async findByDateRange(
-    startDate: Date,
-    endDate: Date,
-    tenantId?: string
-  ): Promise<AuditEvent[]> {
-    const conditions = [
-      gte(auditEventSchema.createdAt, startDate),
-      lte(auditEventSchema.createdAt, endDate),
-    ];
-
-    if (tenantId) {
-      conditions.push(eq(auditEventSchema.tenantId, tenantId));
-    }
-
-    const events = await this.db
-      .select()
-      .from(auditEventSchema)
-      .where(and(...conditions))
-      .orderBy(desc(auditEventSchema.createdAt));
-
-    return events.map((e) => this.mapToEntity(e));
-  }
-
-  async count(tenantId?: string): Promise<number> {
-    const query = this.db.select().from(auditEventSchema);
-
-    if (tenantId) {
-      query.where(eq(auditEventSchema.tenantId, tenantId));
-    }
-
-    const result = await query;
-    return result.length;
-  }
-
-  private mapToEntity(
-    row: typeof auditEventSchema.$inferSelect
-  ): AuditEvent {
+  private mapToData(row: typeof iamAuditEvent.$inferSelect): AuditEventData {
     return {
-      id: row.id,
+      id: row.auditId,
       traceId: row.traceId,
-      tenantId: row.tenantId,
-      userId: row.userId,
+      resourceType: row.resourceType,
+      resourceId: row.resourceId,
       action: row.action,
-      entityType: row.entityType,
-      entityId: row.entityId,
-      changes: row.changes as Record<string, unknown>,
-      metadata: row.metadata as Record<string, unknown>,
-      ipAddress: row.ipAddress,
-      userAgent: row.userAgent,
+      actorUserId: row.actorUserId || undefined,
+      metadataDiff: (row.metadataDiff as Record<string, unknown>) || {},
+      ipAddress: row.ipAddress || undefined,
+      userAgent: row.userAgent || undefined,
+      prevHash: row.prevHash,
+      hash: row.hash,
       createdAt: row.createdAt,
     };
   }
 }
-

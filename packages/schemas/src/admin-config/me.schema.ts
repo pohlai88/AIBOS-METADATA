@@ -9,7 +9,10 @@ export const UpdateProfileRequestSchema = z.object({
   displayName: z.string().min(2).optional().describe("Display name"),
   avatarUrl: z.string().nullable().optional().describe("Avatar URL"),
   locale: z.string().optional().describe("Locale (e.g., en-US)"),
-  timezone: z.string().optional().describe("Timezone (e.g., Asia/Kuala_Lumpur)"),
+  timezone: z
+    .string()
+    .optional()
+    .describe("Timezone (e.g., Asia/Kuala_Lumpur)"),
 });
 
 export const ChangePasswordRequestSchema = z.object({
@@ -56,4 +59,3 @@ export const ChangePasswordResponseSchema = z.object({
 export type CurrentUser = z.infer<typeof CurrentUserResponseSchema>;
 export type UpdateProfileRequest = z.infer<typeof UpdateProfileRequestSchema>;
 export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequestSchema>;
-

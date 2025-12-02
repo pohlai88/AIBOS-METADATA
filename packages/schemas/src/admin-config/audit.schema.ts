@@ -39,4 +39,3 @@ export const AuditListResponseSchema = z.object({
 // TYPE EXPORTS
 export type AuditEvent = z.infer<typeof AuditEventSchema>;
 export type AuditQuery = z.infer<typeof AuditQuerySchema>;
-

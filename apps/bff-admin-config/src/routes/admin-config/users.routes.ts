@@ -2,10 +2,11 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { authMiddleware, requireRole } from "../../middleware/auth.middleware";
+import { container } from "../../config/container";
 
 /**
  * Users Routes
- * 
+ *
  * Endpoints:
  * - GET /users - List users
  * - GET /users/:id - Get user detail
@@ -17,13 +18,14 @@ import { authMiddleware, requireRole } from "../../middleware/auth.middleware";
 
 const inviteSchema = z.object({
   email: z.string().email(),
+  name: z.string().optional(),
   role: z.enum(["org_admin", "member", "viewer"]),
 });
 
 const updateUserSchema = z.object({
   displayName: z.string().optional(),
   avatarUrl: z.string().nullable().optional(),
-  status: z.enum(["active", "inactive", "invited", "locked"]).optional(),
+  role: z.enum(["org_admin", "member", "viewer"]).optional(),
 });
 
 const deactivateSchema = z.object({
@@ -46,18 +48,30 @@ usersRoutes.get("/", async (c) => {
   const role = c.req.query("role");
 
   try {
-    // TODO: Call GetUsersUseCase
-    // - Get memberships for tenant
-    // - Get user details
-    // - Filter by status/role
-    // - Apply search query
+    const users = await container.getUsers(tenantId, {
+      status,
+      role,
+      search: searchQuery,
+    });
 
-    // Mock response
+    // Transform to API response format
+    const response = users.map((u) => ({
+      id: u.id,
+      email: u.email.toString(),
+      name: u.name,
+      avatarUrl: u.avatarUrl,
+      status: u.status.toString(),
+      role: u.role.toString(),
+      lastLoginAt: u.lastLoginAt?.toISOString(),
+      createdAt: u.createdAt?.toISOString(),
+    }));
+
     return c.json({
-      users: [],
-      total: 0,
+      users: response,
+      total: response.length,
     });
   } catch (error) {
+    console.error("[USERS] List error:", error);
     return c.json(
       { error: error instanceof Error ? error.message : "Failed to fetch users" },
       500
@@ -74,15 +88,36 @@ usersRoutes.get("/:id", async (c) => {
   const tenantId = c.get("tenantId");
 
   try {
-    // TODO: Call GetUserDetailUseCase
-    // - Get user
-    // - Get membership in current tenant
-    // - Get recent activity
+    const detail = await container.getUserDetail(userId, tenantId);
+
+    if (!detail) {
+      return c.json({ error: "User not found" }, 404);
+    }
 
     return c.json({
-      user: null,
+      user: {
+        id: detail.user.id,
+        email: detail.user.email.toString(),
+        name: detail.user.name,
+        avatarUrl: detail.user.avatarUrl,
+        status: detail.user.status.toString(),
+        lastLoginAt: detail.user.lastLoginAt?.toISOString(),
+        createdAt: detail.user.createdAt?.toISOString(),
+      },
+      membership: {
+        id: detail.membership.id,
+        role: detail.membership.role.toString(),
+        createdAt: detail.membership.createdAt?.toISOString(),
+      },
+      recentActivity: detail.recentActivity.map((a) => ({
+        id: a.id,
+        action: a.action,
+        timestamp: a.createdAt?.toISOString(),
+        metadataDiff: a.metadataDiff,
+      })),
     });
   } catch (error) {
+    console.error("[USERS] Detail error:", error);
     return c.json(
       { error: error instanceof Error ? error.message : "User not found" },
       404
@@ -100,22 +135,33 @@ usersRoutes.post(
   requireRole("org_admin", "platform_admin"),
   zValidator("json", inviteSchema),
   async (c) => {
-    const { email, role } = c.req.valid("json");
+    const { email, name, role } = c.req.valid("json");
     const tenantId = c.get("tenantId");
     const invitedBy = c.get("userId");
 
     try {
-      // TODO: Call InviteUserUseCase
-      // - Check if user already exists
-      // - Generate invite token
-      // - Send email
-      // - Create audit event
+      const result = await container.executeInviteUser({
+        input: {
+          email,
+          name,
+          role,
+          tenantId,
+        },
+        actorUserId: invitedBy,
+        ipAddress: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+        userAgent: c.req.header("user-agent"),
+      });
 
       return c.json({
         message: "Invitation sent successfully",
-        email,
+        user: {
+          id: result.user.id,
+          email: result.user.email.toString(),
+          status: result.user.status.toString(),
+        },
       });
     } catch (error) {
+      console.error("[USERS] Invite error:", error);
       return c.json(
         { error: error instanceof Error ? error.message : "Failed to send invitation" },
         400
@@ -140,15 +186,78 @@ usersRoutes.patch(
     const actorId = c.get("userId");
 
     try {
-      // TODO: Call UpdateUserUseCase
-      // - Validate updates
-      // - Update user
-      // - Create audit event
+      // Get user
+      const user = await container.userRepository.findById(userId);
+      if (!user) {
+        return c.json({ error: "User not found" }, 404);
+      }
+
+      // Update user fields
+      if (updates.displayName) {
+        user.updateProfile({ name: updates.displayName });
+      }
+      if (updates.avatarUrl !== undefined) {
+        user.updateProfile({ avatarUrl: updates.avatarUrl });
+      }
+
+      await container.userRepository.save(user);
+
+      // Update role if changed
+      if (updates.role) {
+        const membership = await container.membershipRepository.findByUserAndTenant(
+          userId,
+          tenantId
+        );
+        if (membership) {
+          membership.changeRole(updates.role, actorId);
+          await container.membershipRepository.save(membership);
+        }
+      }
+
+      // Audit event
+      const prevAudit = await container.auditRepository.getLatestByTraceId(
+        user.traceId.toString()
+      );
+
+      const { AuditEvent } = await import(
+        "../../../../business-engine/admin-config/domain/entities/audit-event.entity"
+      );
+
+      const auditEvent = AuditEvent.create({
+        traceId: user.traceId.toString(),
+        resourceType: "USER",
+        resourceId: userId,
+        action: "UPDATE",
+        actorUserId: actorId,
+        metadataDiff: updates,
+        prevHash: prevAudit?.hash ?? null,
+      });
+
+      await container.auditRepository.save(auditEvent);
+
+      // Emit event
+      await container.eventBus.publish({
+        type: "user.updated",
+        version: "1.0.0",
+        timestamp: new Date().toISOString(),
+        source: "bff-admin-config",
+        correlationId: user.traceId.toString(),
+        tenantId,
+        payload: { userId, updates, updatedBy: actorId },
+      });
 
       return c.json({
         message: "User updated successfully",
+        user: {
+          id: user.id,
+          email: user.email.toString(),
+          name: user.name,
+          avatarUrl: user.avatarUrl,
+          status: user.status.toString(),
+        },
       });
     } catch (error) {
+      console.error("[USERS] Update error:", error);
       return c.json(
         { error: error instanceof Error ? error.message : "Failed to update user" },
         400
@@ -174,22 +283,17 @@ usersRoutes.post(
 
     // Safety check: Can't deactivate yourself
     if (userId === actorId) {
-      return c.json(
-        { error: "Cannot deactivate your own account" },
-        400
-      );
+      return c.json({ error: "Cannot deactivate your own account" }, 400);
     }
 
     try {
-      // TODO: Call DeactivateUserUseCase
-      // - Check if last admin (prevent lockout)
-      // - Update user status to inactive
-      // - Create audit event with reason
+      await container.deactivateUser(userId, tenantId, actorId, reason);
 
       return c.json({
         message: "User deactivated successfully",
       });
     } catch (error) {
+      console.error("[USERS] Deactivate error:", error);
       return c.json(
         { error: error instanceof Error ? error.message : "Failed to deactivate user" },
         400
@@ -212,14 +316,13 @@ usersRoutes.post(
     const actorId = c.get("userId");
 
     try {
-      // TODO: Call ReactivateUserUseCase
-      // - Update user status to active
-      // - Create audit event
+      await container.reactivateUser(userId, tenantId, actorId);
 
       return c.json({
         message: "User reactivated successfully",
       });
     } catch (error) {
+      console.error("[USERS] Reactivate error:", error);
       return c.json(
         { error: error instanceof Error ? error.message : "Failed to reactivate user" },
         400
@@ -227,4 +330,3 @@ usersRoutes.post(
     }
   }
 );
-
