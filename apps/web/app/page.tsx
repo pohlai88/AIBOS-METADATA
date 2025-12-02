@@ -26,6 +26,8 @@ import {
   Workflow,
   Boxes,
 } from "lucide-react";
+import { AgentOrchestrationViz } from "@/components/AgentOrchestrationViz";
+import { DecisionTreeViz } from "@/components/DecisionTreeViz";
 
 export default function AIOrchestration() {
   const [mode, setMode] = useState<"day" | "night">("day");
@@ -303,13 +305,39 @@ export default function AIOrchestration() {
         </div>
       </section>
 
+      {/* LIVE ORCHESTRATION VISUALIZATION */}
+      <section className="relative px-6 lg:px-8 pb-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-6">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="font-semibold text-sm">
+                Live Orchestration • Real-time Agent Coordination
+              </span>
+            </div>
+            <h2 className="text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+              <Network className="w-12 h-12" />
+              Agentic AI Orchestration
+            </h2>
+            <p className="text-xl text-white/70 max-w-3xl mx-auto">
+              Watch autonomous agents coordinate in real-time — validating,
+              generating, governing, and managing metadata across distributed
+              workflows
+            </p>
+          </div>
+
+          {/* Live Orchestration Demo */}
+          <AgentOrchestrationViz isPaused={isPaused} />
+        </div>
+      </section>
+
       {/* AGENTIC AI DASHBOARD */}
       <section className="relative px-6 lg:px-8 pb-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-5xl font-bold mb-4 flex items-center justify-center gap-3">
               <Bot className="w-12 h-12" />
-              Agentic AI Agents
+              Agent Performance Metrics
             </h2>
             <p className="text-xl text-white/70">
               Autonomous agents executing tasks under MCP governance
@@ -381,7 +409,7 @@ export default function AIOrchestration() {
                       className={`h-full bg-gradient-to-r from-${agent.color}-500 to-${agent.color}-400 rounded-full transition-all duration-1000`}
                       style={{
                         // Use deterministic width based on index
-                        width: `${60 + (index * 10) % 40}%`,
+                        width: `${60 + ((index * 10) % 40)}%`,
                         animation: "activityPulse 2s ease-in-out infinite",
                       }}
                     />
@@ -389,6 +417,21 @@ export default function AIOrchestration() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* AUTONOMOUS DECISION MAKING */}
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold mb-3 flex items-center justify-center gap-2">
+                <Brain className="w-8 h-8" />
+                Autonomous Decision Making
+              </h3>
+              <p className="text-white/70">
+                Watch AI agents evaluate conditions and make intelligent routing
+                decisions
+              </p>
+            </div>
+            <DecisionTreeViz isPaused={isPaused} isDay={isDay} />
           </div>
 
           {/* AI WORKFLOW TYPES */}

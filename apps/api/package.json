@@ -1,0 +1,39 @@
+{
+  "name": "@aibos/api",
+  "version": "1.0.0",
+  "description": "AI-BOS Backend API Server - Admin Config & Payment Cycle",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.2.1",
+    "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "postgres": "^3.4.4",
+    "zod": "^3.23.8",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.19.1",
+    "@types/pg": "^8.15.6",
+    "drizzle-kit": "^0.28.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
+  }
+}
+
