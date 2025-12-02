@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, MoreHorizontal, Mail } from "lucide-react";
+import { Plus, Search, MoreHorizontal, Mail, Loader2 } from "lucide-react";
 import {
   Button,
   Input,
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
   Badge,
   UserAvatar,
@@ -34,20 +31,27 @@ import {
   DropdownMenuSeparator,
 } from "@aibos/ui";
 
+// Hooks - Wired to real API
+import {
+  useUsers,
+  useInviteUser,
+  useDeactivateUser,
+  useReactivateUser,
+} from "@/lib/hooks";
+
+// Empty states
+import { EmptyState, SearchEmpty } from "@/components/EmptyStates";
+
 /**
  * User Directory Page
  *
- * From GRCD-ADMIN-FRONTEND.md:
- * - Job-based lanes: All | Active | Admins | Inactive
- * - User table with status/role badges
- * - Invite user modal
- * - Action menu per user
+ * WIRED TO REAL API:
+ * - GET /users - List users
+ * - POST /users/invite - Invite user
+ * - POST /users/:id/deactivate - Deactivate user
+ * - POST /users/:id/reactivate - Reactivate user
  */
 
-import { DEMO_USERS, isDemoMode } from "@/lib/demo-data";
-import { EmptyState, SearchEmpty } from "@/components/EmptyStates";
-
-// User role type
 type UserRole = "platform_admin" | "org_admin" | "member" | "viewer";
 
 type User = {
@@ -59,37 +63,25 @@ type User = {
   avatarUrl: string | null;
   joinedAt: string;
   lastActive: string | null;
-  title?: string;
-  bio?: string;
-};
-
-// Use demo data if in demo mode, otherwise empty
-const getMockUsers = (): User[] => {
-  if (isDemoMode()) {
-    return DEMO_USERS.map((u) => ({
-      id: u.id,
-      name: u.name,
-      email: u.email,
-      role: u.role,
-      status: u.status,
-      avatarUrl: u.avatarUrl,
-      joinedAt: u.joinedAt,
-      lastActive: u.lastActive,
-      title: u.title,
-      bio: u.bio,
-    }));
-  }
-  return []; // Empty by default - show beautiful empty state
 };
 
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
-  const mockUsers = getMockUsers();
-  const hasUsers = mockUsers.length > 0;
+  // Real API call
+  const { data, isLoading, error } = useUsers({
+    q: searchQuery || undefined,
+  });
 
-  const filteredUsers = mockUsers.filter(
+  const users: User[] = data?.users?.map((u) => ({
+    ...u,
+    role: u.role as UserRole,
+  })) || [];
+
+  const hasUsers = users.length > 0;
+
+  const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -103,8 +95,40 @@ export default function UsersPage() {
     (u) => u.status === "inactive" || u.status === "invited"
   );
 
-  // Show empty state if no users at all
-  if (!hasUsers) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-text">Users</h1>
+          <p className="text-text-muted">
+            Manage your organization&apos;s team members.
+          </p>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <div className="mb-4 text-4xl">⚠️</div>
+            <h3 className="mb-2 font-medium text-danger">Failed to load users</h3>
+            <p className="text-sm text-text-muted">
+              {error instanceof Error ? error.message : "Please try again later."}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (!hasUsers && !searchQuery) {
     return (
       <div className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -217,6 +241,19 @@ function UserTable({
   searchQuery?: string;
   onClearSearch?: () => void;
 }) {
+  const deactivateMutation = useDeactivateUser();
+  const reactivateMutation = useReactivateUser();
+
+  const handleDeactivate = (userId: string) => {
+    if (confirm("Are you sure you want to deactivate this user?")) {
+      deactivateMutation.mutate({ userId });
+    }
+  };
+
+  const handleReactivate = (userId: string) => {
+    reactivateMutation.mutate({ userId });
+  };
+
   if (users.length === 0 && searchQuery) {
     return (
       <Card>
@@ -273,9 +310,7 @@ function UserTable({
                       <div className="font-medium text-text hover:text-primary-600">
                         {user.name}
                       </div>
-                      <div className="text-sm text-text-muted">
-                        {user.email}
-                      </div>
+                      <div className="text-sm text-text-muted">{user.email}</div>
                     </div>
                   </Link>
                 </td>
@@ -306,12 +341,24 @@ function UserTable({
                       <DropdownMenuItem>Change Role</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {user.status === "active" ? (
-                        <DropdownMenuItem className="text-danger">
-                          Deactivate User
+                        <DropdownMenuItem
+                          className="text-danger"
+                          onClick={() => handleDeactivate(user.id)}
+                          disabled={deactivateMutation.isPending}
+                        >
+                          {deactivateMutation.isPending
+                            ? "Deactivating..."
+                            : "Deactivate User"}
                         </DropdownMenuItem>
                       ) : (
-                        <DropdownMenuItem className="text-success">
-                          Reactivate User
+                        <DropdownMenuItem
+                          className="text-success"
+                          onClick={() => handleReactivate(user.id)}
+                          disabled={reactivateMutation.isPending}
+                        >
+                          {reactivateMutation.isPending
+                            ? "Reactivating..."
+                            : "Reactivate User"}
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>
@@ -327,20 +374,23 @@ function UserTable({
 }
 
 function InviteUserDialog({ onClose }: { onClose: () => void }) {
-  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("member");
 
+  // Real API call
+  const inviteMutation = useInviteUser();
+
   const handleInvite = async () => {
-    setIsLoading(true);
-    try {
-      // TODO: Replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Inviting:", { email, role });
-      onClose();
-    } finally {
-      setIsLoading(false);
-    }
+    inviteMutation.mutate(
+      { email, role },
+      {
+        onSuccess: () => {
+          setEmail("");
+          setRole("member");
+          onClose();
+        },
+      }
+    );
   };
 
   return (
@@ -356,6 +406,14 @@ function InviteUserDialog({ onClose }: { onClose: () => void }) {
       </DialogHeader>
 
       <div className="space-y-4 py-4">
+        {inviteMutation.error && (
+          <div className="rounded-lg bg-danger/10 border border-danger/20 p-3 text-sm text-danger">
+            {inviteMutation.error instanceof Error
+              ? inviteMutation.error.message
+              : "Failed to send invitation"}
+          </div>
+        )}
+
         <div className="space-y-2">
           <Label htmlFor="invite-email">Email Address</Label>
           <Input
@@ -392,8 +450,18 @@ function InviteUserDialog({ onClose }: { onClose: () => void }) {
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={handleInvite} disabled={!email || isLoading}>
-          {isLoading ? "Sending..." : "Send Invitation"}
+        <Button
+          onClick={handleInvite}
+          disabled={!email || inviteMutation.isPending}
+        >
+          {inviteMutation.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            "Send Invitation"
+          )}
         </Button>
       </DialogFooter>
     </DialogContent>

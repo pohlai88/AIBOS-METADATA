@@ -407,6 +407,102 @@
     }
   }
 
+  /* Aurora animations - Aceternity-inspired */
+  @keyframes aurora {
+    0% {
+      background-position: 50% 50%, 50% 50%, 50% 50%;
+    }
+    25% {
+      background-position: 60% 40%, 40% 60%, 55% 45%;
+    }
+    50% {
+      background-position: 40% 60%, 60% 40%, 45% 55%;
+    }
+    75% {
+      background-position: 55% 45%, 45% 55%, 60% 40%;
+    }
+    100% {
+      background-position: 50% 50%, 50% 50%, 50% 50%;
+    }
+  }
+
+  @keyframes aurora-reverse {
+    0% {
+      background-position: 50% 50%, 50% 50%;
+    }
+    50% {
+      background-position: 40% 60%, 60% 40%;
+    }
+    100% {
+      background-position: 50% 50%, 50% 50%;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(20px, -20px) scale(1.05);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-15px, 15px) scale(1.03);
+    }
+  }
+
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(10px, -10px) scale(1.02);
+    }
+  }
+
+  .animate-aurora {
+    animation: aurora 15s ease-in-out infinite;
+  }
+
+  .animate-aurora-reverse {
+    animation: aurora-reverse 12s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float-delayed 10s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 12s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+
+  /* Nike-style slide up animation */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
   }

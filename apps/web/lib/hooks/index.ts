@@ -6,6 +6,7 @@ export {
   useCurrentUser,
   useForgotPassword,
   useResetPassword,
+  useAcceptInvite,
   useUpdateProfile,
   useChangePassword,
 } from "./use-auth";

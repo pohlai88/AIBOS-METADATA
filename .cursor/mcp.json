@@ -6,6 +6,13 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "aibos-design-creative": {
+      "command": "node",
+      "args": [
+        ".mcp/design-creative/server.mjs"
+      ],
+      "cwd": "."
     }
   }
 }

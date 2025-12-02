@@ -14,20 +14,36 @@
 import { eq, and, desc, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-// Business Engine Domain
-import { User } from "../../../../business-engine/admin-config/domain/entities/user.entity";
-import { Tenant } from "../../../../business-engine/admin-config/domain/entities/tenant.entity";
-import { Membership } from "../../../../business-engine/admin-config/domain/entities/membership.entity";
-import { AuditEvent } from "../../../../business-engine/admin-config/domain/entities/audit-event.entity";
-import { AuditConcurrencyError } from "../../../../business-engine/admin-config/domain/errors/concurrency.error";
+// Business Engine - Import entities and types (not errors to avoid circular deps)
+import {
+  User,
+  Tenant,
+  Membership,
+  AuditEvent,
+  type IUserRepository,
+  type ITenantRepository,
+  type IMembershipRepository,
+  type IAuditRepository,
+  type ITokenRepository,
+  type InviteTokenData,
+  type PasswordResetTokenData,
+  type TransactionScope,
+} from "../../../../business-engine/admin-config";
 
-// Business Engine Ports
-import type { IUserRepository } from "../../../../business-engine/admin-config/application/ports/outbound/user.repository.port";
-import type { ITenantRepository } from "../../../../business-engine/admin-config/application/ports/outbound/tenant.repository.port";
-import type { IMembershipRepository } from "../../../../business-engine/admin-config/application/ports/outbound/membership.repository.port";
-import type { IAuditRepository } from "../../../../business-engine/admin-config/application/ports/outbound/audit.repository.port";
-import type { ITokenRepository, InviteTokenData, PasswordResetTokenData } from "../../../../business-engine/admin-config/application/ports/outbound/token.repository.port";
-import type { TransactionScope } from "../../../../business-engine/admin-config/application/ports/outbound/transaction.manager.port";
+// Inline AuditConcurrencyError to avoid module resolution issues with tsx
+// The original is in business-engine/admin-config/domain/errors/concurrency.error.ts
+class AuditConcurrencyError extends Error {
+  constructor(
+    public readonly traceId: string,
+    public readonly attemptedPrevHash: string | null,
+  ) {
+    super(
+      `Audit chain fork detected for TraceID: ${traceId}. ` +
+      `The prevHash '${attemptedPrevHash}' is no longer the head of the chain.`
+    );
+    this.name = 'AuditConcurrencyError';
+  }
+}
 
 // DB Schema
 import * as schema from "../db/schema";

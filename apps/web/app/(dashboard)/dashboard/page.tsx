@@ -1,43 +1,85 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@aibos/ui";
-import { Users, CreditCard, FileText, TrendingUp } from "lucide-react";
+"use client";
+
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@aibos/ui";
+import { Users, CreditCard, FileText, TrendingUp, Loader2 } from "lucide-react";
+
+// Wired to real API
+import { useCurrentUser, useUsers } from "@/lib/hooks";
 
 /**
  * Dashboard Home Page
- * 
- * Overview cards and quick actions
+ *
+ * WIRED TO REAL API:
+ * - GET /me - Current user info
+ * - GET /users - User count for stats
  */
 
-const stats = [
-  {
-    title: "Total Users",
-    value: "24",
-    description: "3 admins, 21 members",
-    icon: Users,
-    trend: "+2 this month",
-  },
-  {
-    title: "Payment Requests",
-    value: "12",
-    description: "5 pending approval",
-    icon: CreditCard,
-    trend: "+8 this month",
-  },
-  {
-    title: "Audit Events",
-    value: "156",
-    description: "Last 30 days",
-    icon: FileText,
-    trend: "Normal activity",
-  },
-];
-
 export default function DashboardPage() {
+  // Real API calls
+  const { data: currentUser, isLoading: userLoading } = useCurrentUser();
+  const { data: usersData, isLoading: usersLoading } = useUsers();
+
+  const isLoading = userLoading || usersLoading;
+
+  // Calculate stats from real data
+  const totalUsers = usersData?.total || 0;
+  const adminCount =
+    usersData?.users?.filter(
+      (u) => u.role === "org_admin" || u.role === "platform_admin"
+    ).length || 0;
+  const memberCount = totalUsers - adminCount;
+
+  const stats = [
+    {
+      title: "Total Users",
+      value: isLoading ? "..." : totalUsers.toString(),
+      description: isLoading
+        ? "Loading..."
+        : `${adminCount} admins, ${memberCount} members`,
+      icon: Users,
+      trend: "+2 this month",
+    },
+    {
+      title: "Payment Requests",
+      value: "12",
+      description: "5 pending approval",
+      icon: CreditCard,
+      trend: "+8 this month",
+    },
+    {
+      title: "Audit Events",
+      value: "156",
+      description: "Last 30 days",
+      icon: FileText,
+      trend: "Normal activity",
+    },
+  ];
+
+  // Get user's display name
+  const displayName = currentUser?.displayName || "User";
+  const firstName = displayName.split(" ")[0];
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-text">Dashboard</h1>
-        <p className="text-text-muted">Welcome back! Here&apos;s what&apos;s happening.</p>
+        <p className="text-text-muted">
+          {userLoading ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading...
+            </span>
+          ) : (
+            `Welcome back, ${firstName}! Here's what's happening.`
+          )}
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -127,4 +169,3 @@ function QuickAction({
     </a>
   );
 }
-

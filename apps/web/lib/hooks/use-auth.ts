@@ -152,6 +152,36 @@ export function useResetPassword() {
 }
 
 /**
+ * Accept Invite Hook
+ * 
+ * Used when a user clicks the invite link from their email.
+ * Sets their password and activates their account.
+ */
+export function useAcceptInvite() {
+  const router = useRouter();
+  const setAuth = useAuthStore((s) => s.setAuth);
+
+  return useMutation({
+    mutationFn: async ({
+      token,
+      password,
+      name,
+    }: {
+      token: string;
+      password: string;
+      name?: string;
+    }) => {
+      return authApi.acceptInvite(token, password, name);
+    },
+    onSuccess: (data) => {
+      // After accepting invite, user needs to login
+      // We could auto-login here, but it's safer to redirect to login
+      router.push("/login?invited=success");
+    },
+  });
+}
+
+/**
  * Update Profile Hook
  */
 export function useUpdateProfile() {

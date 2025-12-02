@@ -94,9 +94,24 @@ export const authApi = {
   },
 
   resetPassword: async (token: string, password: string) => {
-    return apiRequest<{ message: string }>("/auth/reset-password", {
+    return apiRequest<{ message: string; user: { id: string; email: string } }>(
+      "/auth/reset-password",
+      {
+        method: "POST",
+        body: JSON.stringify({ token, password }),
+      }
+    );
+  },
+
+  acceptInvite: async (token: string, password: string, name?: string) => {
+    return apiRequest<{
+      message: string;
+      user: { id: string; email: string; name: string; status: string };
+      tenantId: string;
+      role: string;
+    }>("/auth/accept-invite", {
       method: "POST",
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ token, password, name }),
     });
   },
 };

@@ -13,17 +13,21 @@ import {
   CheckCircle,
   AlertTriangle,
   Zap,
+  Sparkles,
 } from "lucide-react";
 import { Button, Input, Label } from "@aibos/ui";
-import { useResetPassword } from "@/lib/hooks";
+import { useAcceptInvite } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
 /**
- * Boxed Glass Reset Password Page
+ * Boxed Glass Accept Invite Page
+ *
+ * Glassmorphism design with gradient blur background
  */
 
-const resetPasswordSchema = z
+const acceptInviteSchema = z
   .object({
+    name: z.string().min(2, "Name must be at least 2 characters").optional(),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -37,33 +41,34 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+type AcceptInviteFormData = z.infer<typeof acceptInviteSchema>;
 
-function ResetPasswordForm() {
+function AcceptInviteForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const resetPasswordMutation = useResetPassword();
+  const acceptInviteMutation = useAcceptInvite();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(resetPasswordSchema),
+  } = useForm<AcceptInviteFormData>({
+    resolver: zodResolver(acceptInviteSchema),
   });
 
-  const onSubmit = async (data: ResetPasswordFormData) => {
+  const onSubmit = async (data: AcceptInviteFormData) => {
     if (!token) return;
-    resetPasswordMutation.mutate({ token, password: data.password });
+    acceptInviteMutation.mutate({
+      token,
+      password: data.password,
+      name: data.name,
+    });
   };
-
-  const isLoading = resetPasswordMutation.isPending;
-  const isSuccess = resetPasswordMutation.isSuccess;
-  const error = resetPasswordMutation.error;
 
   return (
     <div className="mx-auto flex min-h-dvh w-full min-w-80 flex-col bg-background">
@@ -92,33 +97,32 @@ function ResetPasswordForm() {
                 Invalid Link
               </h1>
               <p className="text-text-muted mb-8">
-                This password reset link is invalid or has expired.
+                This invitation link is invalid or has expired. Please contact
+                your administrator for a new invitation.
               </p>
-              <Link href="/forgot-password">
+              <Link href="/login">
                 <Button
-                  className={cn(
-                    "h-12 px-8 rounded-full font-semibold",
-                    "bg-text text-background hover:bg-text/90",
-                    "dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200"
-                  )}
+                  variant="outline"
+                  className="h-12 px-8 rounded-full font-semibold"
                 >
-                  Request new link
+                  Go to Login
                 </Button>
               </Link>
             </div>
-          ) : isSuccess ? (
+          ) : acceptInviteMutation.isSuccess ? (
             /* Success State */
             <div className="mx-auto max-w-md text-center animate-fade-in">
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
                 <CheckCircle className="h-8 w-8 text-success" />
               </div>
               <h1 className="mb-4 text-3xl font-black text-text">
-                Password reset!
+                Welcome aboard!
               </h1>
               <p className="text-text-muted mb-8">
-                Your password has been successfully reset.
+                Your account has been created successfully. You can now sign in
+                and start exploring.
               </p>
-              <Link href="/login?reset=success">
+              <Link href="/login?invited=success">
                 <Button
                   className={cn(
                     "h-12 px-8 rounded-full font-semibold",
@@ -126,7 +130,7 @@ function ResetPasswordForm() {
                     "dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200"
                   )}
                 >
-                  Sign in
+                  Sign in to continue
                 </Button>
               </Link>
             </div>
@@ -134,16 +138,25 @@ function ResetPasswordForm() {
             <>
               {/* Heading */}
               <div className="mx-auto max-w-3xl text-center animate-fade-in">
+                <div className="mb-5 flex items-center justify-center">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-background-muted py-1.5 pr-3 pl-1.5 text-sm font-medium text-text-muted">
+                    <span className="inline-flex items-center justify-center rounded-full bg-success px-2 py-1 text-xs leading-none font-medium text-white">
+                      Invited
+                    </span>
+                    <span>You&apos;ve been invited to join</span>
+                  </div>
+                </div>
                 <h1 className="mb-4 text-4xl font-black text-text">
-                  Set new password
+                  Join thousands of happy users
                 </h1>
                 <h2 className="text-lg/relaxed font-medium text-text-muted">
-                  Your new password must be different from previous passwords.
+                  Create your account in seconds and discover why teams love our
+                  platform. Get started with all the tools you need to succeed.
                 </h2>
               </div>
 
               {/* Form - Glass Effect */}
-              <div className="relative mx-auto mt-16 max-w-md animate-fade-in-up">
+              <div className="relative mx-auto mt-16 max-w-lg animate-fade-in-up">
                 {/* Gradient Blur Background */}
                 <div className="absolute inset-0 -inset-x-6 rounded-3xl bg-gradient-to-b from-primary-300 via-success to-primary-700 opacity-15 blur-xl" />
 
@@ -155,21 +168,41 @@ function ResetPasswordForm() {
                   >
                     <div className="flex flex-col gap-5">
                       {/* Error Alert */}
-                      {error && (
+                      {acceptInviteMutation.error && (
                         <div className="rounded-lg bg-danger/10 border border-danger/20 p-3 text-sm text-danger">
-                          {error instanceof Error
-                            ? error.message
-                            : "Failed to reset password. The link may have expired."}
+                          {acceptInviteMutation.error instanceof Error
+                            ? acceptInviteMutation.error.message
+                            : "Failed to accept invitation. The link may have expired."}
                         </div>
                       )}
 
-                      {/* New Password */}
+                      {/* Name Field */}
+                      <div className="space-y-1">
+                        <Label htmlFor="name" className="text-sm font-medium">
+                          Name
+                        </Label>
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="John Doe"
+                          autoComplete="name"
+                          className="h-11 bg-background-subtle border-border-muted focus:border-primary-500 focus:ring-2 focus:ring-primary-500/25"
+                          {...register("name")}
+                        />
+                        {errors.name?.message && (
+                          <p className="text-sm text-danger">
+                            {errors.name.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Password Field */}
                       <div className="space-y-1">
                         <Label
                           htmlFor="password"
                           className="text-sm font-medium"
                         >
-                          New Password
+                          Password
                         </Label>
                         <div className="relative">
                           <Input
@@ -242,28 +275,68 @@ function ResetPasswordForm() {
                         )}
                       </div>
 
+                      {/* Terms Checkbox */}
+                      <div className="flex flex-wrap items-center gap-1">
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={agreedToTerms}
+                            onChange={(e) => setAgreedToTerms(e.target.checked)}
+                            className="h-4 w-4 rounded border-border-muted text-primary-500 focus:ring-2 focus:ring-primary-500/25"
+                          />
+                          <span className="ml-2 text-sm text-text-muted">
+                            I agree with
+                          </span>
+                        </label>
+                        <a
+                          href="#"
+                          className="text-sm font-medium text-text-muted hover:text-text"
+                        >
+                          terms and conditions
+                        </a>
+                      </div>
+
                       {/* Submit Button */}
                       <div className="pt-2">
                         <Button
                           type="submit"
-                          disabled={isLoading}
+                          disabled={
+                            acceptInviteMutation.isPending || !agreedToTerms
+                          }
                           className={cn(
                             "w-full h-12 rounded-full text-base font-semibold",
                             "bg-text text-background hover:bg-text/90",
                             "dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200",
                             "focus:ring-2 focus:ring-primary-500/50",
-                            "transition-all duration-200"
+                            "transition-all duration-200",
+                            "disabled:opacity-50 disabled:cursor-not-allowed"
                           )}
                         >
-                          {isLoading ? (
+                          {acceptInviteMutation.isPending ? (
                             <Loader2 className="h-5 w-5 animate-spin" />
                           ) : (
-                            "Reset password"
+                            "Sign up"
                           )}
                         </Button>
                       </div>
                     </div>
                   </form>
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-text-muted animate-fade-in [animation-delay:400ms]">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary-500" />
+                  <span>Real-time collaboration</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-success" />
+                  <span>Enterprise security</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-info" />
+                  <span>AI-powered insights</span>
                 </div>
               </div>
             </>
@@ -274,7 +347,7 @@ function ResetPasswordForm() {
   );
 }
 
-export default function ResetPasswordPage() {
+export default function AcceptInvitePage() {
   return (
     <Suspense
       fallback={
@@ -283,7 +356,7 @@ export default function ResetPasswordPage() {
         </div>
       }
     >
-      <ResetPasswordForm />
+      <AcceptInviteForm />
     </Suspense>
   );
 }
