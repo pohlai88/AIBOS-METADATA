@@ -69,7 +69,17 @@ export default function MetadataGlossaryPage() {
   const [selectedField, setSelectedField] = useState<MetadataField | null>(null);
   const [useSampleData, setUseSampleData] = useState(true); // Toggle for demo data
 
+  // Micro Action Drawer for change requests
+  const changeRequestDrawer = useMicroActionDrawer();
+
   const stats = getSampleDataStats();
+
+  const handleSubmitChangeRequest = (request: ChangeRequest) => {
+    console.log("Change request submitted:", request);
+    // In real app: call API to submit change request
+    alert(`Change request submitted for ${request.fieldName}`);
+    changeRequestDrawer.close();
+  };
 
   // Filter data based on search, domain, and module
   const filteredData = SAMPLE_METADATA_FIELDS.filter((field) => {
@@ -276,7 +286,20 @@ export default function MetadataGlossaryPage() {
       id: "compliance",
       label: "Compliance",
       icon: <Shield className="h-3 w-3" />,
-      content: <ComplianceEmptyState fieldName={selectedField?.fieldName} />,
+      content: selectedField ? (
+        <ComplianceStatusCard
+          fieldName={selectedField.fieldName}
+          requirements={getSampleComplianceRequirements(selectedField.fieldName)}
+          overallStatus={
+            selectedField.fieldName === "customer_name"
+              ? "partial"
+              : "compliant"
+          }
+          onViewDetails={() => console.log("View compliance details")}
+        />
+      ) : (
+        <ComplianceEmptyState fieldName={selectedField?.fieldName} />
+      ),
     },
   ];
 
@@ -341,10 +364,21 @@ export default function MetadataGlossaryPage() {
             </>
           }
           actions={
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              New Field
-            </Button>
+            <>
+              {selectedField && (
+                <Button
+                  variant="outline"
+                  onClick={changeRequestDrawer.open}
+                >
+                  <FileText className="mr-2 h-4 w-4" />
+                  Request Change
+                </Button>
+              )}
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                New Field
+              </Button>
+            </>
           }
         />
       }
@@ -373,6 +407,23 @@ export default function MetadataGlossaryPage() {
           selectedRowId={selectedField?.id}
         />
       </div>
+
+      {/* Change Request Drawer */}
+      {selectedField && (
+        <MicroActionDrawer
+          open={changeRequestDrawer.isOpen}
+          onClose={changeRequestDrawer.close}
+          title="Request Metadata Change"
+          size="md"
+        >
+          <ChangeRequestForm
+            fieldName={selectedField.fieldName}
+            currentTier={typeof selectedField.tier === "string" ? parseInt(selectedField.tier.replace("tier", "")) : selectedField.tier}
+            onSubmit={handleSubmitChangeRequest}
+            onCancel={changeRequestDrawer.close}
+          />
+        </MicroActionDrawer>
+      )}
     </WorkbenchLayout>
   );
 }
