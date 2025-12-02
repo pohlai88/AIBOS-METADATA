@@ -35,7 +35,7 @@ import {
   makeDeactivateUserUseCase,
   makeReactivateUserUseCase,
   makeAdminUpdateUserUseCase,
-} from "../../../../../business-engine/admin-config";
+} from "@business-engine/admin-config";
 
 // Legacy services (to be migrated)
 import {

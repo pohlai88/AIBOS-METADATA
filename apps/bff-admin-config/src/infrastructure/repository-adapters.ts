@@ -28,7 +28,7 @@ import {
   type InviteTokenData,
   type PasswordResetTokenData,
   type TransactionScope,
-} from "../../../../business-engine/admin-config";
+} from "@business-engine/admin-config";
 
 // Inline AuditConcurrencyError to avoid module resolution issues with tsx
 // The original is in business-engine/admin-config/domain/errors/concurrency.error.ts

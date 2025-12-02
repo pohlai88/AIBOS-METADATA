@@ -33,7 +33,7 @@ import {
   makeAcceptInviteUseCase,
   makeForgotPasswordUseCase,
   makeResetPasswordUseCase,
-} from "../../../../../business-engine/admin-config";
+} from "@business-engine/admin-config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SCHEMAS (Route-level validation)

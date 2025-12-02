@@ -15,7 +15,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type {
   ITransactionManager,
   TransactionScope,
-} from "../../../../business-engine/admin-config/application/ports/outbound/transaction.manager.port";
+} from "@business-engine/admin-config";
 
 import * as schema from "../db/schema";
 

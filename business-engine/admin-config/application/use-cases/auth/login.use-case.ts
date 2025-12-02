@@ -104,7 +104,7 @@ export function makeLoginUseCase(
     // All writes happen atomically. If any step fails, everything rolls back.
     // ─────────────────────────────────────────────────────────────────────────
     return transactionManager.run(async (scope: TransactionScope) => {
-      const { userRepository, auditRepository } = scope;
+      const { userRepository, auditRepository, membershipRepository, tenantRepository } = scope;
 
       // ─────────────────────────────────────────────────────────────────────
       // STEP 1: FIND USER BY EMAIL
@@ -193,19 +193,33 @@ export function makeLoginUseCase(
       }
 
       // ─────────────────────────────────────────────────────────────────────
-      // STEP 4: RESOLVE TENANT CONTEXT (if tenantSlug provided)
+      // STEP 4: RESOLVE TENANT CONTEXT
+      // If tenantSlug provided, use it. Otherwise, auto-select first tenant.
       // ─────────────────────────────────────────────────────────────────────
 
-      const tenantContext = input.tenantSlug
-        ? await resolveTenantContext(
+      let tenantContext: Awaited<ReturnType<typeof resolveTenantContext>> | null = null;
+
+      if (input.tenantSlug) {
+        // Use specified tenant
+        tenantContext = await resolveTenantContext(
           scope,
           user,
           input.tenantSlug,
           input.email,
           ipAddress,
           userAgent,
-        )
-        : null;
+        );
+      } else {
+        // Auto-select first tenant membership
+        const memberships = await membershipRepository.findByUserId(user.id!);
+        if (memberships.length > 0) {
+          const firstMembership = memberships[0];
+          const tenant = await tenantRepository.findById(firstMembership.tenantId);
+          if (tenant) {
+            tenantContext = { tenant, membership: firstMembership };
+          }
+        }
+      }
 
       // ─────────────────────────────────────────────────────────────────────
       // STEP 5: RECORD SUCCESSFUL LOGIN

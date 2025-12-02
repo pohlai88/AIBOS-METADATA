@@ -10,7 +10,7 @@ import type { Context, Next } from "hono";
 import {
   DomainError,
   AuthenticationError,
-} from "../../../../business-engine/admin-config/domain/errors";
+} from "@business-engine/admin-config";
 
 /**
  * Error code to HTTP status mapping

@@ -28,7 +28,7 @@ import {
 } from "../../infrastructure";
 
 // Business Engine (pure domain logic)
-import { makeUpdateTenantUseCase } from "../../../../../business-engine/admin-config";
+import { makeUpdateTenantUseCase } from "@business-engine/admin-config";
 
 // Legacy services (for reads - to be migrated to CQRS in v2.0)
 import { getOrganization } from "../../services";

@@ -14,7 +14,7 @@ import { DrizzleTransactionManager, createRepositoryScope } from "../../infrastr
 import {
   makeUpdateProfileUseCase,
   makeChangePasswordUseCase,
-} from "../../../../../business-engine/admin-config";
+} from "@business-engine/admin-config";
 
 // Crypto dependencies (BFF owns these)
 import bcrypt from "bcryptjs";

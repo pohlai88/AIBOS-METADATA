@@ -1,0 +1,12 @@
+{
+  "name": "@business-engine/admin-config",
+  "version": "2.0.0",
+  "description": "Business Engine for Admin Config & User Management - Pure Domain Logic",
+  "type": "module",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./*": "./*"
+  }
+}
+
