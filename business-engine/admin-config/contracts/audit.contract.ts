@@ -43,12 +43,16 @@ export const AuditActionEnum = z.enum([
   'REACTIVATE',
   'ROLE_CHANGE',
   'PROFILE_UPDATE',
+  'ADMIN_UPDATE',
   // Auth-specific
   'LOGIN',
+  'LOGIN_FAILED',
   'LOGOUT',
   'PASSWORD_RESET_REQUEST',
   'PASSWORD_RESET_COMPLETE',
   'PASSWORD_CHANGE',
+  // Permission-specific (v1.1)
+  'INVITE_DENIED',
   // View/access (for payment slip tracking in MVP2)
   'VIEW',
   'DOWNLOAD',

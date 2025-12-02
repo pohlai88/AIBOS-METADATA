@@ -7,11 +7,42 @@ import type { AuditResourceType, AuditAction } from '../../../contracts/audit.co
  * 
  * This interface defines the contract for audit event data access.
  * GRCD Ref: §7.1 Core Entities - audit_events
+ * 
+ * IMPORTANT (v1.1): Optimistic Locking on Hash Chain
+ * The appendEvent method MUST enforce hash chain integrity.
+ * If event.prevHash does not match the latest hash in DB, throw AuditConcurrencyError.
  */
 export interface IAuditRepository {
   /**
-   * Save an audit event.
-   * Audit events are immutable - only insert, never update.
+   * Append an audit event to the hash chain.
+   * 
+   * OPTIMISTIC LOCKING CONTRACT (v1.1):
+   * - Get latest event for traceId in the same transaction
+   * - Verify event.prevHash === latest?.hash (or null if first)
+   * - Insert with incremented sequence number
+   * - On conflict (another write raced ahead), throw AuditConcurrencyError
+   * 
+   * @param event The audit event to append
+   * @throws AuditConcurrencyError if prevHash doesn't match DB's latest
+   * @returns The persisted event with generated ID
+   * 
+   * @example Implementation (SQL)
+   * ```sql
+   * -- Insert only if our prevHash is still the latest
+   * INSERT INTO audit_events (trace_id, sequence, prev_hash, hash, ...)
+   * SELECT $1, COALESCE(MAX(sequence), 0) + 1, $2, $3, ...
+   * FROM audit_events
+   * WHERE trace_id = $1
+   * HAVING MAX(hash) = $2 OR (COUNT(*) = 0 AND $2 IS NULL);
+   * 
+   * -- If rowCount === 0, another write raced ahead → throw AuditConcurrencyError
+   * ```
+   */
+  appendEvent(event: AuditEvent): Promise<AuditEvent>;
+
+  /**
+   * @deprecated Use appendEvent() for new code. Kept for backward compatibility.
+   * Save an audit event without optimistic locking.
    */
   save(event: AuditEvent): Promise<AuditEvent>;
 
@@ -19,6 +50,9 @@ export interface IAuditRepository {
    * Get the latest audit event for a trace ID.
    * Used to get prev_hash for hash chain.
    * GRCD F-TRACE-5: Hash chain for tamper-evident trail.
+   * 
+   * NOTE (v1.1): For concurrency safety, call this INSIDE the same transaction
+   * as appendEvent to ensure "read your own writes" consistency.
    */
   getLatestByTraceId(traceId: string): Promise<AuditEvent | null>;
 
@@ -88,4 +122,3 @@ export interface IAuditRepository {
     brokenAt?: string; // auditId where chain broke
   }>;
 }
-

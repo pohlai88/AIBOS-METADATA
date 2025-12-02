@@ -6,4 +6,5 @@ export * from './user.repository.port';
 export * from './membership.repository.port';
 export * from './audit.repository.port';
 export * from './token.repository.port';
+export * from './transaction.manager.port';
 

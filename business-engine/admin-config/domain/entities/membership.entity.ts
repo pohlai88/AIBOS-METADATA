@@ -53,6 +53,13 @@ export class Membership {
   }
 
   /**
+   * Helper to create a TenantRole from string (for use case permission checks)
+   */
+  static createRole(role: string): TenantRole {
+    return TenantRole.create(role);
+  }
+
+  /**
    * Reconstitute a Membership from persistence.
    */
   static fromPersistence(params: {

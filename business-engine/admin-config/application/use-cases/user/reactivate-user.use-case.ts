@@ -1,41 +1,42 @@
-// business-engine/admin-config/application/use-cases/user/accept-invite.use-case.ts
+// business-engine/admin-config/application/use-cases/user/reactivate-user.use-case.ts
 /**
- * AcceptInviteUseCase (v1.1 Hardened)
+ * ReactivateUserUseCase (v1.1 Hardened)
  * 
- * GRCD F-USER-2: Accept invite and set password.
+ * GRCD F-USER-3: System MUST support reactivating users
  * 
  * v1.1 Hardening:
  * - Transaction boundary via ITransactionManager
- * - Domain error taxonomy (ValidationError, NotFoundError, InvariantViolationError)
- * - State machine transition: INVITED → ACTIVE
+ * - Permission check (org_admin+ can reactivate)
+ * - State machine enforcement via UserStatus VO
  * - Optimistic locking on audit chain via appendEvent
+ * 
+ * State Machine:
+ * - INACTIVE → ACTIVE (valid)
+ * - LOCKED → ACTIVE (valid - unlock)
+ * - ACTIVE → ACTIVE (invalid - already active)
+ * - INVITED → ACTIVE (invalid - must accept invite)
  */
 
 import type { User } from '../../../domain/entities/user.entity';
 import { AuditEvent } from '../../../domain/entities/audit-event.entity';
-import { ValidationError } from '../../../domain/errors/validation.error';
+import { UnauthorizedError } from '../../../domain/errors/unauthorized.error';
 import { NotFoundError } from '../../../domain/errors/not-found.error';
 import { InvariantViolationError } from '../../../domain/errors/invariant.error';
 import type {
   ITransactionManager,
   TransactionScope,
 } from '../../ports/outbound/transaction.manager.port';
-import type { AcceptInviteInput } from '../../../contracts/user.contract';
-
-/**
- * Dependencies injected by BFF (NOT in TransactionScope)
- * These are stateless crypto functions.
- */
-export interface AcceptInviteDependencies {
-  hashToken: (token: string) => string;
-  hashPassword: (password: string) => Promise<string>;
-}
 
 /**
  * Command input
  */
-export interface AcceptInviteCommand {
-  input: AcceptInviteInput;
+export interface ReactivateUserCommand {
+  targetUserId: string;
+  actor: {
+    userId: string;
+    tenantId: string;
+  };
+  reason?: string;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -43,138 +44,117 @@ export interface AcceptInviteCommand {
 /**
  * Result output
  */
-export interface AcceptInviteResult {
+export interface ReactivateUserResult {
   user: User;
   auditEvent: AuditEvent;
-  tenantId: string;
-  role: string;
 }
 
 /**
- * AcceptInviteUseCase Factory
+ * ReactivateUserUseCase Factory
  * 
- * Creates a use case instance with transaction manager and dependencies.
+ * Creates a use case instance with transaction manager.
  * 
  * @example
- * const acceptInvite = makeAcceptInviteUseCase(txManager, {
- *   hashToken: (token) => sha256(token),
- *   hashPassword: async (password) => bcrypt.hash(password, 12),
- * });
+ * const reactivateUser = makeReactivateUserUseCase(txManager);
  * 
- * try {
- *   const result = await acceptInvite({
- *     input: { token, password, name },
- *     ipAddress,
- *     userAgent,
- *   });
- * } catch (error) {
- *   if (error instanceof ValidationError) {
- *     // 400 - Invalid or expired token
- *   }
- * }
+ * const result = await reactivateUser({
+ *   targetUserId: 'user-to-reactivate',
+ *   actor: { userId: 'admin-id', tenantId: 'tenant-id' },
+ *   reason: 'Account review complete',
+ * });
  */
-export function makeAcceptInviteUseCase(
+export function makeReactivateUserUseCase(
   transactionManager: ITransactionManager,
-  deps: AcceptInviteDependencies,
 ) {
-  return async function acceptInviteUseCase(
-    command: AcceptInviteCommand,
-  ): Promise<AcceptInviteResult> {
-    const { input, ipAddress, userAgent } = command;
-    const { hashToken, hashPassword } = deps;
-
-    // Hash token BEFORE transaction (stateless operation)
-    const tokenHash = hashToken(input.token);
-
-    // Hash password BEFORE transaction (expensive, stateless)
-    // GRCD C-ORG-2: Password NOT logged in plaintext
-    const passwordHash = await hashPassword(input.password);
+  return async function reactivateUserUseCase(
+    command: ReactivateUserCommand,
+  ): Promise<ReactivateUserResult> {
+    const { targetUserId, actor, reason, ipAddress, userAgent } = command;
 
     // ─────────────────────────────────────────────────────────────────────────
     // TRANSACTION BOUNDARY
     // All writes happen atomically. If any step fails, everything rolls back.
     // ─────────────────────────────────────────────────────────────────────────
     return transactionManager.run(async (scope: TransactionScope) => {
-      const { userRepository, tokenRepository, auditRepository } = scope;
+      const { userRepository, membershipRepository, auditRepository } = scope;
 
       // ─────────────────────────────────────────────────────────────────────
-      // STEP 1: FIND AND VALIDATE TOKEN
+      // STEP 1: PERMISSION CHECK
+      // Only org_admin or platform_admin can reactivate users
       // ─────────────────────────────────────────────────────────────────────
 
-      const inviteToken = await tokenRepository.findInviteTokenByHash(tokenHash);
+      const actorMembership = await membershipRepository.findByUserAndTenant(
+        actor.userId,
+        actor.tenantId,
+      );
 
-      if (!inviteToken) {
-        throw new ValidationError('token', 'Invalid invite token', {
-          hint: 'Token may be malformed or tampered',
-        });
-      }
-
-      if (inviteToken.isUsed) {
-        throw new ValidationError('token', 'Invite token has already been used', {
-          tokenId: inviteToken.id,
-          usedAt: inviteToken.usedAt?.toISOString(),
-        });
-      }
-
-      if (inviteToken.expiresAt < new Date()) {
-        throw new ValidationError('token', 'Invite token has expired', {
-          tokenId: inviteToken.id,
-          expiredAt: inviteToken.expiresAt.toISOString(),
-        });
-      }
-
-      // ─────────────────────────────────────────────────────────────────────
-      // STEP 2: LOAD USER
-      // ─────────────────────────────────────────────────────────────────────
-
-      const user = await userRepository.findById(inviteToken.userId);
-      if (!user) {
-        throw new NotFoundError('User', inviteToken.userId, {
-          context: 'User referenced by invite token not found',
-        });
-      }
-
-      // ─────────────────────────────────────────────────────────────────────
-      // STEP 3: VALIDATE STATE MACHINE TRANSITION
-      // State: INVITED → ACTIVE
-      // ─────────────────────────────────────────────────────────────────────
-
-      if (!user.status.isPendingInvite()) {
-        throw new InvariantViolationError(
-          'User',
-          `Cannot accept invite: user status is '${user.status.toString()}', expected 'invited'`,
-          {
-            userId: user.id,
-            currentStatus: user.status.toString(),
-            expectedStatus: 'invited',
-          },
+      if (!actorMembership || !actorMembership.role.canDeactivateUser()) {
+        throw new UnauthorizedError(
+          'REACTIVATE_USER',
+          'Only administrators can reactivate users',
+          { requiredRole: 'org_admin or platform_admin' },
         );
       }
 
       // ─────────────────────────────────────────────────────────────────────
-      // STEP 4: ACCEPT INVITE (State Transition + Set Password)
+      // STEP 2: LOAD TARGET USER
       // ─────────────────────────────────────────────────────────────────────
 
-      const previousStatus = user.status.toString();
-      user.acceptInvite(passwordHash, input.name);
-      const newStatus = user.status.toString();
+      const user = await userRepository.findById(targetUserId);
+      if (!user) {
+        throw new NotFoundError('User', targetUserId);
+      }
 
       // ─────────────────────────────────────────────────────────────────────
-      // STEP 5: PERSIST USER
+      // STEP 3: VERIFY TARGET IS IN SAME TENANT
+      // Admins can only reactivate users in their own tenant
+      // ─────────────────────────────────────────────────────────────────────
+
+      const targetMembership = await membershipRepository.findByUserAndTenant(
+        targetUserId,
+        actor.tenantId,
+      );
+
+      if (!targetMembership) {
+        throw new NotFoundError('User', targetUserId, {
+          message: 'User is not a member of this organization',
+        });
+      }
+
+      // ─────────────────────────────────────────────────────────────────────
+      // STEP 4: CAPTURE BEFORE STATE
+      // ─────────────────────────────────────────────────────────────────────
+
+      const beforeStatus = user.status.toString();
+
+      // ─────────────────────────────────────────────────────────────────────
+      // STEP 5: DOMAIN LOGIC - STATE MACHINE TRANSITION
+      // UserStatus.transitionTo() will throw if transition is invalid:
+      // - INACTIVE → ACTIVE: Valid
+      // - LOCKED → ACTIVE: Valid
+      // - ACTIVE → ACTIVE: Invalid (already active)
+      // - INVITED → ACTIVE: Invalid (must accept invite)
+      // ─────────────────────────────────────────────────────────────────────
+
+      try {
+        user.reactivate();
+      } catch (error) {
+        // Convert generic error to domain error
+        throw new InvariantViolationError(
+          'INVALID_STATUS_TRANSITION',
+          `Cannot reactivate user: ${error instanceof Error ? error.message : 'Invalid state transition'}`,
+          { currentStatus: beforeStatus, targetStatus: 'active' },
+        );
+      }
+
+      // ─────────────────────────────────────────────────────────────────────
+      // STEP 6: PERSIST USER
       // ─────────────────────────────────────────────────────────────────────
 
       const savedUser = await userRepository.save(user);
 
       // ─────────────────────────────────────────────────────────────────────
-      // STEP 6: MARK TOKEN AS USED
-      // GRCD F-USER-5: Token invalid after use
-      // ─────────────────────────────────────────────────────────────────────
-
-      await tokenRepository.markInviteTokenUsed(inviteToken.id);
-
-      // ─────────────────────────────────────────────────────────────────────
       // STEP 7: APPEND AUDIT EVENT (with optimistic locking)
-      // GRCD F-TRACE-2: Every lifecycle action MUST generate an audit event
       // ─────────────────────────────────────────────────────────────────────
 
       const prevAuditEvent = await auditRepository.getLatestByTraceId(
@@ -185,17 +165,12 @@ export function makeAcceptInviteUseCase(
         traceId: savedUser.traceId.toString(),
         resourceType: 'USER',
         resourceId: savedUser.id!,
-        action: 'ACCEPT_INVITE',
-        actorUserId: savedUser.id!, // Self-action
+        action: 'REACTIVATE',
+        actorUserId: actor.userId,
         metadataDiff: {
-          tenantId: inviteToken.tenantId,
-          role: inviteToken.role,
-          invitedBy: inviteToken.invitedBy,
-          statusChange: {
-            from: previousStatus,
-            to: newStatus,
-          },
-          nameUpdated: input.name ? true : false,
+          before: { status: beforeStatus },
+          after: { status: savedUser.status.toString() },
+          reason: reason ?? 'Admin action',
         },
         ipAddress,
         userAgent,
@@ -205,16 +180,9 @@ export function makeAcceptInviteUseCase(
       // appendEvent enforces optimistic locking
       const savedAuditEvent = await auditRepository.appendEvent(auditEvent);
 
-      // ─────────────────────────────────────────────────────────────────────
-      // RETURN RESULT
-      // Include tenant/role info for BFF to use in response/redirect
-      // ─────────────────────────────────────────────────────────────────────
-
       return {
         user: savedUser,
         auditEvent: savedAuditEvent,
-        tenantId: inviteToken.tenantId,
-        role: inviteToken.role,
       };
     });
   };
@@ -225,7 +193,7 @@ export function makeAcceptInviteUseCase(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * @deprecated Use makeAcceptInviteUseCase() factory instead.
- * This export maintains backward compatibility with v1.0 code.
+ * @deprecated Use makeReactivateUserUseCase() factory instead.
  */
-export { makeAcceptInviteUseCase as acceptInviteUseCase };
+export { makeReactivateUserUseCase as reactivateUserUseCase };
+

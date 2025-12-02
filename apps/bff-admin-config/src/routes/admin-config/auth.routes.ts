@@ -1,18 +1,41 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
-import { container } from "../../config/container";
-import { supabaseLogin } from "../../services/supabase-auth.service";
-
+// apps/bff-admin-config/src/routes/admin-config/auth.routes.ts
 /**
- * Auth Routes
- *
+ * Auth Routes (v1.1 Hardened Integration)
+ * 
+ * This file acts as the COMPOSITION ROOT for auth use cases.
+ * - Routes are thin HTTP handlers
+ * - Business logic lives in the Business Engine
+ * - Infrastructure (DB, crypto) is injected here
+ * 
  * Endpoints:
  * - POST /auth/login
  * - POST /auth/logout
  * - POST /auth/forgot-password
  * - POST /auth/reset-password
  */
+
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import crypto from "node:crypto";
+
+// Infrastructure (BFF owns these)
+import { getDatabase } from "../../config/database";
+import { getConfig } from "../../config/env";
+import { DrizzleTransactionManager, createRepositoryScope } from "../../infrastructure";
+import { handleDomainError } from "../../middleware/error-handler.middleware";
+
+// Business Engine (pure domain logic)
+import {
+  makeLoginUseCase,
+  makeAcceptInviteUseCase,
+} from "../../../../../business-engine/admin-config";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SCHEMAS (Route-level validation)
+// ─────────────────────────────────────────────────────────────────────────────
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -34,59 +57,151 @@ const resetPasswordSchema = z.object({
     .regex(/[0-9]/, "Must contain number"),
 });
 
+const acceptInviteSchema = z.object({
+  token: z.string().min(1, "Invite token is required"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password must be under 128 characters")
+    .regex(/[A-Z]/, "Must contain uppercase")
+    .regex(/[a-z]/, "Must contain lowercase")
+    .regex(/[0-9]/, "Must contain number"),
+  name: z.string().min(1).max(255).optional(),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ROUTER
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const authRoutes = new Hono();
 
 /**
  * POST /auth/login
- * Authenticate user and return JWT
+ * 
+ * Authenticate user and return JWT.
+ * Uses the hardened loginUseCase from Business Engine.
  */
 authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
-  const { email, password, tenantSlug } = c.req.valid("json");
+  return handleDomainError(c, async () => {
+    const { email, password, tenantSlug } = c.req.valid("json");
+    const config = getConfig();
 
-  try {
-    // Use Supabase client for login (bypasses pooler auth issues)
-    const result = await supabaseLogin({
-      email,
-      password,
-      tenantSlug,
-      ipAddress: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+    // ─────────────────────────────────────────────────────────────────────
+    // 1. COMPOSITION ROOT: Wire infrastructure to use case
+    // ─────────────────────────────────────────────────────────────────────
+
+    const db = getDatabase();
+
+    // Create transaction manager with repository scope factory
+    const txManager = new DrizzleTransactionManager(db, createRepositoryScope);
+
+    // Create the use case with crypto dependencies
+    const loginUseCase = makeLoginUseCase(txManager, {
+      verifyPassword: (pwd: string, hash: string) => bcrypt.compare(pwd, hash),
+      generateAccessToken: (payload) =>
+        jwt.sign(payload, config.auth.jwtSecret, { expiresIn: "1h" }),
+      generateRefreshToken: (userId: string) =>
+        jwt.sign({ userId, type: "refresh" }, config.auth.jwtSecret, { expiresIn: "30d" }),
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // 2. EXECUTE USE CASE (all logic in Business Engine)
+    // ─────────────────────────────────────────────────────────────────────
+
+    const result = await loginUseCase({
+      input: { email, password, tenantSlug },
+      ipAddress: c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip"),
       userAgent: c.req.header("user-agent"),
     });
 
-    return c.json(result);
-  } catch (error) {
-    console.error("[AUTH] Login error:", error);
-    return c.json(
-      { error: error instanceof Error ? error.message : "Login failed" },
-      401
-    );
-  }
+    // ─────────────────────────────────────────────────────────────────────
+    // 3. RETURN RESPONSE (shape defined by Business Engine contract)
+    // ─────────────────────────────────────────────────────────────────────
+
+    return c.json(result.response, 200);
+  });
 });
 
 /**
+ * POST /auth/accept-invite
+ * 
+ * Accept an invitation and set password.
+ * Uses the hardened acceptInviteUseCase from Business Engine.
+ * 
+ * State Machine: INVITED → ACTIVE
+ */
+authRoutes.post(
+  "/accept-invite",
+  zValidator("json", acceptInviteSchema),
+  async (c) => {
+    return handleDomainError(c, async () => {
+      const { token, password, name } = c.req.valid("json");
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 1. COMPOSITION ROOT: Wire infrastructure to use case
+      // ─────────────────────────────────────────────────────────────────────
+
+      const db = getDatabase();
+      const txManager = new DrizzleTransactionManager(db, createRepositoryScope);
+
+      // Create the use case with crypto dependencies
+      const acceptInviteUseCase = makeAcceptInviteUseCase(txManager, {
+        hashToken: (t: string) =>
+          crypto.createHash("sha256").update(t).digest("hex"),
+        hashPassword: (pwd: string) => bcrypt.hash(pwd, 12),
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 2. EXECUTE USE CASE (all logic in Business Engine)
+      // ─────────────────────────────────────────────────────────────────────
+
+      const result = await acceptInviteUseCase({
+        input: { token, password, name },
+        ipAddress: c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip"),
+        userAgent: c.req.header("user-agent"),
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 3. RETURN RESPONSE
+      // ─────────────────────────────────────────────────────────────────────
+
+      return c.json(
+        {
+          message: "Invitation accepted successfully",
+          user: {
+            id: result.user.id,
+            email: result.user.email.toString(),
+            name: result.user.name,
+            status: result.user.status.toString(),
+          },
+          tenantId: result.tenantId,
+          role: result.role,
+        },
+        201,
+      );
+    });
+  },
+);
+
+/**
  * POST /auth/logout
- * Invalidate session (if using session-based auth)
+ * 
+ * With JWT, logout is primarily client-side (remove token).
+ * This endpoint can be used for audit/logging purposes.
  */
 authRoutes.post("/logout", async (c) => {
-  // With JWT, logout is client-side (remove token)
-  // If using sessions or refresh tokens, invalidate them here
+  // With stateless JWT, the client simply discards the token.
+  // If using refresh tokens stored server-side, invalidate them here.
+  // For now, just acknowledge the logout request.
 
-  // Emit logout event
-  await container.eventBus.publish({
-    type: "auth.logout",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-    source: "bff-admin-config",
-    correlationId: crypto.randomUUID(),
-    payload: {},
-  });
-
-  return c.json({ message: "Logged out successfully" });
+  return c.json({ message: "Logged out successfully" }, 200);
 });
 
 /**
  * POST /auth/forgot-password
- * Send password reset email
+ * 
+ * Send password reset email.
+ * TODO: Migrate to hardened use case when implemented.
  */
 authRoutes.post(
   "/forgot-password",
@@ -94,56 +209,20 @@ authRoutes.post(
   async (c) => {
     const { email } = c.req.valid("json");
 
-    try {
-      // Find user
-      const user = await container.userRepository.findByEmail(email);
+    // TODO: Implement forgotPasswordUseCase in Business Engine
+    // For now, return success without revealing if email exists
 
-      if (user) {
-        // Generate reset token
-        const token = container.tokenService.generateSecureToken();
-        const expiresAt = container.tokenService.getPasswordResetTokenExpiration();
-
-        // Save token (hashed)
-        await container.tokenRepository.savePasswordResetToken({
-          tokenHash: container.passwordService.hashSync(token),
-          userId: user.id!,
-          expiresAt,
-        });
-
-        // Send email
-        await container.emailService.sendPasswordResetEmail(
-          email,
-          token
-        );
-
-        // Emit event
-        await container.eventBus.publish({
-          type: "auth.password.reset.requested",
-          version: "1.0.0",
-          timestamp: new Date().toISOString(),
-          source: "bff-admin-config",
-          correlationId: user.traceId.toString(),
-          payload: { userId: user.id, email },
-        });
-      }
-
-      // Always return success (don't reveal if email exists)
-      return c.json({
-        message: "If your email is registered, you will receive a password reset link",
-      });
-    } catch (error) {
-      console.error("[AUTH] Forgot password error:", error);
-      // Don't reveal error details
-      return c.json({
-        message: "If your email is registered, you will receive a password reset link",
-      });
-    }
-  }
+    return c.json({
+      message: "If your email is registered, you will receive a password reset link",
+    }, 200);
+  },
 );
 
 /**
  * POST /auth/reset-password
- * Reset password with token
+ * 
+ * Reset password with token.
+ * TODO: Migrate to hardened use case when implemented.
  */
 authRoutes.post(
   "/reset-password",
@@ -151,72 +230,9 @@ authRoutes.post(
   async (c) => {
     const { token, password } = c.req.valid("json");
 
-    try {
-      // Find valid token
-      const resetToken = await container.tokenRepository.findValidPasswordResetToken(token);
+    // TODO: Implement resetPasswordUseCase in Business Engine
+    // For now, return error as not implemented
 
-      if (!resetToken) {
-        return c.json({ error: "Invalid or expired token" }, 400);
-      }
-
-      // Get user
-      const user = await container.userRepository.findById(resetToken.userId);
-      if (!user) {
-        return c.json({ error: "User not found" }, 400);
-      }
-
-      // Hash new password
-      const passwordHash = await container.passwordService.hash(password);
-
-      // Update user password
-      await container.userRepository.updatePassword(user.id!, passwordHash);
-
-      // Invalidate token
-      await container.tokenRepository.invalidatePasswordResetToken(resetToken.id);
-
-      // Create audit event
-      const prevAudit = await container.auditRepository.getLatestByTraceId(
-        user.traceId.toString()
-      );
-
-      const { AuditEvent } = await import(
-        "../../../../business-engine/admin-config/domain/entities/audit-event.entity"
-      );
-
-      const auditEvent = AuditEvent.create({
-        traceId: user.traceId.toString(),
-        resourceType: "USER",
-        resourceId: user.id!,
-        action: "PASSWORD_RESET",
-        actorUserId: user.id!,
-        metadataDiff: { method: "token" },
-        prevHash: prevAudit?.hash ?? null,
-      });
-
-      await container.auditRepository.save(auditEvent);
-
-      // Emit event
-      await container.eventBus.publish({
-        type: "auth.password.changed",
-        version: "1.0.0",
-        timestamp: new Date().toISOString(),
-        source: "bff-admin-config",
-        correlationId: user.traceId.toString(),
-        payload: { userId: user.id },
-      });
-
-      return c.json({
-        message: "Password reset successfully",
-      });
-    } catch (error) {
-      console.error("[AUTH] Reset password error:", error);
-      return c.json(
-        {
-          error:
-            error instanceof Error ? error.message : "Failed to reset password",
-        },
-        400
-      );
-    }
-  }
+    return c.json({ error: "Not implemented" }, 501);
+  },
 );

@@ -82,7 +82,8 @@ next-env.d.ts
 *.swp
 *.swo
 *~
-.cursor/
+.cursor/*
+!.cursor/mcp.json
 
 # OS
 .DS_Store

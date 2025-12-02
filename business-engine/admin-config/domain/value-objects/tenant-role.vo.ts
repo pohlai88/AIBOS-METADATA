@@ -131,6 +131,74 @@ export class TenantRole {
     return false;
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Permission Methods (v1.1 - Used by Use Cases)
+  // Policy codes (F-PERM-*) allow kernel/telemetry to classify failures.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /**
+   * F-PERM-INVITE-1: Can this role invite users to the tenant?
+   * Requires: platform_admin or org_admin
+   */
+  canInviteUser(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * F-PERM-DEACTIVATE-1: Can this role deactivate/reactivate users?
+   * Requires: platform_admin or org_admin
+   */
+  canDeactivateUser(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * F-PERM-TENANT-1: Can this role update tenant profile?
+   * Requires: platform_admin or org_admin
+   */
+  canUpdateTenantProfile(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * F-PERM-TENANT-2: Can this role create new tenants?
+   * Requires: platform_admin only
+   */
+  canCreateTenant(): boolean {
+    return this.value === 'platform_admin';
+  }
+
+  /**
+   * F-PERM-AUDIT-1: Can this role view audit logs?
+   * Requires: platform_admin or org_admin
+   */
+  canViewAuditLog(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * F-PERM-USER-1: Can this role update other users' profiles?
+   * Requires: platform_admin or org_admin
+   */
+  canUpdateOtherUsers(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * F-PERM-ROLE-1: Can this role change user roles?
+   * Requires: platform_admin or org_admin
+   */
+  canChangeUserRole(): boolean {
+    return this.value === 'platform_admin' || this.value === 'org_admin';
+  }
+
+  /**
+   * Get the policy code prefix for this role's permissions
+   */
+  getPolicyPrefix(): string {
+    return `ROLE_${this.value.toUpperCase()}`;
+  }
+
   /**
    * Check equality with another TenantRole.
    */

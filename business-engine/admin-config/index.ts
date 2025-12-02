@@ -17,6 +17,7 @@ export * from './contracts/auth.contract';
 export * from './domain/value-objects';
 export * from './domain/entities';
 export * from './domain/events';
+export * from './domain/errors';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // APPLICATION (Use Cases & Ports)
