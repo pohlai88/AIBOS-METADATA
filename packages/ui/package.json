@@ -7,8 +7,7 @@
   "exports": {
     ".": "./index.ts",
     "./design/globals.css": "./design/globals.css",
-    "./components/ThemeProvider": "./components/ThemeProvider.tsx",
-    "./utils/cn": "./utils/cn.ts"
+    "./lib/utils": "./lib/utils.ts"
   },
   "scripts": {
     "lint": "eslint . --config ../../eslint.config.mjs",

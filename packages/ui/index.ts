@@ -1,23 +1,16 @@
 /**
  * AIBOS Design System - Main Export
  * 
- * This package provides the design system foundation:
+ * This package provides the design system foundation (PILLARS ONLY):
  * - Design tokens (CSS variables)
- * - Theme provider (light/dark mode)
- * - Shared Tailwind configuration
+ * - Pure utilities (cn function)
  * 
  * Components are NOT exported from here.
- * They live in the registry and are copied into apps.
+ * They live in apps/web/components/ui/ following hexagonal architecture.
  */
 
-// Export ThemeProvider and useTheme hook
-export { ThemeProvider, useTheme, ThemeToggle } from './components/ThemeProvider';
-
-// Export utility functions
-export { cn } from './utils/cn';
-
-// Note: In Tailwind v4, each app has its own tailwind.config.js
-// No need to share/extend config files - use CSS variables instead
+// Export utility functions (PILLAR - pure, no React)
+export { cn } from './lib/utils';
 
 /**
  * Design Token Documentation
@@ -37,7 +30,3 @@ export { cn } from './utils/cn';
  * - Shadows (sm, md, lg, xl)
  * - Border radius (sm, md, lg, xl, 2xl, full)
  */
-
-// Type exports for TypeScript
-export type Theme = 'light' | 'dark' | 'system';
-

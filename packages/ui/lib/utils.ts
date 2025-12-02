@@ -9,7 +9,7 @@
  *   cn('text-base', isLarge && 'text-lg')  // → 'text-lg' (conditional)
  *   cn('bg-primary', className)  // → merges with external className
  * 
- * Used by all registry components to allow className overrides.
+ * Used by all UI components to allow className overrides.
  */
 
 import { type ClassValue, clsx } from "clsx";

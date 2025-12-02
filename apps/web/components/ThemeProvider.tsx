@@ -6,7 +6,7 @@
  *
  * Usage in app/layout.tsx:
  *
- * import { ThemeProvider } from '@aibos/ui/components/ThemeProvider';
+ * import { ThemeProvider } from '@/components/ThemeProvider';
  *
  * export default function RootLayout({ children }) {
  *   return (
@@ -162,3 +162,4 @@ export function ThemeToggle() {
     </button>
   );
 }
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTheme } from "@aibos/ui";
+import { useTheme } from "@/components/ThemeProvider";
 import { Sun, Moon, Monitor } from "lucide-react";
 
 /**
