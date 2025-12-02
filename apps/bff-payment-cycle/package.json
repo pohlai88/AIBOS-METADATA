@@ -1,26 +1,35 @@
 {
   "name": "@aibos/bff-payment-cycle",
-  "version": "0.1.0",
-  "description": "Backend-for-Frontend service for Payment Cycle Orchestrator",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Backend-for-Frontend service for Payment Cycle Orchestration",
   "type": "module",
+  "main": "index.ts",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@hono/node-server": "^1.12.0",
-    "@hono/zod-validator": "^0.2.2",
+    "@aibos/schemas": "workspace:*",
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.2.1",
+    "@supabase/supabase-js": "^2.86.0",
     "dotenv": "^16.4.5",
-    "hono": "^4.5.0",
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.0",
+    "nanoid": "^5.0.7",
+    "postgres": "^3.4.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "tsx": "^4.16.0",
-    "typescript": "^5.5.0"
+    "@types/node": "^22.19.1",
+    "drizzle-kit": "^0.28.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.3"
   }
 }
-

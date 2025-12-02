@@ -245,30 +245,48 @@ importers:
 
   apps/bff-payment-cycle:
     dependencies:
+      '@aibos/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@hono/node-server':
-        specifier: ^1.12.0
+        specifier: ^1.13.0
         version: 1.19.6(hono@4.10.7)
       '@hono/zod-validator':
-        specifier: ^0.2.2
+        specifier: ^0.2.1
         version: 0.2.2(hono@4.10.7)(zod@3.25.76)
+      '@supabase/supabase-js':
+        specifier: ^2.86.0
+        version: 2.86.0
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
+      drizzle-orm:
+        specifier: ^0.36.0
+        version: 0.36.4(@types/pg@8.15.6)(pg@8.16.3)(postgres@3.4.7)
       hono:
-        specifier: ^4.5.0
+        specifier: ^4.6.0
         version: 4.10.7
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.1.6
+      postgres:
+        specifier: ^3.4.4
+        version: 3.4.7
       zod:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
       '@types/node':
-        specifier: ^22.0.0
+        specifier: ^22.19.1
         version: 22.19.1
+      drizzle-kit:
+        specifier: ^0.28.0
+        version: 0.28.1
       tsx:
-        specifier: ^4.16.0
+        specifier: ^4.19.2
         version: 4.20.6
       typescript:
-        specifier: ^5.5.0
+        specifier: ^5.9.3
         version: 5.9.3
 
   apps/web:
