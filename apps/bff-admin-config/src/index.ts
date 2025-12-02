@@ -1,9 +1,11 @@
 /**
- * AI-BOS Backend API Server
+ * BFF Admin Config
  *
- * Hosts:
- * - Admin Config & User Management API
- * - Payment Cycle API (future)
+ * Backend-for-Frontend service for Admin Config & User Management
+ * Port: 3001
+ *
+ * External Route: /admin-config/* (via API Gateway)
+ * Internal Routes: /* (Gateway strips prefix)
  */
 
 import { serve } from "@hono/node-server";
@@ -31,12 +33,14 @@ app.get("/health", (c) => {
   return c.json({
     status: "healthy",
     timestamp: new Date().toISOString(),
-    service: "aibos-api",
+    service: "bff-admin-config",
   });
 });
 
-// Mount routes
-app.route("/api/admin", adminConfigRoutes);
+// Mount all admin-config routes at root
+// Gateway strips /admin-config prefix before forwarding
+// External: /admin-config/auth/login → Internal: /auth/login
+app.route("/", adminConfigRoutes);
 
 // 404 handler
 app.notFound((c) => {
@@ -44,6 +48,7 @@ app.notFound((c) => {
     {
       error: "Not Found",
       path: c.req.path,
+      service: "bff-admin-config",
     },
     404
   );
@@ -64,29 +69,29 @@ const port = parseInt(process.env.PORT || "3001");
 
 console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🚀 AI-BOS API Server
+🚀 BFF Admin Config
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Port: ${port}
 Environment: ${process.env.NODE_ENV || "development"}
 Frontend: ${process.env.FRONTEND_URL || "http://localhost:3000"}
 
-Routes:
-- POST   /api/admin/auth/login
-- POST   /api/admin/auth/logout
-- POST   /api/admin/auth/forgot-password
-- POST   /api/admin/auth/reset-password
-- GET    /api/admin/organization
-- PATCH  /api/admin/organization
-- GET    /api/admin/users
-- GET    /api/admin/users/:id
-- POST   /api/admin/users/invite
-- PATCH  /api/admin/users/:id
-- POST   /api/admin/users/:id/deactivate
-- POST   /api/admin/users/:id/reactivate
-- GET    /api/admin/me
-- PATCH  /api/admin/me
-- PATCH  /api/admin/me/password
-- GET    /api/admin/audit
+Routes (via Gateway /admin-config/*):
+- POST   /auth/login
+- POST   /auth/logout
+- POST   /auth/forgot-password
+- POST   /auth/reset-password
+- GET    /organization
+- PATCH  /organization
+- GET    /users
+- GET    /users/:id
+- POST   /users/invite
+- PATCH  /users/:id
+- POST   /users/:id/deactivate
+- POST   /users/:id/reactivate
+- GET    /me
+- PATCH  /me
+- PATCH  /me/password
+- GET    /audit
 
 Health: GET /health
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

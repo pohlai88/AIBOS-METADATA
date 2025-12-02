@@ -1,7 +1,7 @@
 {
-  "name": "@aibos/api",
+  "name": "@aibos/bff-admin-config",
   "version": "1.0.0",
-  "description": "AI-BOS Backend API Server - Admin Config & Payment Cycle",
+  "description": "Backend-for-Frontend service for Admin Config & User Management",
   "type": "module",
   "main": "index.ts",
   "scripts": {
