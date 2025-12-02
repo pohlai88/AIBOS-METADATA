@@ -1,6 +1,6 @@
 # Admin-Config Business Engine
 
-**Status:** ✅ **v1.1.0 HARDENED**  
+**Status:** ✅ **v2.0.0 COMPLETE**  
 **Date:** December 3, 2025
 
 A pure, domain-driven business logic engine for the Admin Configuration subsystem. This module is isolated from infrastructure concerns (HTTP, Database) and enforces strict business rules, immutable audit logs, and atomic transactions.
@@ -100,12 +100,14 @@ Every write operation appends to a cryptographically linked ledger.
 
 ## 🗺️ Route Integration Status
 
-**✅ 100% of WRITE operations are now hardened!**
+**✅ 100% of WRITE operations are now hardened! (12 routes)**
 
 | Module    | Route                        | Operation       | Status          | Pattern                            |
 | --------- | ---------------------------- | --------------- | --------------- | ---------------------------------- |
 | **Auth**  | `POST /auth/login`           | Login           | ✅ **Hardened** | Atomic (Update LastLogin + Audit)  |
 | **Auth**  | `POST /auth/accept-invite`   | Accept Invite   | ✅ **Hardened** | State Machine (INVITED → ACTIVE)   |
+| **Auth**  | `POST /auth/forgot-password` | Forgot Password | ✅ **Hardened** | Token Generation + Email (v2.0)    |
+| **Auth**  | `POST /auth/reset-password`  | Reset Password  | ✅ **Hardened** | Token Validation + Password Update |
 | **Users** | `POST /users/invite`         | Invite User     | ✅ **Hardened** | Two-Phase (Tx Commit → Email Send) |
 | **Users** | `PATCH /me`                  | Self Update     | ✅ **Hardened** | Atomic Update                      |
 | **Users** | `PATCH /me/password`         | Change Password | ✅ **Hardened** | Security + Atomic Audit            |
@@ -115,8 +117,6 @@ Every write operation appends to a cryptographically linked ledger.
 | **Org**   | `PATCH /organization`        | Update Tenant   | ✅ **Hardened** | Permission Check + Atomic Audit    |
 | **Read**  | `GET /users/*`               | Read Operations | 🟡 **Legacy**   | Direct Service Calls (Safe)        |
 | **Read**  | `GET /organization`          | Get Tenant      | 🟡 **Legacy**   | Direct Service Calls (Safe)        |
-| **Auth**  | `POST /auth/forgot-password` | Forgot Password | ⏳ **v2.0**     | Not Implemented                    |
-| **Auth**  | `POST /auth/reset-password`  | Reset Password  | ⏳ **v2.0**     | Not Implemented                    |
 
 ---
 
@@ -420,8 +420,9 @@ Tests       6 passed (6)
 
 ---
 
-## 🚀 Next Steps (v2.0 Roadmap)
+## 🚀 Next Steps (v2.1 Roadmap)
 
+- [ ] **Email Service Integration** - Replace console.log with actual email provider (SendGrid, Resend, etc.)
 - [ ] **Event Bus Integration** - Publish `UserCreated`, `UserDeactivated` to RabbitMQ/Kafka
 - [ ] **Read-Model Optimization** - CQRS for `GET` routes (separate read replicas)
 - [ ] **Multi-Factor Authentication** - MFA logic in the auth use cases
@@ -431,6 +432,15 @@ Tests       6 passed (6)
 ---
 
 ## 📜 Changelog
+
+### v2.0.0 (December 3, 2025) - PASSWORD RESET FLOW
+
+- ✅ `makeForgotPasswordUseCase` - Request password reset (email enumeration safe)
+- ✅ `makeResetPasswordUseCase` - Execute password reset with token
+- ✅ 12/12 write routes now atomic + audited
+- ✅ User entity: `canResetPassword()` and `setPassword()` methods
+- ✅ Token-based password reset with 1-hour expiry
+- ✅ All existing tokens invalidated on successful reset
 
 ### v1.1.1 (December 3, 2025) - 100% WRITE COVERAGE
 

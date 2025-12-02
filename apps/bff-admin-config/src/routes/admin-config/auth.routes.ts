@@ -31,6 +31,8 @@ import { handleDomainError } from "../../middleware/error-handler.middleware";
 import {
   makeLoginUseCase,
   makeAcceptInviteUseCase,
+  makeForgotPasswordUseCase,
+  makeResetPasswordUseCase,
 } from "../../../../../business-engine/admin-config";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -200,39 +202,111 @@ authRoutes.post("/logout", async (c) => {
 /**
  * POST /auth/forgot-password
  * 
- * Send password reset email.
- * TODO: Migrate to hardened use case when implemented.
+ * Request a password reset email.
+ * Uses the hardened forgotPasswordUseCase from Business Engine.
+ * 
+ * SECURITY: Always returns success to prevent email enumeration.
  */
 authRoutes.post(
   "/forgot-password",
   zValidator("json", forgotPasswordSchema),
   async (c) => {
-    const { email } = c.req.valid("json");
+    return handleDomainError(c, async () => {
+      const { email } = c.req.valid("json");
 
-    // TODO: Implement forgotPasswordUseCase in Business Engine
-    // For now, return success without revealing if email exists
+      // ─────────────────────────────────────────────────────────────────────
+      // 1. COMPOSITION ROOT: Wire infrastructure to use case
+      // ─────────────────────────────────────────────────────────────────────
 
-    return c.json({
-      message: "If your email is registered, you will receive a password reset link",
-    }, 200);
+      const db = getDatabase();
+      const txManager = new DrizzleTransactionManager(db, createRepositoryScope);
+
+      // Create the use case with crypto dependencies
+      const forgotPasswordUseCase = makeForgotPasswordUseCase(txManager, {
+        generateToken: () => crypto.randomBytes(32).toString("hex"),
+        hashToken: (t: string) =>
+          crypto.createHash("sha256").update(t).digest("hex"),
+        sendPasswordResetEmail: async (params) => {
+          // TODO: Implement actual email sending via email service
+          // For now, log the token for development/testing
+          console.log("[DEV] Password reset token:", params.resetToken);
+          console.log("[DEV] For user:", params.email);
+          console.log("[DEV] Expires:", params.expiresAt.toISOString());
+        },
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 2. EXECUTE USE CASE (all logic in Business Engine)
+      // ─────────────────────────────────────────────────────────────────────
+
+      const result = await forgotPasswordUseCase({
+        input: { email },
+        ipAddress: c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip"),
+        userAgent: c.req.header("user-agent"),
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 3. RETURN RESPONSE (always success - don't leak user existence)
+      // ─────────────────────────────────────────────────────────────────────
+
+      return c.json({ message: result.message }, 200);
+    });
   },
 );
 
 /**
  * POST /auth/reset-password
  * 
- * Reset password with token.
- * TODO: Migrate to hardened use case when implemented.
+ * Reset password with a valid reset token.
+ * Uses the hardened resetPasswordUseCase from Business Engine.
+ * 
+ * Token is single-use and expires after 1 hour.
  */
 authRoutes.post(
   "/reset-password",
   zValidator("json", resetPasswordSchema),
   async (c) => {
-    const { token, password } = c.req.valid("json");
+    return handleDomainError(c, async () => {
+      const { token, password } = c.req.valid("json");
 
-    // TODO: Implement resetPasswordUseCase in Business Engine
-    // For now, return error as not implemented
+      // ─────────────────────────────────────────────────────────────────────
+      // 1. COMPOSITION ROOT: Wire infrastructure to use case
+      // ─────────────────────────────────────────────────────────────────────
 
-    return c.json({ error: "Not implemented" }, 501);
+      const db = getDatabase();
+      const txManager = new DrizzleTransactionManager(db, createRepositoryScope);
+
+      // Create the use case with crypto dependencies
+      const resetPasswordUseCase = makeResetPasswordUseCase(txManager, {
+        hashToken: (t: string) =>
+          crypto.createHash("sha256").update(t).digest("hex"),
+        hashPassword: (pwd: string) => bcrypt.hash(pwd, 12),
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 2. EXECUTE USE CASE (all logic in Business Engine)
+      // ─────────────────────────────────────────────────────────────────────
+
+      const result = await resetPasswordUseCase({
+        input: { token, password },
+        ipAddress: c.req.header("x-forwarded-for") ?? c.req.header("x-real-ip"),
+        userAgent: c.req.header("user-agent"),
+      });
+
+      // ─────────────────────────────────────────────────────────────────────
+      // 3. RETURN RESPONSE
+      // ─────────────────────────────────────────────────────────────────────
+
+      return c.json(
+        {
+          message: result.message,
+          user: {
+            id: result.user.id,
+            email: result.user.email.toString(),
+          },
+        },
+        200,
+      );
+    });
   },
 );

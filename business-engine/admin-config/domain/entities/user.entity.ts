@@ -248,6 +248,21 @@ export class User {
     return this.props.status.canLogin();
   }
 
+  /**
+   * Check if user can reset their password.
+   * Only active users can reset passwords (not invited, locked, or inactive).
+   */
+  canResetPassword(): boolean {
+    return this.props.status.canLogin(); // Same rules as login
+  }
+
+  /**
+   * Set password (alias for changePassword, used in reset flows).
+   */
+  setPassword(newPasswordHash: string): void {
+    this.changePassword(newPasswordHash);
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Serialization
   // ─────────────────────────────────────────────────────────────────────────
