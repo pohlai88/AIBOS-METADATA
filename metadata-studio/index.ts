@@ -15,6 +15,8 @@ import { qualityRouter } from './api/quality.routes';
 import { namingRouter } from './api/naming.routes';
 import { mappingRouter } from './api/mapping.routes';
 import { policyRouter } from './api/policy.routes';
+import { namingPolicyRouter } from './api/naming-policy.routes';
+import { agentProposalRouter } from './api/agent-proposal.routes';
 import { registerMetricsRoutes } from './api/metrics.routes';
 import { initializeEventSystem } from './events';
 
@@ -45,6 +47,8 @@ export function createApp() {
   app.route('/naming', namingRouter);
   app.route('/mapping', mappingRouter);
   app.route('/policy', policyRouter);
+  app.route('/naming-policy', namingPolicyRouter);
+  app.route('/agent-proposals', agentProposalRouter);
 
   return app;
 }
